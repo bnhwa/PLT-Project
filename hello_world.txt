@@ -1,5 +1,5 @@
 
-function hello_world(string s) {
+void function hello_world(string s) {
     print(s)
 }
 
