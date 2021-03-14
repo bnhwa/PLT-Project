@@ -43,13 +43,13 @@ decls:
    {None}
    | decls variable_decl {None}
    | decls function_decl {None}
-
+ 
 variable_decl:
    typ IDENTIFIER SEQUENCING{None}
    | typ IDENTIFIER ASSIGN expr {None}
 
 function_decl:
-   list_type FUNCTION IDENTIFIER LEFT_PAREN args_list RIGHT_PAREN LEFT_BRACK decl_list RIGHT_BRACK {None}
+   list_type FUNCTION IDENTIFIER LEFT_PAREN args_list RIGHT_PAREN LEFT_BRACK decl_list RIGHT_BRACK { Func_decl() }
 
 decl_list:
     /* nothing */ { None }
@@ -75,13 +75,13 @@ expr:
    | expr BOOL_AND expr              { None }
    | expr BOOL_OR expr               { None }
    | NOT expr                        { None }
-   | MINUS expr                      { None } 
+   | MINUS expr                      { None }
    | XIRTAM IDENTIFIER ASSIGN NEW XIRTAM LEFT_PAREN set_of_sets RIGHT_PAREN {None}
-   | XIRTAM IDENTIFIER ASSIGN NEW XIRTAM LEFT_PAREN tuple_type_size RIGHT_PAREN {None}  
-   | XIRTAM IDENTIFIER ASSIGN NEW XIRTAM LEFT_PAREN args_opt RIGHT_PAREN {None} 
+   | XIRTAM IDENTIFIER ASSIGN NEW XIRTAM LEFT_PAREN tuple_type_size RIGHT_PAREN {None}
+   | XIRTAM IDENTIFIER ASSIGN NEW XIRTAM LEFT_PAREN args_opt RIGHT_PAREN {None}
    | IDENTIFIER DOT IDENTIFIER LEFT_PAREN args_opt RIGHT_PAREN {None}
    | XIRTAM IDENTIFIER ASSIGN NEW XIRTAM DOT IDENTIFIER LEFT_PAREN args_opt RIGHT_PAREN {None}
-   | IDENTIFIER LEFT_PAREN args_opt RIGHT_PAREN { None }
+   | IDENTIFIER LEFT_PAREN args_opt RIGHT_PAREN { Call($1, $3) }
 
 
 stmt:
@@ -94,8 +94,8 @@ stmt:
    | FOR LEFT_PAREN expr_opt SEQUENCING expr_opt SEQUENCING expr_opt RIGHT_PAREN LEFT_BRACK stmt RIGHT_BRACK {None}
 
 args_list:
-    expr {None}
-   | expr COMMA args_list {None}
+    expr { [$1] }
+   | expr COMMA args_list { $3 :: $1 }
 
 set:
    LEFT_BRACK args_list RIGHT_BRACK {None}
@@ -116,8 +116,8 @@ function_decl:
    typ FUNCTION IDENTIFIER LEFT_PAREN args_opt RIGHT_PAREN LEFT_CURL expr RIGHT_CURL {None}
 
 args_opt:
-    /* nothing */ { None }
-  | args_list  { None }
+    /* nothing */ { [] }
+  | args_list  { List.rev $1 }
 
 typ:
    INT {None}
