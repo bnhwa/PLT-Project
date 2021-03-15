@@ -18,7 +18,7 @@ Data used:
 /* Tokens: program flow */
 %token AND OR IF ELSE ELSEIF FOR RETURN CONTINUE NEW DEL NULL /*BREAK*/
 /* Tokens: matrix functions */
-%token MAT_FILL MAT_TRANSPOSE MAT_ROWS MAT_COLS MAT_EQ MAT_ADD MAT_MULT_SCALAR MAT_MULT MAT_IDENTITY
+%token MAT_FILL MAT_TRANSPOSE MAT_ROWS MAT_COLS MAT_EQ MAT_ADD MAT_MULT_SCALAR MAT_MULT /*MAT_IDENTITY*/
 /* Tokens: Datatypes */
 %token XIRTAM NUM BOOL STRING FUNC VOID 
 
@@ -154,7 +154,7 @@ expr:
 	I put int_of_float to ensure certain arguments are ints, with matrix indexing and assignment
    	*/
 	/*Xirtam matrix functions*/
-	| MAT_IDENTITY		PAREN_L expr PAREN_R {XirtamIdentity($3) }/*make identity matrix of size */
+	/*| MAT_IDENTITY		PAREN_L expr PAREN_R {XirtamIdentity($3) }make identity matrix of size */
 	| MAT_TRANSPOSE		PAREN_L expr PAREN_R {XirtamTranspose($3) }
 	| MAT_ROWS 			PAREN_L expr  PAREN_R {XirtamRows($3)}
 	| MAT_COLS 			PAREN_L expr PAREN_R {XirtamCols($3)}
