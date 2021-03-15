@@ -34,8 +34,8 @@ rule tokenize = parse
 | '.'	{PERIOD}
 
 (* Program flow  *)
-| "&&" {BOOL_AND}
-| "||" {BOOL_OR}
+| "&&" {AND}
+| "||" {OR}
 | "if"     {IF}
 | "else"   {ELSE}
 | "else if" {ELSEIF}
@@ -47,7 +47,7 @@ rule tokenize = parse
 | "NULL" {NULL}
 
 (*Note ARE WE IMPLEMENTING THESE?*)
-| "break"  {BREAK}
+(*| "break"  {BREAK}*)
 
 
 (* Primitive data & function types *)
@@ -61,9 +61,9 @@ rule tokenize = parse
 (*  Literals*)
 | "true"   {TRUE}
 | "false"  {FALSE}
-| ['+' '-']? digits as lex { NUMLIT(float_of_string lex) } (*convert all numbers to float*)
+| ['+' '-']? digits as lex { NUMLIT(float_of_string lex) } (*convert all numbers to float (num datatype)*)
 | ['+' '-']? digits '.'  digit* ( ['e' 'E'] ['+' '-']? digits )? as lex {NUMLIT(float_of_string lex) } (*accept floating point numbers with signs*)
 | ['_']?['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*     as lex {ID(lex)}(*Variable IDS string and number _*)
 | '"' ([^ '"']* as lex) '"' { STRLIT(lex) }(*double quotes with lookahead*)
 | eof { EOF }
-| _ as char { raise (Failure("invalid character detectred: " ^ Char.escaped char)) }
+| _ as char { raise (Failure("invalid character detectred: " ^ Char.escaped char)) }(* raise error *)
