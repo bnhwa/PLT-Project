@@ -17,6 +17,8 @@ Data used:
 %token ADD SUB TIMES  MOD EXP DIV ASSIGN NOT EQ NEQ GT LT LEQ GEQ PERIOD TRUE FALSE
 /* Tokens: program flow */
 %token AND OR IF ELSE ELSEIF FOR RETURN CONTINUE NEW DEL NULL /*BREAK*/
+/* Tokens: matrix functions */
+%token MAT_FILL MAT_TRANSPOSE MAT_ROWS MAT_COLS MAT_EQ MAT_ADD MAT_MULT_SCALAR MAT_MULT MAT_IDENTITY
 /* Tokens: Datatypes */
 %token XIRTAM NUM BOOL STRING FUNC VOID 
 
@@ -144,17 +146,30 @@ expr:
 	Focus rn on getting the core functionality and matrix operations
    	*/
    	| NEW XIRTAM xirtam_dec {$3} 	
-  	| ID SQUARE_L expr SQUARE_R SQUARE_L expr SQUARE_R { XirtamGet($1, int_of_float $3, int_of_float $6) }
-  	| ID SQUARE_L expr SQUARE_R SQUARE_L expr SQUARE_R ASSIGN expr { XirtamAssign($1, int_of_float $3, int_of_float $6, $9) }
+  	| ID SQUARE_L expr SQUARE_R SQUARE_L expr SQUARE_R { XirtamGet($1, int_of_float $3, int_of_float $6) }/*mat1[0][2]*/
+  	| ID SQUARE_L expr SQUARE_R SQUARE_L expr SQUARE_R ASSIGN expr { XirtamAssign($1, int_of_float $3, int_of_float $6, $9) }/*mat1[0][2]=expr*/
+  	/*| XIRTAM PERIOD PAREN_L xirtam_funcs PAREN_R {$3}*//*xirtam funcs*/
   	/*double check how things are initialized and how we want to do matrix functions*/
    	/*check type conversion int bc scanner default converts all int/floats to float!!!!! 
 	I put int_of_float to ensure certain arguments are ints, with matrix indexing and assignment
    	*/
+	/*Xirtam matrix functions*/
+	| MAT_IDENTITY		PAREN_L expr PAREN_R {XirtamIdentity($3) }/*make identity matrix of size */
+	| MAT_TRANSPOSE		PAREN_L expr PAREN_R {XirtamTranspose($3) }
+	| MAT_ROWS 			PAREN_L expr  PAREN_R {XirtamRows($3)}
+	| MAT_COLS 			PAREN_L expr PAREN_R {XirtamCols($3)}
+	| MAT_FILL 			PAREN_L expr COMMA expr PAREN_R {XirtamFill($3,$5) } 
+	| MAT_EQ			PAREN_L expr COMMA expr PAREN_R {XirtamEq($3,$5) } 
+	| MAT_ADD			PAREN_L expr COMMA expr PAREN_R {XirtamAdd($3,$5) } 
+	| MAT_MULT_SCALAR 	PAREN_L expr COMMA expr PAREN_R {XirtamMultScalar($3,$5) } 
+	| MAT_MULT 			PAREN_L expr COMMA expr PAREN_R {XirtamMult($3,$5) } 
+
 xirtam_dec:
+
 	CURLY_L xirtam_row CURLY_R { XirtamDec(List.rev $2) }/*DOUBLE CHECK THIS*/
-  	
-	| PAREN_L NUMLIT COMMA NUMLIT COMMA PAREN_R { XirtamDec(int_of_float $2, int_of_float$4) } 
-	| PAREN_L STRLIT PAREN_R { XirtamDec_str($2) }/*string mat declaration new XIRTAM("identity")*/
+	| PAREN_L expr COMMA expr PAREN_R { XirtamDec(int_of_float $2, int_of_float$4) } /*new Xirtam(1,2) , default zeros fill.
+	IN CODEGEN MAKE SURE row, col VALS >0*/
+	/*| PAREN_L STRLIT COMMA expr PAREN_R { XirtamDec_str($2, int_of_float $4) }new Xirtam("identity",3) : 3x3 identity*/
 
 xirtam_row:
   	| CURLY_L args_list CURLY_R { [$2]} /*{1,2,3}  {{1},{2}}*/

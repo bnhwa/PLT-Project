@@ -57,6 +57,20 @@ rule tokenize = parse
 | "string" {STRING}
 | "function" {FUNC}
 | "void"   {VOID}
+(* Xirtam functions CHECK IF THIS CONFLICTS WITH VAR NAMING
+if so, make it so users cant name variables xirtam function names
+*)
+(* MAT_IDENTITY MAT_FILL MAT_TRANSPOSE MAT_ROWS MAT_COLS MAT_EQ MAT_ADD MAT_MULT_SCALAR MAT_MULT*)
+| "identity" {MAT_IDENTITY}
+| "fillMat" {MAT_FILL}  (* Fill all of matrix with values*)
+| "transpose" {MAT_TRANSPOSE}(* *)
+| "getrows" {MAT_ROWS}(* get number of rows*)(* *)
+| "getcols" {MAT_COLS}(* get number of cols*)
+| "equals" {MAT_EQ} (* *)
+| "addMat" {MAT_ADD}(* *)
+| "multScalar" {MAT_MULT_SCALAR}(*multiply scalar *)
+| "multMat" {MAT_MULT}(*mult 2 matrices *)
+
 
 (*  Literals*)
 | "true"   {TRUE}
@@ -65,5 +79,6 @@ rule tokenize = parse
 | ['+' '-']? digits '.'  digit* ( ['e' 'E'] ['+' '-']? digits )? as lex {NUMLIT(float_of_string lex) } (*accept floating point numbers with signs*)
 | ['_']?['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*     as lex {ID(lex)}(*Variable IDS string and number _*)
 | '"' ([^ '"']* as lex) '"' { STRLIT(lex) }(*double quotes with lookahead*)
+(*  Xirtam module functions*)
 | eof { EOF }
 | _ as char { raise (Failure("invalid character detectred: " ^ Char.escaped char)) }(* raise error *)
