@@ -61,7 +61,9 @@ rule tokenize = parse
 if so, make it so users cant name variables xirtam function names
 *)
 (* MAT_IDENTITY MAT_FILL MAT_TRANSPOSE MAT_ROWS MAT_COLS MAT_EQ MAT_ADD MAT_MULT_SCALAR MAT_MULT*)
-| "identity" {MAT_IDENTITY}
+
+(*| "identity" {MAT_IDENTITY} *)
+
 | "fillMat" {MAT_FILL}  (* Fill all of matrix with values*)
 | "transpose" {MAT_TRANSPOSE}(* *)
 | "getrows" {MAT_ROWS}(* get number of rows*)(* *)
