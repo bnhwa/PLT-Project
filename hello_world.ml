@@ -8,14 +8,19 @@ module StringHash = Hashtbl.Make(struct
 
 let map  = StringHash.create 10
 
-let builtin_print_s s = s in StringHash.add map "print" builtin_print_s
+let builtin_print s = s ;;
 
-let rec eval = function
-    StrLit -> 1
-  | Call(v1, v2) -> let func = (StringHash.find map v1) and let s::t = v2 in (func s; 0)
+StringHash.add map "print" builtin_print 
+
+let eval = function
+    StrLit(x) -> 1
+  | Call(v1, v2) -> let temp_f = (StringHash.find map v1) in let s = List.hd v2 in temp_f s ;;
+
+(* v1 = "print"
+v2 = ["helloworld"] *)
  
-let _ =
+(* let _ =
   let lexbuf = Lexing.from_channel stdin in
-  let expr = Parser.expr Scanner.tokenize lexbuf in
+  let expr = parserAlt.expr scannerAlt.tokenize lexbuf in
   let result = eval expr in
-  print_endline (string_of_int result)
+  print_endline (string_of_int result) *)
