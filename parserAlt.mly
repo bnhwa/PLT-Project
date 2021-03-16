@@ -77,7 +77,8 @@ args_opt:
  	| args_list   { List.rev $1 }
 
 args_list: 
-    typ expr             {    [$1]    }
+      expr             {    [$1]    }
+
  	| args_list COMMA expr { ($3 :: $1) }
 
   /*datatypes*/
@@ -154,6 +155,7 @@ expr:
 	I put int_of_float to ensure certain arguments are ints, with matrix indexing and assignment
    	*/
 	/*Xirtam matrix functions*/
+
 	/*| MAT_IDENTITY		PAREN_L expr PAREN_R {XirtamIdentity($3) }make identity matrix of size */
 	| MAT_TRANSPOSE		PAREN_L expr PAREN_R {XirtamTranspose($3) }
 	| MAT_ROWS 			PAREN_L expr  PAREN_R {XirtamRows($3)}
