@@ -8,7 +8,7 @@ module StringHash = Hashtbl.Make(struct
 
 let map  = StringHash.create 10
 
-let builtin_print_s s = (print_endline(s); 0) in StringHash.add map "print" builtin_print_s
+let builtin_print_s s = s in StringHash.add map "print" builtin_print_s
 
 let rec eval = function
     StrLit -> 1
