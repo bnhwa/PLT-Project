@@ -116,8 +116,11 @@ let string_of_typ = function
 
 
   *)
-  | Xirtam(r, c)  -> let r_i = string_of_int r in let c_i = string_of_int 
-   "matrix (r:" ^ string_of_int r ^ ", c:" ^ string_of_int c ^")"
+  | Xirtam(r, c)  -> 
+      let res = if ( r <=0 || c <=0 ) 
+        then "invalid" 
+        else "matrix (r:" ^ string_of_int r ^ ", c:" ^ string_of_int c ^")" 
+      in res 
   (* | Array -> "array" *)
 
 let string_of_var_decl_list (n, e) =
