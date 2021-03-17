@@ -86,10 +86,22 @@ typ:
   	| BOOL    {Bool}
   	| STRING  {String}
   	| VOID    {Void}
-	| XIRTAM  {Xirtam}/* do */
+	| xirtam_typ  {Xirtam}/* do */
 	| FUNC    {Func}
-  /**/
+  /*if we are doing matrix of things other than numerics, use below*/
+  /*
+mat_typ:
+    NUM     {Num}
+    | BOOL    {Bool}
+    | STRING  {String}
+  */
 
+
+
+xirtam_typ:
+/*MAKE SURE TO DO TYPE CONVERSIONS AND ERROR CHECK SINCE XIRTAM ONLY USES NUM TYPES*/
+  XIRTAM SQUARE_L NUMLIT SQUARE_R SQUARE_L NUMLIT SQUARE_R  {Xirtam( int_of_float $3, int_of_float $6)}
+/* mat_typ Xirtam SQUARE_L NUMLIT SQUARE_R SQUARE_L NUMLIT SQUARE_R  {Xirtam($1, $4,$7)}*/
 
 var_decl_stmts:
     ID             {[($1, Empty)]}
@@ -107,7 +119,7 @@ stmt: /*all statements must end with semicolon*/
   	| CONTINUE SEMICOL                           { Continue              }
   	/*| BREAK SEMICOL                              { Break               } *//*are we going to implement this?*/
   	| CURLY_L stmt_list CURLY_R                  { Block(List.rev $2)    } 
-	| IF PAREN_L expr PAREN_R stmt ELSE stmt    { If($3, $5, $7)        }
+	| IF PAREN_L expr PAREN_R stmt ELSE stmt    { If($3, $5, Block([]))       } /*add if else block*/
 	| ELSEIF PAREN_L expr PAREN_R stmt HTELSE stmt { Elseif ($3, $5, $7)} /* DOUBLE CHECK THIS*/
   	| FOR PAREN_L expr_opt SEMICOL expr SEMICOL expr_opt PAREN_R stmt { For($3, $5, $7, $9)   }
 
@@ -148,7 +160,7 @@ expr:
 	Focus rn on getting the core functionality and matrix operations
    	*/
     | NEW XIRTAM xirtam_dec {XirtamDec_lit($3)}  /*matrix literal: {1,2,3,4,5}*/
-    | SQUARE_L xirtam_row SQUARE_R 	{$2}
+    | SQUARE_L xirtam_row SQUARE_R 	{XirtamLit(List.rev $2)}
   	| ID SQUARE_L expr SQUARE_R SQUARE_L expr SQUARE_R { XirtamGet($1, int_of_float $3, int_of_float $6) }/*mat1[0][2]*/
   	| ID SQUARE_L expr SQUARE_R SQUARE_L expr SQUARE_R ASSIGN expr { XirtamAssign($1, int_of_float $3, int_of_float $6, $9) }
     /*mat1[0][2]=expr*/
