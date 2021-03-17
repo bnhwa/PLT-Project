@@ -151,12 +151,12 @@ let string_of_tuple x = "(" ^ (fst x) ^ " : " ^ string_of_typ (snd x) ^ ")"
 (* Print out argument type and argument identifier *)
 let string_of_fdecl fdecl =
   string_of_typ fdecl.typ ^ " " ^
-  fdecl.fname ^ "(" ^ String.concat ", " (
+  fdecl.f_name ^ "(" ^ String.concat ", " (
     List.map string_of_tuple (
-      List.combine (List.map snd fdecl.formals) (List.map fst fdecl.formals)
+      List.combine (List.map snd fdecl.f_args) (List.map fst fdecl.f_args)
       )
     ) ^
-  ")\n{\n" ^ String.concat "" (List.map string_of_stmt fdecl.body) ^"}\n"
+  ")\n{\n" ^ String.concat "" (List.map string_of_stmt fdecl.f_statments) ^"}\n"
 
 let string_of_program (vars, funcs) =
   String.concat "" (List.map string_of_bind vars) ^ "\n" ^
