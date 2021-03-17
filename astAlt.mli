@@ -61,7 +61,7 @@ type func_decl = {
     f_ret : bool;
     f_name : string;
     f_args : bind list;(* formals*)
-    (*locals : bind list; (*local vars?*)*) 
+    (*locals : bind list; (*local vars? *)*) 
     f_statments : stmt list;
   }
 
@@ -110,16 +110,15 @@ let string_of_typ = function
   | Void -> "void"
   (* maybe have matrix of different types??? errorcheck type is rights*) 
   (*
-  STILLL WORKING ON THIS PART BELOW 
-
 
 
 
   *)
   | Xirtam(r, c)  -> 
+  (*error checking to make sure matrix*)
       let res = if ( r <=0 || c <=0 ) 
         then "invalid" 
-        else "matrix (r:" ^ string_of_int r ^ ", c:" ^ string_of_int c ^")" 
+        else "Xirtam (r:" ^ string_of_int r ^ ", c:" ^ string_of_int c ^")" 
       in res 
   (* | Array -> "array" *)
 
