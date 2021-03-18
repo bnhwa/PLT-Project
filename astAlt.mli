@@ -99,8 +99,8 @@ let rec string_of_expr = function
   | XirtamGet(id, e1, e2) -> id ^ "[" ^ string_of_expr e1 ^ "][" ^ string_of_expr e2 ^ "]"
   | XirtamAssign(id, e1, e2, e3) -> id ^ "[" ^ string_of_expr e1 ^ "][" ^
                                  string_of_expr e2 ^ "] = " ^ string_of_expr e3
-  | Unop(o, e) -> string_of_uop o ^ string_of_expr e
   | Binop(e1, o, e2) ->string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
+  | Unop(o, e) -> string_of_uop o ^ string_of_expr e
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Call(f, e) -> f ^ "(" ^ String.concat ", " (List.map string_of_expr e) ^ ")"
   | Empty -> ""
