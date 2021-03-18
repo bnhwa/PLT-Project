@@ -50,6 +50,9 @@ type expr =
 
 type stmt =
     Block of stmt list
+  | VarDeclList of typ * (string * expr) list
+  | VarDecl of typ * string * expr
+  | VDecl of typ * string * expr
   | Expr of expr
   | Return of expr
   | If of expr * stmt * stmt
@@ -115,7 +118,7 @@ let string_of_typ = function
 
   *)
   | Xirtam(r, c)  -> 
-  (*error checking to make sure matrix*)
+  (*error checking to make sure matrix is correct*)
       let res = if ( r <=0 || c <=0 ) 
         then "invalid" 
         else "Xirtam (r:" ^ string_of_int r ^ ", c:" ^ string_of_int c ^")" 
@@ -140,13 +143,11 @@ let rec string_of_stmt = function
   | If(e, s1, s2) ->  "if (" ^ string_of_expr e ^ ")\n" ^
       string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
   | For(e1, e2, e3, s) ->
-      "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
-      string_of_expr e3  ^ ") " ^ string_of_stmt s
+      "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^ string_of_expr e3  ^ ") " ^ string_of_stmt s
   (*| While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s*)(*are we implemeting this?*)
-  | VDecl(t, n, e) -> string_of_typ t ^ " " ^ n ^
+  | VarDecl(t, n, e) -> string_of_typ t ^ " " ^ n ^
       (if e = Empty then "" else " = " ^ string_of_expr e) ^ ";\n"
-  | VDeclList(t, decls) ->
-      string_of_typ t ^ " " ^ String.concat ", " (List.map string_of_var_decl_list decls) ^ ";\n"
+  | VarDeclList(t, decls) -> string_of_typ t ^ " " ^ String.concat ", " (List.map string_of_var_decl_list decls) ^ ";\n"
 
 let string_of_tuple x = "(" ^ (fst x) ^ " : " ^ string_of_typ (snd x) ^ ")"
 
