@@ -1,56 +1,86 @@
 { open Parser }
+(*digits*)
+let digit = ['0'-'9']
+let digits = digit+
 
-rule tokenize = 
-parse
-  [' ' '\t' '\r' '\n'] { tokenize lexbuf }
-| '+' { PLUS }
-| '-' { MINUS }
-| '*' { TIMES }
-| '/' { DIVIDE }
-| ';' {SEQUENCING}
-| '=' {ASSIGN}
-| ['0'-'9']+ as lit { LITERAL(int_of_string lit) }
-| ['a'-'z''A'-'Z''0'-'9''_']+ as var { IDENTIFIER (var) }
-| eof { EOF }
-| '!' {NOT}
-| '%' {MODULO}
-| '^' {EXPONENT}
-| '&' {BITWISE_AND}
-| '(' {LEFT_PAREN}
-| ')' {RIGHT_PAREN}
-| '{' {LEFT_CURL}
-| '}' {RIGHT_CURL}
-| '|' {LINE}
-| '~' {BITWISE_NOT}
-| '[' {LEFT_BRACK}
-| '\\' {RIGHT_BRACK}
-| "'" {SING_QUOTE}
-| "numeric" {NUMERIC}
-| "string" {STRING}
-| "bool" {BOOL}
-| "Xirtam" {XIRTAM}
-| "if" {IF}
-| "else" {ELSE}
+rule tokenize = parse
+  [' ' '\t' '\r' '\n'] { tokenize lexbuf } (* Whitespace/filler*)
+(* ---------- COMMENTS ----------- *)
+| "/*"     { comment lexbuf }           (* comments *)
+(*  Basic syntax  *)
+| '('	{PAREN_L}
+| ')'	{PAREN_R}
+| '{'	{CURLY_L}
+| '}'	{CURLY_R}
+| '[' 	{SQUARE_L}
+| ']'	{SQUARE_R}
+| ';'	{SEMICOL}
+| ','	{COMMA}
+(*  Operators, both unary and binary  *)
+| '+'	{ADD}
+| '-' 	{SUB}
+| '*'	{TIMES}
+| '/'	{DIV}
+| '%'	{MOD}
+| '^'	{EXP}
+| '='	{ASSIGN }
+| "!"	{NOT}
+| "=="	{EQ}
+| "!="	{NEQ}
+| '>'	{GT}
+| '<'	{LT}
+| "<="	{LEQ}
+| ">="	{GEQ}
+| '.'	{PERIOD}
+
+(* Program flow  *)
+| "&&" {AND}
+| "||" {OR}
+| "if"     {IF}
+| "else"   {ELSE}
 | "else if" {ELSEIF}
-| "for" {FOR}
-| "void" {VOID}
+| "for"    {FOR}
 | "return" {RETURN}
-| "continue" {CONTINUE}
+| "continue" { CONTINUE }
 | "new" {NEW}
 | "del" {DEL}
 | "NULL" {NULL}
-| "function" {FUNCTION}
-| "==" { CHECK_EQUAL }
-| "!=" { CHECK_NOT_EQUAL }
-| '<' { SMALLER }
-| '>' { GREATER }
-| ">=" { GREATER_EQUAL }
-| "<=" { SMALLER_EQUAL }
-| "&&" { BOOL_AND }
-| "||" { BOOL_OR }
-| '.' { DOT }
-| ',' { COMMA }
-| ['a'-'z']['.']['0'-'9']+ {FLOATLIT}
-| "int" {INT}
+
+(*Note ARE WE IMPLEMENTING THESE?*)
+(*| "break"  {BREAK}*)
+
+
+(* Primitive data & function types *)
+| "Xirtam" {XIRTAM}
+| "num"    {NUM}
+| "bool"   {BOOL}
 | "string" {STRING}
-| "float" {FLOAT}
+| "function" {FUNC}
+| "void"   {VOID}
+(* Xirtam functions CHECK IF THIS CONFLICTS WITH VAR NAMING
+if so, make it so users cant name variables xirtam function names
+*)
+(* MAT_IDENTITY MAT_FILL MAT_TRANSPOSE MAT_ROWS MAT_COLS MAT_EQ MAT_ADD MAT_MULT_SCALAR MAT_MULT*)
+
+(*| "identity" {MAT_IDENTITY} *)
+
+| "fillMat" {MAT_FILL}  (* Fill all of matrix with values*)
+| "transpose" {MAT_TRANSPOSE}(* *)
+| "getrows" {MAT_ROWS}(* get number of rows*)(* *)
+| "getcols" {MAT_COLS}(* get number of cols*)
+| "equals" {MAT_EQ} (* *)
+| "addMat" {MAT_ADD}(* *)
+| "multScalar" {MAT_MULT_SCALAR}(*multiply scalar *)
+| "multMat" {MAT_MULT}(*mult 2 matrices *)
+
+
+(*  Literals*)
+| "true"   {TRUE}
+| "false"  {FALSE}
+| digits as lex { NUMLIT(float_of_string lex) } (*convert all numbers to float (num datatype)*)
+| digits '.'  digit* ( ['e' 'E'] ['+' '-']? digits )? as lex {NUMLIT(float_of_string lex) } (*accept floating point numbers with signs*)
+| ['_']?['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*     as lex {ID(lex)}(*Variable IDS string and number _*)
+| '"' ([^ '"']* as lex) '"' { STRLIT(lex) }(*double quotes with lookahead*)
+(*  Xirtam module functions*)
+| eof { EOF }
+| _ as char { raise (Failure("invalid character detectred: " ^ Char.escaped char)) }(* raise error *)

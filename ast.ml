@@ -8,10 +8,6 @@ type op_un = Not | Neg
 
 type op_bin = Add | Sub | Mult | Div | Mod | Exponent | Equal | Neq | Less | Leq | Great | Geq | And | Or
 
-type bind = typ * string
-
-type program = bind list * func_decl list
-
 type typ = 
   Xirtam of typ * int * int
   | Num
@@ -19,6 +15,9 @@ type typ =
   | String
   | Void
   | Func
+
+type bind = typ * string
+
 
 type expr =
 	(*Primitives and expressions*)
@@ -32,7 +31,7 @@ type expr =
 	| Call of string * expr list
 	(*IMPLEMENT Xirtam specific below*)
   | XirtamDec_lit of expr list list
-  | XirtamDec_rc of int int
+  | XirtamDec_rc of int * int
   | XirtamGet of string * expr * expr
   | XirtamAssign of string * expr * expr * expr
 (* maybe have these already in the function dictionary?
@@ -70,13 +69,15 @@ type func_decl = {
 
   (* Pretty-printing functions below:*)
 
+type program = bind list * func_decl list
+
 let string_of_op = function
   Add -> "+"
   | Sub -> "-"
   | Mult -> "*"
   | Div -> "/"
   | Equal -> "=="
-  | Greater -> ">"
+  | Great -> ">"
   | Less -> "<"
   | Geq -> ">="
   | Neq -> "!="
@@ -94,8 +95,8 @@ let rec string_of_expr = function
   | BoolLit(false) -> "false"
   | Id(s) -> s
   | StrLit(s) -> s
-  | XirtamLit(x) -> "[" ^ String.concat "," (List.map (fun lst -> "[" ^ String.concat "," (List.map string_of_expr lst) ^ "]") x) ^ "]"
-  (*we use fun instead of function because fun can take in multiple arguments*))
+  (* | XirtamLit(x) -> "[" ^ String.concat "," (List.map (fun lst -> "[" ^ String.concat "," (List.map string_of_expr lst) ^ "]") x) ^ "]" *)
+  (*we use fun instead of function because fun can take in multiple arguments*)
   | XirtamGet(id, e1, e2) -> id ^ "[" ^ string_of_expr e1 ^ "][" ^ string_of_expr e2 ^ "]"
   | XirtamAssign(id, e1, e2, e3) -> id ^ "[" ^ string_of_expr e1 ^ "][" ^
                                  string_of_expr e2 ^ "] = " ^ string_of_expr e3
@@ -108,15 +109,11 @@ let rec string_of_expr = function
 let string_of_typ = function
     Num -> "num"
   | Bool -> "bool"
-  | Float -> "float"
+  (* | Float -> "float" *)
   | String -> "string"
   | Void -> "void"
   (* maybe have matrix of different types??? errorcheck type is rights*) 
-  (*
-
-
-
-  *)
+  (*  *)
   | Xirtam(r, c)  -> 
   (*error checking to make sure matrix is correct*)
       let res = if ( r <=0 || c <=0 ) 
