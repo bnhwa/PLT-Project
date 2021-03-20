@@ -21,8 +21,6 @@ rule tokenize = parse
 | '-' 	{SUB}
 | '*'	{TIMES}
 | '/'	{DIV}
-| '%'	{MOD}
-| '^'	{EXP}
 | '='	{ASSIGN }
 | "!"	{NOT}
 | "=="	{EQ}

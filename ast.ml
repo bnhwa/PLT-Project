@@ -6,7 +6,7 @@ citation: microc compiler shown in class
 (*unary operations*)
 type op_un = Not | Neg
 
-type op_bin = Add | Sub | Mult | Div | Mod | Exponent | Equal | Neq | Less | Leq | Great | Geq | And | Or
+type op_bin = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Great | Geq | And | Or
 
 type typ = 
   Xirtam of typ * int * int
@@ -30,8 +30,8 @@ type expr =
 	| Assign of string * expr 
 	| Call of string * expr list
 	(*IMPLEMENT Xirtam specific below*)
-  | XirtamDec_lit of expr list list
-  | XirtamDec_rc of int * int
+  (* | XirtamDec_lit of expr list list *)
+  (* | XirtamDec_rc of int * int *)
   | XirtamGet of string * expr * expr
   | XirtamAssign of string * expr * expr * expr
 (* maybe have these already in the function dictionary?

@@ -14,7 +14,7 @@ Data used:
 /* Tokens: syntax */
 %token PAREN_L PAREN_R CURLY_L CURLY_R SQUARE_L SQUARE_R SEMICOL COMMA
 /* Tokens: Operators & literals */
-%token ADD SUB TIMES  MOD EXP DIV ASSIGN NOT EQ NEQ GT LT LEQ GEQ PERIOD TRUE FALSE
+%token ADD SUB TIMES  DIV ASSIGN NOT EQ NEQ GT LT LEQ GEQ PERIOD TRUE FALSE
 /* Tokens: program flow */
 %token AND OR IF ELSE ELSEIF FOR RETURN CONTINUE NEW DEL NULL /*BREAK*/
 /* Tokens: matrix functions */
@@ -42,8 +42,7 @@ Data used:
 %left EQ NEQ
 %left GT LT GEQ LEQ
 %left ADD SUB
-%left TIMES DIV MOD
-%left EXP
+%left TIMES DIV 
 %right NOT NEG /*boolean negation and negative*/
 
 %%
@@ -136,9 +135,7 @@ expr:
   	| expr ADD       	expr { Binop($1, Add,      $3) }
   	| expr SUB      	expr { Binop($1, Sub,      $3) }
   	| expr TIMES      expr { Binop($1, Mul,      $3) }
-  	| expr EXP        expr { Binop($1, Exp,      $3) }
   	| expr DIV   		expr { Binop($1, Div,      $3) }
-  	| expr MOD        expr { Binop($1, Mod,      $3) }
   	| expr EQ         expr { Binop($1, Equals,   $3) }
   	| expr NEQ        expr { Binop($1, Neq,      $3) }
   	| expr GT         expr { Binop($1, Greater,     $3) }
@@ -159,7 +156,7 @@ expr:
 	MAYBE LIST STUFF? 
 	Focus rn on getting the core functionality and matrix operations
    	*/
-    | NEW XIRTAM xirtam_dec {XirtamDec_lit($3)}  /*matrix literal: {1,2,3,4,5}*/
+    /* | NEW XIRTAM xirtam_dec {XirtamDec_lit($3)}  matrix literal: {1,2,3,4,5} */
     | SQUARE_L xirtam_row SQUARE_R 	{XirtamLit(List.rev $2)}
   	| ID SQUARE_L expr SQUARE_R SQUARE_L expr SQUARE_R { XirtamGet($1, int_of_float $3, int_of_float $6) }/*mat1[0][2]*/
   	| ID SQUARE_L expr SQUARE_R SQUARE_L expr SQUARE_R ASSIGN expr { XirtamAssign($1, int_of_float $3, int_of_float $6, $9) }
@@ -184,10 +181,10 @@ expr:
 xirtam_dec:
 
 	/*CURLY_L xirtam_row CURLY_R { XirtamDec_lit(List.rev $2) }DOUBLE CHECK THIS*/
-	| PAREN_L expr COMMA expr PAREN_R { XirtamDec_rc(int_of_float $2, int_of_float$4) } /*new Xirtam(1,2) , default zeros fill.
+	/* | PAREN_L expr COMMA expr PAREN_R { XirtamDec_rc(int_of_float $2, int_of_float$4) } */ /*new Xirtam(1,2) , default zeros fill.
 	IN CODEGEN MAKE SURE row, col VALS >0*/
 	/*| PAREN_L STRLIT COMMA expr PAREN_R { XirtamDec_str($2, int_of_float $4) }new Xirtam("identity",3) : 3x3 identity*/
 
-xirtam_row:
-  	| SQUARE_L args_opt SQUARE_R { [$2]} /*{1,2,3}  {{1},{2}}*/
- 	| xirtam_row COMMA SQUARE_L args_opt SQUARE_R  { ($4 :: $1) }
+/* xirtam_row: */
+  	 /* SQUARE_L args_opt SQUARE_R { [$2]} {1,2,3}  {{1},{2}} */
+ 	/* | xirtam_row COMMA SQUARE_L args_opt SQUARE_R  { ($4 :: $1) } */
