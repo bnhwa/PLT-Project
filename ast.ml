@@ -9,8 +9,7 @@ type op_un = Not | Neg
 type op_bin = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Great | Geq | And | Or
 
 type typ = 
-  Xirtam of typ * int * int
-  | Num
+   Num
   | Bool
   | String
   | Void
@@ -32,8 +31,6 @@ type expr =
 	(*IMPLEMENT Xirtam specific below*)
   (* | XirtamDec_lit of expr list list *)
   (* | XirtamDec_rc of int * int *)
-  | XirtamGet of string * expr * expr
-  | XirtamAssign of string * expr * expr * expr
 (* maybe have these already in the function dictionary?
   | MAT_TRANSPOSE   PAREN_L expr PAREN_R {XirtamTranspose($3) }
   | MAT_ROWS      PAREN_L expr  PAREN_R {XirtamRows($3)}
@@ -49,13 +46,14 @@ type expr =
 
 type stmt =
     Block of stmt list
-  | VarDeclList of typ * (string * expr) list
-  | VarDecl of typ * string * expr
+  | VDeclList of typ * (string * expr) list
   | VDecl of typ * string * expr
   | Expr of expr
   | Return of expr
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
+  | Continue
+  | Elseif of expr * stmt * stmt
   (*| While of expr * stmt *) (*are we implementing this?*)
 
 type func_decl = {
@@ -97,9 +95,6 @@ let rec string_of_expr = function
   | StrLit(s) -> s
   (* | XirtamLit(x) -> "[" ^ String.concat "," (List.map (fun lst -> "[" ^ String.concat "," (List.map string_of_expr lst) ^ "]") x) ^ "]" *)
   (*we use fun instead of function because fun can take in multiple arguments*)
-  | XirtamGet(id, e1, e2) -> id ^ "[" ^ string_of_expr e1 ^ "][" ^ string_of_expr e2 ^ "]"
-  | XirtamAssign(id, e1, e2, e3) -> id ^ "[" ^ string_of_expr e1 ^ "][" ^
-                                 string_of_expr e2 ^ "] = " ^ string_of_expr e3
   | Binop(e1, o, e2) ->string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop(o, e) -> string_of_uop o ^ string_of_expr e
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
@@ -112,15 +107,9 @@ let string_of_typ = function
   (* | Float -> "float" *)
   | String -> "string"
   | Void -> "void"
+  | Func -> "function"
   (* maybe have matrix of different types??? errorcheck type is rights*) 
   (*  *)
-  | Xirtam(r, c)  -> 
-  (*error checking to make sure matrix is correct*)
-      let res = if ( r <=0 || c <=0 ) 
-        then "invalid" 
-        else "Xirtam (r:" ^ string_of_int r ^ ", c:" ^ string_of_int c ^")" 
-      in res 
-  (* | Array -> "array" *)
 
 let string_of_var_decl_list (n, e) =
   let suffix ex =
@@ -142,9 +131,10 @@ let rec string_of_stmt = function
   | For(e1, e2, e3, s) ->
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^ string_of_expr e3  ^ ") " ^ string_of_stmt s
   (*| While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s*)(*are we implemeting this?*)
-  | VarDecl(t, n, e) -> string_of_typ t ^ " " ^ n ^
+  | VDecl(t, n, e) -> string_of_typ t ^ " " ^ n ^
       (if e = Empty then "" else " = " ^ string_of_expr e) ^ ";\n"
-  | VarDeclList(t, decls) -> string_of_typ t ^ " " ^ String.concat ", " (List.map string_of_var_decl_list decls) ^ ";\n"
+  | Elseif(a,b,c) -> "PLACEHOLDER"
+  | VDeclList(t, decls) -> string_of_typ t ^ " " ^ String.concat ", " (List.map string_of_var_decl_list decls) ^ ";\n"
 
 let string_of_tuple x = "(" ^ (fst x) ^ " : " ^ string_of_typ (snd x) ^ ")"
 

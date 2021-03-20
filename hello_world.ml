@@ -1,7 +1,7 @@
 
 let _ =
   let lexbuf = Lexing.from_channel stdin in
-  let expr = Parser.expr Scanner.tokenize lexbuf in
+  let expr = Parser.program Scanner.tokenize lexbuf in
   expr
 
 (* module StringHash = Hashtbl.Make(struct
