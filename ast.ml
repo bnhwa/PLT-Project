@@ -62,7 +62,7 @@ type func_decl = {
     f_name : string;
     f_args : bind list;(* formals*)
     (*locals : bind list; (*local vars? *)*) 
-    f_statments : stmt list;
+    f_statements : stmt list;
   }
 
   (* Pretty-printing functions below:*)
