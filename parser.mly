@@ -56,7 +56,7 @@ func_decl:
          f_ret = ($1 = Func);(* check if function is void or not*)
          f_name = $2; (*func name, use symboltables*)
          f_args = $4;(*args *)
-         f_statments = List.rev $7  (*statements in function*)}}/*reverse list to ensure proper ordering*/
+         f_statements = List.rev $7  (*statements in function*)}}/*reverse list to ensure proper ordering*/
 f_args_opt:
    	{ [] }
  	| f_args_list   { List.rev $1 }
