@@ -21,8 +21,6 @@ rule tokenize = parse
 | '-' 	{SUB}
 | '*'	{TIMES}
 | '/'	{DIV}
-| '%'	{MOD}
-| '^'	{EXP}
 | '='	{ASSIGN }
 | "!"	{NOT}
 | "=="	{EQ}
@@ -51,7 +49,6 @@ rule tokenize = parse
 
 
 (* Primitive data & function types *)
-| "Xirtam" {XIRTAM}
 | "num"    {NUM}
 | "bool"   {BOOL}
 | "string" {STRING}
@@ -84,3 +81,7 @@ if so, make it so users cant name variables xirtam function names
 (*  Xirtam module functions*)
 | eof { EOF }
 | _ as char { raise (Failure("invalid character detectred: " ^ Char.escaped char)) }(* raise error *)
+
+and comment = parse
+ "*/" { tokenize lexbuf }
+ | _ { comment lexbuf }
