@@ -24,7 +24,8 @@ let check (globals, functions) =
       f_name = name; 
       f_args = [(ty, "x")]; (*List.mapi (fun arg_num f_args_type -> (f_args_type, "x" ^ string_of_int arg_num)) f_args_type;*)
       f_statements = []; } map
-    in List.fold_left add_bind StringMap.empty [ ("print", String)]
+    in List.fold_left add_bind StringMap.empty [ ("print", String);
+    ("printn", Num);]
   in
 
   (* Add function name to symbol table *)

@@ -84,6 +84,8 @@ let string_of_sfdecl fdecl =
   ")\n{\n" ^
   String.concat "" (List.map string_of_sstmt fdecl.sf_statements) ^
   "}\n"
+
+  
 let string_of_sprogram (vars, funcs) =
   String.concat "" (List.map string_of_bind vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_sfdecl funcs)
