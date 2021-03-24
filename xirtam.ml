@@ -24,7 +24,7 @@ let () =
   let lexbuf = Lexing.from_channel !channel in
   let ast = Parser.program Scanner.tokenize lexbuf in
   match !action with
-    Ast -> print_string ("hihihihihhi") (*(Ast.string_of_program ast)*)
+    Ast -> print_string ("hihihihihi") (*(Ast.string_of_program ast)*)
   | _ -> let sast = Semant.check ast in
     match !action with
       Ast     -> ()
