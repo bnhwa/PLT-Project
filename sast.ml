@@ -29,7 +29,6 @@ type sstmt =
 
 type sfunc_decl = {
     styp : typ ;
-    sf_ret : bool ;
     sf_name : string ;
     sf_args : bind list ; (* formals*)
     (*locals : bind list; (*local vars? *)*) 

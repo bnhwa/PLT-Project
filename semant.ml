@@ -17,7 +17,6 @@ let check (globals, functions) =
   let built_in_decls = 
     let add_bind map (name, ty) = StringMap.add name {
       typ = Void;
-      f_ret = true;
       f_name = name; 
       f_args = [(ty, "x")];
       f_statements = []; } map
@@ -50,6 +49,16 @@ let check (globals, functions) =
 
   let check_function func =
 
+      (* Build local symbol table of variables for this function *)
+    let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
+	                StringMap.empty (globals @ func.f_args @ func.locals )
+    in
+
+     let type_of_identifier s =
+      try StringMap.find s symbols
+      with Not_found -> raise (Failure ("undeclared identifier " ^ s))
+    in
+
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr = function
         NumLit  l -> (Num, SNumLit l)
@@ -73,7 +82,6 @@ let check (globals, functions) =
 
     in (* body of check_function *)
     { styp = func.typ;
-      sf_ret = func.sf_ret; 
       sf_name = func.f_name;
       sf_args = func.sf_args;
       sf_statements = match check_stmt (Block func.f_statements) with

@@ -58,7 +58,6 @@ type stmt =
 
 type func_decl = {
     typ : typ;
-    f_ret : bool;
     f_name : string;
     f_args : bind list;(* formals*)
     (*locals : bind list; (*local vars? *)*) 
