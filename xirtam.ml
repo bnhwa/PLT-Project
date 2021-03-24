@@ -1,10 +1,4 @@
 
-let _ =
-  let lexbuf = Lexing.from_channel stdin in
-  let expr = Parser.program Scanner.tokenize lexbuf in
-  expr
-
-
 
 
 (* Top-level of the MicroC compiler: scan & parse the input,

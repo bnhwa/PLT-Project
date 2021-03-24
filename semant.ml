@@ -17,18 +17,19 @@ let check (globals, functions) =
   let built_in_decls = 
     let add_bind map (name, ty) = StringMap.add name {
       typ = Void;
-      fname = name; 
-      formals = [(ty, "x")];
-      locals = []; body = [] } map
+      f_ret = true;
+      f_name = name; 
+      f_args = [(ty, "x")];
+      f_statements = []; } map
     in List.fold_left add_bind StringMap.empty [ ("print", String)]
   in
 
   (* Add function name to symbol table *)
   let add_func map fd = 
-    let built_in_err = "function " ^ fd.fname ^ " may not be defined"
-    and dup_err = "duplicate function " ^ fd.fname
+    let built_in_err = "function " ^ fd.f_name ^ " may not be defined"
+    and dup_err = "duplicate function " ^ fd.f_name
     and make_err er = raise (Failure er)
-    and n = fd.fname (* Name of the function *)
+    and n = fd.f_name (* Name of the function *)
     in match fd with (* No duplicate functions or redefinitions of built-ins *)
          _ when StringMap.mem n built_in_decls -> make_err built_in_err
        | _ when StringMap.mem n map -> make_err dup_err  
@@ -51,10 +52,9 @@ let check (globals, functions) =
 
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr = function
-        Literal  l -> (Int, SLiteral l)
-      | Fliteral l -> (Float, SFliteral l)
+        NumLit  l -> (Num, SNumLit l)
       | BoolLit l  -> (Bool, SBoolLit l)
-      | Noexpr     -> (Void, SNoexpr)
+      | Empty     -> (Void, SEmpty)
       | Id s       -> (type_of_identifier s, SId s)
       | Call(fname, args) as call ->  (fd.typ, SCall(fname, args))
     in
