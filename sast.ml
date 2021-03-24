@@ -73,7 +73,6 @@ let rec string_of_sstmt = function
   | SElseif(a,b,c) -> "PLACEHOLDER"
  | SVDeclList(t, decls) -> "" (* string_of_typ t ^ " " ^ String.concat ", " (List.map string_of_var_decl_list decls) ^ ";\n" *)
 
-
 (* Print out argument type and argument identifier *)
 let string_of_sfdecl fdecl =
   string_of_typ fdecl.styp ^ " " ^
@@ -82,8 +81,9 @@ let string_of_sfdecl fdecl =
       List.combine (List.map snd fdecl.sf_args) (List.map fst fdecl.sf_args)
       )
     ) ^
-  ")\n{\n" (* ^ String.concat "" (List.map string_of_sstmt fdecl.sf_statments) ^"}\n"*)
-
+  ")\n{\n" ^
+  String.concat "" (List.map string_of_sstmt fdecl.sf_statements) ^
+  "}\n"
 let string_of_sprogram (vars, funcs) =
   String.concat "" (List.map string_of_bind vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_sfdecl funcs)

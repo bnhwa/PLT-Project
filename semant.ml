@@ -11,14 +11,18 @@ module StringMap = Map.Make(String)
    Check each global variable, then check each function *)
 
 let check (globals, functions) =
+  (*global symbol table *)
+  let glob_table = Hashtbl.create 10 in
 
+  (* function binding checks, shouldnt have duplicated of that
 
+  *)
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls = 
     let add_bind map (name, ty) = StringMap.add name {
       typ = Void;
       f_name = name; 
-      f_args = [(ty, "x")];
+      f_args = [(ty, "x")]; (*List.mapi (fun arg_num f_args_type -> (f_args_type, "x" ^ string_of_int arg_num)) f_args_type;*)
       f_statements = []; } map
     in List.fold_left add_bind StringMap.empty [ ("print", String)]
   in
@@ -31,7 +35,18 @@ let check (globals, functions) =
     and n = fd.f_name (* Name of the function *)
     in match fd with (* No duplicate functions or redefinitions of built-ins *)
          _ when StringMap.mem n built_in_decls -> make_err built_in_err
-       | _ when StringMap.mem n map -> make_err dup_err  
+       | _ when StringMap.mem n map -> make_err dup_err
+       (* add to prevent user from creating functions with same name as built-in functions? *)
+       | _ when n = "print" (* 
+          || n = "fillMat"
+          || n = "transpose"
+          || n = "getrows"
+          || n = "getcols"
+          || n = "equals"
+          || n = "addMat"
+          || n = "multScalar"
+          || n = "multMat" *)
+            -> make_err dup_err  
        | _ ->  StringMap.add n fd map 
   in
 
@@ -86,6 +101,7 @@ let check (globals, functions) =
       | StrLit l -> (Num, SNumLit 0.)
       | Unop (op, l) -> (Num, SNumLit 0.)
       | Binop (e1, op, e2) -> (Num, SNumLit 0.)
+        (* we should have binary operators be the same type? or maybe cast them?*)
       | Assign (id, v) -> (Num, SNumLit 0.)
     in
 
@@ -97,7 +113,12 @@ let check (globals, functions) =
               [Return _ as s] -> [check_stmt s]
             | Return _ :: _   -> raise (Failure "nothing may follow a return")
             | Block sl :: ss  -> check_stmt_list (sl @ ss) (* Flatten blocks *)
-            | s :: ss         -> check_stmt s :: check_stmt_list ss
+            | s :: ss         ->
+              check_stmt s :: check_stmt_list ss
+              (* (*if comme*)
+                
+
+              *)
             | []              -> []
           in SBlock(check_stmt_list sl)
       | Continue -> SContinue
