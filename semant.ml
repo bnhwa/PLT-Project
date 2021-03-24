@@ -49,9 +49,13 @@ let check (globals, functions) =
 
   let check_function func =
 
+  let check_assign lvaluet rvaluet err =
+       if lvaluet = rvaluet then lvaluet else raise (Failure err)
+    in   
+
       (* Build local symbol table of variables for this function *)
     let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
-	                StringMap.empty (globals @ func.f_args @ func.locals )
+	                StringMap.empty (globals @ func.f_args )
     in
 
      let type_of_identifier s =
@@ -65,7 +69,24 @@ let check (globals, functions) =
       | BoolLit l  -> (Bool, SBoolLit l)
       | Empty     -> (Void, SEmpty)
       | Id s       -> (type_of_identifier s, SId s)
-      | Call(fname, args) as call ->  (fd.typ, SCall(fname, args))
+      | Call(fname, args) as call ->  
+          let fd = find_func fname in
+          let param_length = List.length fd.f_args in
+          if List.length args != param_length then
+            raise (Failure ("expecting " ^ string_of_int param_length ^ 
+                            " arguments in " ^ string_of_expr call))
+          else let check_call (ft, _) e = 
+            let (et, e') = expr e in 
+            let err = "illegal argument found " ^ string_of_typ et ^
+              " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
+            in (check_assign ft et err, e')
+          in 
+          let args' = List.map2 check_call fd.f_args args
+          in (fd.typ, SCall(fname, args'))
+      | StrLit l -> (Num, SNumLit 0.)
+      | Unop (op, l) -> (Num, SNumLit 0.)
+      | Binop (e1, op, e2) -> (Num, SNumLit 0.)
+      | Assign (id, v) -> (Num, SNumLit 0.)
     in
 
     (* Return a semantically-checked statement i.e. containing sexprs *)
@@ -79,11 +100,17 @@ let check (globals, functions) =
             | s :: ss         -> check_stmt s :: check_stmt_list ss
             | []              -> []
           in SBlock(check_stmt_list sl)
+      | Continue -> SContinue
+      | Return e -> let (t, e') = expr e in
+        if t = func.typ then SReturn (t, e') 
+        else raise (
+	  Failure ("return gives " ^ string_of_typ t ^ " expected " ^
+		   string_of_typ func.typ ^ " in " ^ string_of_expr e))
 
     in (* body of check_function *)
     { styp = func.typ;
       sf_name = func.f_name;
-      sf_args = func.sf_args;
+      sf_args = func.f_args;
       sf_statements = match check_stmt (Block func.f_statements) with
 	SBlock(sl) -> sl
       | _ -> raise (Failure ("internal error: block didn't become a block?"))
