@@ -76,7 +76,7 @@ if so, make it so users cant name variables xirtam function names
 | "false"  {FALSE}
 | digits as lex { NUMLIT(float_of_string lex) } (*convert all numbers to float (num datatype)*)
 | digits '.'  digit* ( ['e' 'E'] ['+' '-']? digits )? as lex {NUMLIT(float_of_string lex) } (*accept floating point numbers with signs*)
-| ['_']?['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*     as lex {ID(lex)}(*Variable IDS string and number _*)
+| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*     as lex {ID(lex)}(*Variable IDS string and number _*)
 | '"' ([^ '"']* as lex) '"' { STRLIT(lex) }(*double quotes with lookahead*)
 (*  Xirtam module functions*)
 | eof { EOF }

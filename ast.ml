@@ -147,6 +147,6 @@ let string_of_fdecl fdecl =
     ) ^
   ")\n{\n" ^ String.concat "" (List.map string_of_stmt fdecl.f_statements) ^"}\n"
 
-let string_of_program (vars, funcs) =
+let string_of_program (vars, funcs) = 
   String.concat "" (List.map string_of_bind vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs)

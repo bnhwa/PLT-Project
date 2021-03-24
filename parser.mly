@@ -4,7 +4,23 @@ XIRTAM Parser alternate version
 Citation: microC processor code
 */
 
-%{ open Ast %}
+%{
+  open Ast 
+  let parse_error s =
+      begin
+        try
+          let start_pos = Parsing.symbol_start_pos ()
+          and end_pos = Parsing.symbol_end_pos () in
+          Printf.printf "File \"%s\", line %d, characters %d-%d: \n"
+            start_pos.pos_fname
+            start_pos.pos_lnum
+            (start_pos.pos_cnum - start_pos.pos_bol)
+            (end_pos.pos_cnum - start_pos.pos_bol)
+        with Invalid_argument(_) -> ()
+      end;
+      Printf.printf "Syntax error: %s\n" s;
+      raise Parsing.Parse_error
+  %}
 /* Tokens: syntax */
 %token PAREN_L PAREN_R CURLY_L CURLY_R SQUARE_L SQUARE_R SEMICOL COMMA
 /* Tokens: Operators & literals */
@@ -43,7 +59,9 @@ Citation: microC processor code
 
 program:
 	decls EOF {$1}
+  
 decls:
+   /* nothing */ { ([], [])               }
  	| decls var_decl { (($2 :: fst $1), snd $1) }
  	| decls func_decl { (fst $1, ($2 :: snd $1)) }
 
@@ -51,13 +69,13 @@ var_decl:
    typ ID SEMICOL { ($1, $2) }
 
 func_decl:
- 	typ ID PAREN_L f_args_opt PAREN_L CURLY_L stmt_list CURLY_R
+ 	typ ID PAREN_L f_args_opt PAREN_R CURLY_L stmt_list CURLY_R
      {{  typ = $1;
          f_name = $2; (*func name, use symboltables*)
          f_args = $4;(*args *)
          f_statements = List.rev $7  (*statements in function*)}}/*reverse list to ensure proper ordering*/
 f_args_opt:
-   	{ [] }
+   /* nothing */  { [] }
  	| f_args_list   { List.rev $1 }
 
 f_args_list: /* arg list with types for functinos */
