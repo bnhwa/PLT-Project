@@ -3,7 +3,28 @@
 XIRTAM Parser alternate version
 Citation: microC processor code
 */
+	  
 
+%{ open Ast 
+
+let parse_error s =
+      begin
+        try
+          let start_pos = Parsing.symbol_start_pos ()
+          and end_pos = Parsing.symbol_end_pos () in
+          Printf.printf "File \"%s\", line %d, characters %d-%d: \n"
+            start_pos.pos_fname
+            start_pos.pos_lnum
+            (start_pos.pos_cnum - start_pos.pos_bol)
+            (end_pos.pos_cnum - start_pos.pos_bol)
+        with Invalid_argument(_) -> ()
+      end;
+      Printf.printf "Syntax error: %s\n" s;
+      raise Parsing.Parse_error
+%}
+
+
+<<<<<<< HEAD
 %{
   open Ast 
   let parse_error s =
@@ -21,6 +42,8 @@ Citation: microC processor code
       Printf.printf "Syntax error: %s\n" s;
       raise Parsing.Parse_error
   %}
+=======
+>>>>>>> 0d62b97cdfcbcb8f5913ec222eb9c11f0a1a27b0
 /* Tokens: syntax */
 %token PAREN_L PAREN_R CURLY_L CURLY_R SQUARE_L SQUARE_R SEMICOL COMMA
 /* Tokens: Operators & literals */
