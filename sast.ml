@@ -27,11 +27,23 @@ type sstmt =
   | SContinue
   | SElseif of sexpr * sstmt * sstmt
 
+(*we should definately add symbol table items and block info so we can check func duplications and such*)
+(*type sym_tab_item = {
+    ty : typ; (* type *)
+    is_init: bool;  (* is this symbol initialized: true/false *)
+  }
+
+type block_info = {
+    sblock_parent : block_info option;
+    sym_tab  : (string, sym_tab_item) Hashtbl.t; (*which symbol table*)
+  }
+*)
 type sfunc_decl = {
     styp : typ ;
     sf_name : string ;
     sf_args : bind list ; (* formals*)
     (*locals : bind list; (*local vars? *)*) 
+   (*  sf_block : block_info; (*information regarding block of function?*) *)
     sf_statements : sstmt list ;
   }
 
