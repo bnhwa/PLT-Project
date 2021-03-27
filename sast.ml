@@ -15,36 +15,30 @@ and sx =
   | SEmpty
 
 
+type sbind = typ * string * sexpr
 
 type sstmt = 
     SBlock of sstmt list
+  (*  
   | SVDeclList of typ * (string * sexpr) list
   | SVDecl of typ * string * sexpr
+*)
   | SExpr of sexpr
   | SReturn of sexpr
   | SIf of sexpr * sstmt * sstmt
   | SFor of sexpr * sexpr * sexpr * sstmt
+  | SWhile of sexpr * sstmt (* adding while loop back*)
   | SContinue
   | SElseif of sexpr * sstmt * sstmt
 
-(*we should definately add symbol table items and block info so we can check func duplications and such*)
-(*type sym_tab_item = {
-    ty : typ; (* type *)
-    is_init: bool;  (* is this symbol initialized: true/false *)
-  }
 
-type block_info = {
-    sblock_parent : block_info option;
-    sym_tab  : (string, sym_tab_item) Hashtbl.t; (*which symbol table*)
-  }
-*)
+(*should make sbind because these should be semantically checked!*)
 type sfunc_decl = {
-    styp : typ ;
-    sf_name : string ;
-    sf_args : bind list ; (* formals*)
-    (*locals : bind list; (*local vars? *)*) 
-   (*  sf_block : block_info; (*information regarding block of function?*) *)
-    sf_statements : sstmt list ;
+    styp          : typ;
+    sf_name       : string;
+    sf_args       : sbind list; (* formals*)
+    sf_locals     : sbind list; (*add local variables *)
+    sf_statements : sstmt list;
   }
 
 (* Pretty-printing functions below:*)
@@ -78,28 +72,28 @@ let rec string_of_sstmt = function
       string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2
   | SFor(e1, e2, e3, s) ->
       "for (" ^ string_of_sexpr e1  ^ " ; " ^ string_of_sexpr e2 ^ " ; " ^ string_of_sexpr e3  ^ ") " ^ string_of_sstmt s
-  (*| While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s*)(*are we implemeting this?*)
+  | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s (* we should implement this I think*)
+
+  | SElseif(a,b,c) -> "PLACEHOLDER" (*should we sideline this too?*)
+  (* sidelining these for now, keep things simple
   | SVDecl(t, n, e) -> string_of_typ t ^ " " ^ n ^ (match e with
       (_, SEmpty) -> ""
       | _ -> " = " ^ string_of_sexpr e) ^ ";\n"
-  | SElseif(a,b,c) -> "PLACEHOLDER"
- | SVDeclList(t, decls) -> "" (* string_of_typ t ^ " " ^ String.concat ", " (List.map string_of_var_decl_list decls) ^ ";\n" *)
+  | SVDeclList(t, decls) -> "" (* string_of_typ t ^ " " ^ String.concat ", " (List.map string_of_var_decl_list decls) ^ ";\n" *)
+  *)
 
 (* Print out argument type and argument identifier *)
 let string_of_sfdecl fdecl =
   string_of_typ fdecl.styp ^ " " ^
-  fdecl.sf_name ^ "(" ^ String.concat ", " (
-    List.map string_of_tuple (
-      List.combine (List.map snd fdecl.sf_args) (List.map fst fdecl.sf_args)
-      )
-    ) ^
+  fdecl.sf_name ^ "(" ^String.concat ", " (List.map (fun (_, f_arg_name, _) -> f_arg_name) fdecl.sf_args) ^
   ")\n{\n" ^
+  String.concat "" (List.map string_of_vdecl fdecl.sf_locals) ^
   String.concat "" (List.map string_of_sstmt fdecl.sf_statements) ^
   "}\n"
 
   
 let string_of_sprogram (vars, funcs) =
-  String.concat "" (List.map string_of_bind vars) ^ "\n" ^
+  String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_sfdecl funcs)
 
 

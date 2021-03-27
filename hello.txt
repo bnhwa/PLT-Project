@@ -1,7 +1,12 @@
-
-
+num x;
+num moot()
+{
+  return 5;
+}
 num main()
 {
+num nihao;
+  nihao = 5;
   printn(72); /* H */
   printn(69); /* E */
   printn(76); /* L */

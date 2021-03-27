@@ -27,9 +27,9 @@ let parse_error s =
 /* Tokens: syntax */
 %token PAREN_L PAREN_R CURLY_L CURLY_R SQUARE_L SQUARE_R SEMICOL COMMA
 /* Tokens: Operators & literals */
-%token ADD SUB TIMES  DIV ASSIGN NOT EQ NEQ GT LT LEQ GEQ PERIOD TRUE FALSE
+%token ADD SUB TIMES DIV ASSIGN NOT EQ NEQ GT LT LEQ GEQ PERIOD TRUE FALSE
 /* Tokens: program flow */
-%token AND OR IF ELSE ELSEIF FOR RETURN CONTINUE NEW DEL NULL /*BREAK*/
+%token AND OR IF ELSE ELSEIF FOR WHILE RETURN CONTINUE NEW DEL NULL /*BREAK*/
 /* Tokens: matrix functions */
 %token MAT_FILL MAT_TRANSPOSE MAT_ROWS MAT_COLS MAT_EQ MAT_ADD MAT_MULT_SCALAR MAT_MULT /*MAT_IDENTITY*/
 /* Tokens: Datatypes */
@@ -68,22 +68,30 @@ decls:
  	| decls var_decl { (($2 :: fst $1), snd $1) }
  	| decls func_decl { (fst $1, ($2 :: snd $1)) }
 
+
 var_decl:
-   typ ID SEMICOL { ($1, $2) }
+  typ ID SEMICOL               { ($1, $2, Empty) }
+  /* | typ ID ASSIGN expr SEMICOL { ($1, $2, Assign($2, $4))} */
+
+
+var_decl_list:
+    /* nothing */    { [] }
+  | var_decl_list var_decl { $2 :: $1 }
 
 func_decl:
- 	typ ID PAREN_L f_args_opt PAREN_R CURLY_L stmt_list CURLY_R
+ 	typ ID PAREN_L f_args_opt PAREN_R CURLY_L var_decl_list stmt_list CURLY_R
      {{  typ = $1;
          f_name = $2; (*func name, use symboltables*)
          f_args = $4;(*args *)
-         f_statements = List.rev $7  (*statements in function*)}}/*reverse list to ensure proper ordering*/
+         f_locals = $7;
+         f_statements = List.rev $8  (*statements in function*)}}/*reverse list to ensure proper ordering*/
 f_args_opt:
    /* nothing */  { [] }
  	| f_args_list   { List.rev $1 }
 
 f_args_list: /* arg list with types for functinos */
-    typ ID                   { [($1,$2)]     }
- 	| f_args_list COMMA typ ID { ($3,$4) :: $1 }
+    typ ID                   { [($1,$2,Empty)]     } /*added the Empty because we can have assignment to expression, but we dont want to in this case*/
+ 	| f_args_list COMMA typ ID { ($3,$4,Empty) :: $1 }
 
 args_opt:
    	{ [] }
@@ -108,26 +116,30 @@ mat_typ:
     | STRING  {String}
   */
 
-
+/*
+remove this, make it more like microc rather var1=2,var2
 var_decl_stmts:
     ID             {[($1, Empty)]}
   	| ID ASSIGN expr {[($1, $3)]}
-  	| var_decl_stmts COMMA ID             {($3, Empty) ::$1}/*just variables, no assignment*/
-  	| var_decl_stmts COMMA ID ASSIGN expr {($3, $5):: $1}/*assignment to expression variables*/
+  	| var_decl_stmts COMMA ID             {($3, Empty) ::$1}just variables, no assignment
+  	| var_decl_stmts COMMA ID ASSIGN expr {($3, $5):: $1}assignment to expression variables*/
 
 stmt_list:
 	{[]}
 	| stmt_list stmt {$2 :: $1}
+
+
 stmt: /*all statements must end with semicolon*/
-	typ var_decl_stmts SEMICOL                 { VDeclList($1, List.rev $2)  }
-  	| expr SEMICOL                               { Expr $1               }
-  	| RETURN expr_opt SEMICOL                    { Return $2             }
-  	| CONTINUE SEMICOL                           { Continue              }
-  	/*| BREAK SEMICOL                              { Break               } *//*are we going to implement this?*/
-  	| CURLY_L stmt_list CURLY_R                  { Block(List.rev $2)    } 
-	| IF PAREN_L expr PAREN_R stmt ELSE stmt    { If($3, $5, Block([]))       } /*add if else block*/
-	| ELSEIF PAREN_L expr PAREN_R stmt HTELSE stmt { Elseif ($3, $5, $7)} /* DOUBLE CHECK THIS*/
-  	| FOR PAREN_L expr_opt SEMICOL expr SEMICOL expr_opt PAREN_R stmt { For($3, $5, $7, $9)   }
+	/*typ var_decl_stmts SEMICOL                 { VDeclList($1, List.rev $2)  }*/
+  expr SEMICOL                                          { Expr $1               }
+  | RETURN expr_opt SEMICOL                             { Return $2             }
+  | CONTINUE SEMICOL                                    { Continue              }
+  /*| BREAK SEMICOL                              { Break               } *//*are we going to implement this?*/
+  | CURLY_L stmt_list CURLY_R                           { Block(List.rev $2)    } 
+	| IF PAREN_L expr PAREN_R stmt ELSE stmt              { If($3, $5, Block([]))       } /*add if else block*/
+	| ELSEIF PAREN_L expr PAREN_R stmt HTELSE stmt        { Elseif ($3, $5, $7)} /* DOUBLE CHECK THIS*/
+  | FOR PAREN_L expr_opt SEMICOL expr SEMICOL expr_opt PAREN_R stmt { For($3, $5, $7, $9)   }
+  | WHILE PAREN_L expr PAREN_R stmt                     { While($3, $5)         }
 
 expr_opt:
   	{Empty} /*no expression or something */
