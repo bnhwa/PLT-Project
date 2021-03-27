@@ -15,10 +15,6 @@ type typ =
   | Void
   | Func
 
-
-
-
-
 type expr =
 	(*Primitives and expressions*)
 	NumLit of float
