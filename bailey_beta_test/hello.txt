@@ -1,0 +1,18 @@
+num x = 5;
+
+num main()
+{
+num nihao;
+  printn(72); /* H */
+  printn(69); /* E */
+  printn(76); /* L */
+  printn(76); /* L */
+  printn(79); /* O */
+  printn(32); /*   */
+  printn(87); /* W */
+  printn(79); /* O */
+  printn(82); /* R */
+  printn(76); /* L */
+  printn(68); /* D */
+  return 0;
+}
