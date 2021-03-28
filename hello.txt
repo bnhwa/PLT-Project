@@ -7,6 +7,8 @@ num moot(num t, num t)
 num main()
 {
 num nihao;
+  string jojo;
+  jojo = "yes yes YESSSSS ";
   nihao = 5;
   printn(72); /* H */
   printn(69); /* E */

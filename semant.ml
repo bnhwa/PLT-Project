@@ -144,7 +144,7 @@ let built_in_decls =
           (*
           let args' = List.map2 check_call fd.f_args args
           in (fd.typ, SCall(fname, args')) *)
-      | StrLit l -> (Num, SNumLit 0.)
+      | StrLit l -> (String, SStrLit l)
       | Unop (op, l) -> (Num, SNumLit 0.)
       | Binop (e1, op, e2) -> (Num, SNumLit 0.)
         (* we should have binary operators be the same type? or maybe cast them?*)
@@ -185,7 +185,7 @@ let built_in_decls =
             | []              -> []
           in SBlock(check_stmt_list sl)
 
-    in (* body of check_function *) (* body of check_function *)
+    in (* body of check_function, get expression for assignment *)
     let arg_helper (_type,_name,_val) = (_type,_name, expr _val)
     in
     { styp = func.typ;
