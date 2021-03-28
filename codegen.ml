@@ -2,6 +2,8 @@
 (* TODO: 
     1. Deal with strings.
     2. Examine line 68 - 116.
+    3. There are two SBinops in the original MicroC. Did I copy the right one?
+    4. SCall for print still needs to be implemented
  *)
 
 
@@ -133,8 +135,33 @@ let translate (globals, functions) =
 	    A.Neg when t = A.Float -> L.build_fneg 
 	  | A.Neg                  -> L.build_neg
           | A.Not                  -> L.build_not) e' "tmp" builder
-      | SBinop 
-
+      | SBinop (e1, op, e2) -> 
+        let e1' = expr builder e2
+        and e2' = expr builder e2 in 
+        (match op with
+          A.Add     -> L.build_add
+        | A.Sub     -> L.build_sub
+        | A.Mult    -> L.build_mul
+              | A.Div     -> L.build_sdiv
+        | A.And     -> L.build_and
+        | A.Or      -> L.build_or
+        | A.Equal   -> L.build_icmp L.Icmp.Eq
+        | A.Neq     -> L.build_icmp L.Icmp.Ne
+        | A.Less    -> L.build_icmp L.Icmp.Slt
+        | A.Leq     -> L.build_icmp L.Icmp.Sle
+        | A.Great -> L.build_icmp L.Icmp.Sgt
+        | A.Geq     -> L.build_icmp L.Icmp.Sge
+        	  ) e1' e2' "tmp" builder
+      | SAssign (s, e) -> let e' = expr builder e in
+                          ignore(L.build_store e' (lookup s) builder); e'
+      | SCall (f, args) ->
+         let (fdef, fdecl) = StringMap.find f function_decls in
+	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in
+	 let result = (match fdecl.styp with 
+                        A.Void -> ""
+                      | _ -> f ^ "_result") in
+         L.build_call fdef (Array.of_list llargs) result builder
+    in
 
 
 
