@@ -103,8 +103,8 @@ let built_in_decls =
 
   let check_function func =
   (*check local vars for duplicates!!!! check for arg duplicates and local var duplicates*)
-  check_binds "args" func.f_args;
-  check_binds "args" func.f_locals;
+  check_binds "function argument" func.f_args;
+  check_binds "local variable" func.f_locals;
   let check_assign lvaluet rvaluet err =
        if lvaluet = rvaluet then lvaluet else raise (Failure err)
     in   
