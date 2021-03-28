@@ -1,6 +1,8 @@
 num x;
 num moot(num t, num a)
 {
+  num nihao;
+  num nihao1;
   t = 5;
   return 5;
 }
@@ -9,13 +11,25 @@ num main()
   /*variables*/
   num nihao;
   num nihao1;
+  num i;
   string jojo;
+  bool ok;
 
   /*operations*/
+  ok = (1>3 ) && (3==3);
   nihao1 = (-(5+5))*-1;
   jojo = "yes yes YESSSSS ";
   nihao = 5;
   nihao = -nihao;
+
+  for (i = 0; i<5; i=i+1){
+    if (i>0){
+      printn(i);
+    }
+
+  }
+
+  /*Prints*/
   printn(72); /* H */
   printn(69); /* E */
   printn(76); /* L */
@@ -27,5 +41,7 @@ num main()
   printn(82); /* R */
   printn(76); /* L */
   printn(68); /* D */
+
+
   return 0;
 }

@@ -135,8 +135,13 @@ stmt: /*all statements must end with semicolon*/
   | RETURN expr_opt SEMICOL                             { Return $2             }
   | CONTINUE SEMICOL                                    { Continue              }
   /*| BREAK SEMICOL                              { Break               } *//*are we going to implement this?*/
-  | CURLY_L stmt_list CURLY_R                           { Block(List.rev $2)    } 
+  | CURLY_L stmt_list CURLY_R                           { Block(List.rev $2)    }
+  | IF PAREN_L expr PAREN_R stmt %prec HTELSE { If($3, $5, Block([])) }
+  | IF PAREN_L expr PAREN_R stmt ELSE stmt    { If($3, $5, $7)        }
+  /*
 	| IF PAREN_L expr PAREN_R stmt ELSE stmt              { If($3, $5, Block([]))       } /*add if else block*/
+
+  /*
 	| ELSEIF PAREN_L expr PAREN_R stmt HTELSE stmt        { Elseif ($3, $5, $7)} /* DOUBLE CHECK THIS*/
   | FOR PAREN_L expr_opt SEMICOL expr SEMICOL expr_opt PAREN_R stmt { For($3, $5, $7, $9)   }
   | WHILE PAREN_L expr PAREN_R stmt                     { While($3, $5)         }
