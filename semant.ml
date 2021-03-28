@@ -148,7 +148,16 @@ let built_in_decls =
           let args' = List.map2 check_call fd.f_args args
           in (fd.typ, SCall(fname, args')) *)
       | StrLit l -> (String, SStrLit l)
-      | Unop (op, l) -> (Num, SNumLit 0.)
+      | Unop (op, l) as ex ->
+        let (t, l') = expr l in
+          let ty = match op with
+          (*double check this, *)
+            Neg when t = Num -> t
+          | Not when t = Bool -> Bool
+          | _ -> raise (Failure ("illegal unary operator " ^ 
+                                 string_of_uop op ^ string_of_typ t ^
+                                 " applied to " ^ string_of_expr ex))
+        in (ty, SUnop(op, (t, l')))
       | Binop (e1, op, e2) -> (Num, SNumLit 0.)
         (* we should have binary operators be the same type? or maybe cast them?*)
       | Assign (id, v) as _exp ->

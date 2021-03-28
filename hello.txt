@@ -1,5 +1,5 @@
 num x;
-num moot(num t, num t)
+num moot(num t, num a)
 {
   t = 5;
   return 5;
@@ -10,6 +10,7 @@ num nihao;
   string jojo;
   jojo = "yes yes YESSSSS ";
   nihao = 5;
+  nihao = -nihao;
   printn(72); /* H */
   printn(69); /* E */
   printn(76); /* L */
