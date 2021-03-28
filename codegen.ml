@@ -1,9 +1,9 @@
 
 (* TODO: 
-    1. Deal with strings.
+    1. Deal with strings overall.
     2. Examine line 68 - 116.
     3. There are two SBinops in the original MicroC. Did I copy the right one?
-    4. SCall for print still needs to be implemented
+    4. Printf definition needs revision
  *)
 
 
@@ -43,6 +43,7 @@ let translate (globals, functions) =
     let global_var m (t, n) = 
       let init = match t with
           A.Float -> L.const_float (ltype_of_typ t) 0.0
+        (* | A.String -> *)
         | _ -> L.const_int (ltype_of_typ t) 0
       in StringMap.add n (L.define_global n init the_module) m in
     List.fold_left global_var StringMap.empty globals in
@@ -57,30 +58,16 @@ let translate (globals, functions) =
     (* Define each function (arguments and return type) so we can 
         call it even before we've created its body *)
     let function_decls : (L.llvalue * sfunc_decl) StringMap.t =
-        let function_decl m fdecl =
+      let function_decl m fdecl =
         let name = fdecl.sfname
         and formal_types = 
-        Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.sformals)
+    Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.sformals)
         in let ftype = L.function_type (ltype_of_typ fdecl.styp) formal_types in
         StringMap.add name (L.define_function name ftype the_module, fdecl) m in
-        List.fold_left function_decl StringMap.empty functions in
+      List.fold_left function_decl StringMap.empty functions in
 
 
 
-
-
-
-    (* Define each function (arguments and return type) so we can 
-     call it even before we've created its body *)
-  let function_decls : (L.llvalue * sfunc_decl) StringMap.t =
-    let function_decl m fdecl =
-      let name = fdecl.sfname
-      and formal_types = 
-	Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.sformals)
-      in let ftype = L.function_type (ltype_of_typ fdecl.styp) formal_types in
-      StringMap.add name (L.define_function name ftype the_module, fdecl) m in
-    List.fold_left function_decl StringMap.empty functions in
-  
   (* Fill in the body of the given function *)
   let build_function_body fdecl =
     let (the_function, _) = StringMap.find fdecl.sfname function_decls in
@@ -121,14 +108,10 @@ let translate (globals, functions) =
 
         (* Construct code for an expression; return its value *)
     let rec expr builder ((_, e) : sexpr) = match e with
-	SNumLit l  -> L.const_float_of_string float_t l
-
+	  SNumLit l  -> L.const_float_of_string float_t l
     (*| SStrLit s -> *)
-
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
-
       | SId id -> L.build_load (lookup id) id builder
-
       | SUnop(op, ((t, _) as e)) ->
           let e' = expr builder e in 
           (match op with
@@ -154,6 +137,9 @@ let translate (globals, functions) =
         	  ) e1' e2' "tmp" builder
       | SAssign (s, e) -> let e' = expr builder e in
                           ignore(L.build_store e' (lookup s) builder); e'
+      | SCall ("printf", [e]) -> 
+	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
+	    "printf" builder
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in
@@ -163,65 +149,16 @@ let translate (globals, functions) =
          L.build_call fdef (Array.of_list llargs) result builder
     in
 
+ 
+    (* LLVM insists each basic block end with exactly one "terminator" 
+       instruction that transfers control.  This function runs "instr builder"
+       if the current block does not already have a terminator.  Used,
+       e.g., to handle the "fall off the end of the function" case. *)
+    let add_terminal builder instr =
+      match L.block_terminator (L.insertion_block builder) with
+	Some _ -> ()
+      | None -> ignore (instr builder) in
 
 
 
 
-
-
-
-
-
-      | SNoexpr     -> L.const_int i32_t 0
-      | SAssign (s, e) -> let e' = expr builder e in
-                          ignore(L.build_store e' (lookup s) builder); e'
-      | SBinop ((A.Float,_ ) as e1, op, e2) ->
-	  let e1' = expr builder e1
-	  and e2' = expr builder e2 in
-	  (match op with 
-	    A.Add     -> L.build_fadd
-	  | A.Sub     -> L.build_fsub
-	  | A.Mult    -> L.build_fmul
-	  | A.Div     -> L.build_fdiv 
-	  | A.Equal   -> L.build_fcmp L.Fcmp.Oeq
-	  | A.Neq     -> L.build_fcmp L.Fcmp.One
-	  | A.Less    -> L.build_fcmp L.Fcmp.Olt
-	  | A.Leq     -> L.build_fcmp L.Fcmp.Ole
-	  | A.Greater -> L.build_fcmp L.Fcmp.Ogt
-	  | A.Geq     -> L.build_fcmp L.Fcmp.Oge
-	  | A.And | A.Or ->
-	      raise (Failure "internal error: semant should have rejected and/or on float")
-	  ) e1' e2' "tmp" builder
-      | SBinop (e1, op, e2) ->
-	  let e1' = expr builder e1
-	  and e2' = expr builder e2 in
-	  (match op with
-	    A.Add     -> L.build_add
-	  | A.Sub     -> L.build_sub
-	  | A.Mult    -> L.build_mul
-          | A.Div     -> L.build_sdiv
-	  | A.And     -> L.build_and
-	  | A.Or      -> L.build_or
-	  | A.Equal   -> L.build_icmp L.Icmp.Eq
-	  | A.Neq     -> L.build_icmp L.Icmp.Ne
-	  | A.Less    -> L.build_icmp L.Icmp.Slt
-	  | A.Leq     -> L.build_icmp L.Icmp.Sle
-	  | A.Greater -> L.build_icmp L.Icmp.Sgt
-	  | A.Geq     -> L.build_icmp L.Icmp.Sge
-	  ) e1' e2' "tmp" builder
-      | SUnop(op, ((t, _) as e)) ->
-          let e' = expr builder e in
-	  (match op with
-	    A.Neg when t = A.Float -> L.build_fneg 
-	  | A.Neg                  -> L.build_neg
-          | A.Not                  -> L.build_not) e' "tmp" builder
-      | SCall ("print", [e]) | SCall ("printb", [e]) ->
-	  L.build_call printf_func [| int_format_str ; (expr builder e) |]
-	    "printf" builder
-      | SCall ("printbig", [e]) ->
-	  L.build_call printbig_func [| (expr builder e) |] "printbig" builder
-      | SCall ("printf", [e]) -> 
-	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
-	    "printf" builder
-      | SCall (f, args) ->
-         let (fdef, fdecl) = StringMap.find f function_decls in
