@@ -4,6 +4,8 @@
     2. Examine line 68 - 116.
     3. There are two SBinops in the original MicroC. Did I copy the right one?
     4. Printf definition needs revision
+    5. Find a way to deal with the llargs and result having the optional 3rd parameter lines 156-161,
+     test first, and if it doesnt work, maybe use an ignore?
  *)
 
 
@@ -59,9 +61,10 @@ let translate (globals, functions) =
         call it even before we've created its body *)
     let function_decls : (L.llvalue * sfunc_decl) StringMap.t =
       let function_decl m fdecl =
-        let name = fdecl.sfname
-        and formal_types = 
-    Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.sformals)
+        let name = fdecl.sf_name
+        and formal_types = (* make this filter out the 2nd and 3rd arg*)
+    Array.of_list (List.map (fun (t,_,_) -> ltype_of_typ t) fdecl.sf_args)
+
         in let ftype = L.function_type (ltype_of_typ fdecl.styp) formal_types in
         StringMap.add name (L.define_function name ftype the_module, fdecl) m in
       List.fold_left function_decl StringMap.empty functions in
@@ -70,7 +73,7 @@ let translate (globals, functions) =
 
   (* Fill in the body of the given function *)
   let build_function_body fdecl =
-    let (the_function, _) = StringMap.find fdecl.sfname function_decls in
+    let (the_function, _) = StringMap.find fdecl.sf_name function_decls in
     let builder = L.builder_at_end context (L.entry_block the_function) in
 
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
@@ -92,11 +95,18 @@ let translate (globals, functions) =
 	let local_var = L.build_alloca (ltype_of_typ t) n builder
 	in StringMap.add n local_var m 
       in
-
-      let formals = List.fold_left2 add_formal StringMap.empty fdecl.sformals
+      (*
+      we should reshape these to get rid of the optional 3rd value that we don't care about in the argument list
+      when adding local vars or the func vars
+      *)
+      let formatted_args = List.map (fun (_type, _var_id, _) -> (_type, _var_id)) fdecl.sf_args in
+      let formatted_locals= List.map (fun (_type, _var_id, _) -> (_type, _var_id)) fdecl.sf_locals in
+      let formals = List.fold_left2 add_formal StringMap.empty formatted_args
           (Array.to_list (L.params the_function)) in
-      List.fold_left add_local formals fdecl.slocals 
+      List.fold_left add_local formals formatted_locals
+
     in
+
 
     (* Return the value for a variable or formal argument.
        Check local names first, then global names *)
@@ -141,6 +151,7 @@ let translate (globals, functions) =
 	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
 	    "printf" builder
       | SCall (f, args) ->
+      (**)
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in
 	 let result = (match fdecl.styp with 
@@ -148,7 +159,7 @@ let translate (globals, functions) =
                       | _ -> f ^ "_result") in
          L.build_call fdef (Array.of_list llargs) result builder
     in
-
+    (* *)
  
     (* LLVM insists each basic block end with exactly one "terminator" 
        instruction that transfers control.  This function runs "instr builder"

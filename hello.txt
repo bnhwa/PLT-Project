@@ -1,6 +1,7 @@
 num x;
-num moot()
+num moot(num t, num t)
 {
+  t = 5;
   return 5;
 }
 num main()
