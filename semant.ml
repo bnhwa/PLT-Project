@@ -28,6 +28,7 @@ let check (globals, functions) =
   check_binds "global" globals;
 
 
+
   (* Collect function declarations for built-in functions: no bodies *)
   (*
   let built_in_decls = 
@@ -101,7 +102,9 @@ let built_in_decls =
   let _ = find_func "main" in (* Ensure "main" is defined *)
 
   let check_function func =
-
+  (*check local vars for duplicates!!!! check for arg duplicates and local var duplicates*)
+  check_binds "args" func.f_args;
+  check_binds "args" func.f_locals;
   let check_assign lvaluet rvaluet err =
        if lvaluet = rvaluet then lvaluet else raise (Failure err)
     in   
