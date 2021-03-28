@@ -6,8 +6,13 @@ num moot(num t, num a)
 }
 num main()
 {
-num nihao;
+  /*variables*/
+  num nihao;
+  num nihao1;
   string jojo;
+
+  /*operations*/
+  nihao1 = (-(5+5))*-1;
   jojo = "yes yes YESSSSS ";
   nihao = 5;
   nihao = -nihao;

@@ -158,8 +158,27 @@ let built_in_decls =
                                  string_of_uop op ^ string_of_typ t ^
                                  " applied to " ^ string_of_expr ex))
         in (ty, SUnop(op, (t, l')))
-      | Binop (e1, op, e2) -> (Num, SNumLit 0.)
-        (* we should have binary operators be the same type? or maybe cast them?*)
+      | Binop (e1, op, e2) as e -> 
+          let (t1, e1') = expr e1 
+          and (t2, e2') = expr e2 in
+          (* Based on the MicroC, all binary operators require operands of the same type, 
+          However, should we allow type casting between bool and num? 
+          Someone look into this please
+           *)
+          let same = t1 = t2 in
+          (* Determine expression type based on operator and operand types *)
+          let ty = match op with
+            Add | Sub | Mult | Div when same && t1 = Num   -> Num
+          | Equal | Neq            when same               -> Bool
+          | Less | Leq | Great | Geq
+                     when same && (t1 = Num) -> Bool (*castable to bool, should we like python have string "" = false and "asdfasdf"  be true?*)
+          | And | Or when same && t1 = Bool -> Bool
+          | _ -> raise (
+            Failure ("illegal binary operator " ^
+                       string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
+                       string_of_typ t2 ^ " in " ^ string_of_expr e))
+          in (ty, SBinop((t1, e1'), op, (t2, e2')))
+
       | Assign (id, v) as _exp ->
           let _left = type_of_identifier id in 
           let (_right, val') = expr v in
