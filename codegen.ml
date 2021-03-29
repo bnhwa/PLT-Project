@@ -42,9 +42,10 @@ let translate (globals, functions) =
 
 
     let global_vars : L.llvalue StringMap.t =
-    let global_var m (t, n) = 
+    (* ignore 3rd optional expr*)
+    let global_var m (t, n, _) = 
       let init = match t with
-          A.Float -> L.const_float (ltype_of_typ t) 0.0
+          A.Num -> L.const_float (ltype_of_typ t) 0.0
         (* | A.String -> *)
         | _ -> L.const_int (ltype_of_typ t) 0
       in StringMap.add n (L.define_global n init the_module) m in
@@ -53,9 +54,11 @@ let translate (globals, functions) =
 
     let printf_t : L.lltype = 
     L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
+    (*print num aka a float*)
     let printf_func : L.llvalue = 
-      L.declare_function "print" printf_t the_module in
-
+      L.declare_function "printn" printf_t the_module in
+    (* exponent function *)
+    let exp_func = L.declare_function "pow" pow_t the_module in
 
     (* Define each function (arguments and return type) so we can 
         call it even before we've created its body *)
@@ -99,9 +102,10 @@ let translate (globals, functions) =
       we should reshape these to get rid of the optional 3rd value that we don't care about in the argument list
       when adding local vars or the func vars
       *)
-      let formatted_args = List.map (fun (_type, _var_id, _) -> (_type, _var_id)) fdecl.sf_args in
-      let formatted_locals= List.map (fun (_type, _var_id, _) -> (_type, _var_id)) fdecl.sf_locals in
-      let formals = List.fold_left2 add_formal StringMap.empty formatted_args
+      let filter_args_helper (_type, _var_id, _) = (_type, _var_id) in 
+      let formatted_args   = filter_args_helper fdecl.sf_args in
+      let formatted_locals = filter_args_helper fdecl.sf_locals in
+      let formals          = List.fold_left2 add_formal StringMap.empty formatted_args
           (Array.to_list (L.params the_function)) in
       List.fold_left add_local formals formatted_locals
 
@@ -128,14 +132,45 @@ let translate (globals, functions) =
 	    A.Neg when t = A.Float -> L.build_fneg 
 	  | A.Neg                  -> L.build_neg
           | A.Not                  -> L.build_not) e' "tmp" builder
+      (*In fashion of microc have typechecking for *)
       | SBinop (e1, op, e2) -> 
-        let e1' = expr builder e2
-        and e2' = expr builder e2 in 
+        let (_typ, _ ) = e1 in (*get type of first expression, semant should have checked that both types of e1 and e2 should be same*)
+        let e1' = expr builder e1 in
+        let e2' = expr builder e2 in (match _typ with 
+        (*this looks much cleaner*)
+        (*binary bool operations!*)
+          A.Bool -> (match op with 
+            A.And     -> L.build_and e1' e2' "tmp" builder
+            | A.Or      -> L.build_or e1' e2' "tmp" builder
+            | A.Equal   -> L.build_icmp L.Icmp.Eq e1' e2' "tmp" builder
+            | A.Neq     -> L.build_icmp L.Icmp.Ne e1' e2' "tmp" builder
+            | _         -> raise (Failure "internal error: semant should have rejected and/or on float"))
+          (* um operations*)N
+          | A.Num -> (match op with 
+            A.Add     -> L.build_fadd
+              | A.Sub     -> L.build_fsub
+              | A.Mult    -> L.build_fmul
+              | A.Div     -> L.build_fdiv 
+              | A.Mod     -> L.build_frem  e1' e2' "tmp" builder
+              | A.Exp     -> L.build_call exp_func [| e1'; e2'|] "exp" builder (*double check this*)
+              | A.Equal   -> L.build_fcmp L.Fcmp.Oeq
+              | A.Neq     -> L.build_fcmp L.Fcmp.One
+              | A.Less    -> L.build_fcmp L.Fcmp.Olt
+              | A.Leq     -> L.build_fcmp L.Fcmp.Ole
+              | A.Greater -> L.build_fcmp L.Fcmp.Ogt
+              | A.Geq     -> L.build_fcmp L.Fcmp.Oge
+              | A.And 
+              | A.Or      -> raise (Failure "internal error: semant should have rejected and/or on float")
+              ) e1' e2' "tmp" builder)
+        )        (*binary bool operations*)
+        (*original is below*)
+        (* 
         (match op with
           A.Add     -> L.build_add
         | A.Sub     -> L.build_sub
         | A.Mult    -> L.build_mul
-              | A.Div     -> L.build_sdiv
+        | A.Div     -> L.build_sdiv
+        | A.Mod     -> L.build_srem  e1' e2' "tmp" builder (* mod for other stuff*)
         | A.And     -> L.build_and
         | A.Or      -> L.build_or
         | A.Equal   -> L.build_icmp L.Icmp.Eq
@@ -145,11 +180,13 @@ let translate (globals, functions) =
         | A.Great -> L.build_icmp L.Icmp.Sgt
         | A.Geq     -> L.build_icmp L.Icmp.Sge
         	  ) e1' e2' "tmp" builder
+        *)
+
       | SAssign (s, e) -> let e' = expr builder e in
                           ignore(L.build_store e' (lookup s) builder); e'
       | SCall ("printf", [e]) -> 
 	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
-	    "printf" builder
+	    "printn" builder
       | SCall (f, args) ->
       (**)
          let (fdef, fdecl) = StringMap.find f function_decls in
@@ -167,9 +204,66 @@ let translate (globals, functions) =
        e.g., to handle the "fall off the end of the function" case. *)
     let add_terminal builder instr =
       match L.block_terminator (L.insertion_block builder) with
-	Some _ -> ()
+	   Some _ -> ()
       | None -> ignore (instr builder) in
+(* statements and control flow*)
+ let rec stmt builder = function
+  SBlock sl -> List.fold_left stmt builder sl
+      | SExpr e -> ignore(expr builder e); builder 
+      | SReturn e -> ignore(match fdecl.styp with
+                              (* Special "return nothing" instr *)
+                              A.Void -> L.build_ret_void builder 
+                              (* Build return statement *)
+                            | _ -> L.build_ret (expr builder e) builder );
+                     builder
+      (* are we adding continue?*)
+      | SIf (predicate, then_stmt, else_stmt) ->
+         let bool_val = expr builder predicate in
+   let merge_bb = L.append_block context "merge" the_function in
+         let build_br_merge = L.build_br merge_bb in (* partial function *)
 
+   let then_bb = L.append_block context "then" the_function in
+   add_terminal (stmt (L.builder_at_end context then_bb) then_stmt)
+     build_br_merge;
 
+   let else_bb = L.append_block context "else" the_function in
+   add_terminal (stmt (L.builder_at_end context else_bb) else_stmt)
+     build_br_merge;
+
+   ignore(L.build_cond_br bool_val then_bb else_bb builder);
+   L.builder_at_end context merge_bb
+
+      | SWhile (predicate, body) ->
+    let pred_bb = L.append_block context "while" the_function in
+    ignore(L.build_br pred_bb builder);
+
+    let body_bb = L.append_block context "while_body" the_function in
+    add_terminal (stmt (L.builder_at_end context body_bb) body)
+      (L.build_br pred_bb);
+
+    let pred_builder = L.builder_at_end context pred_bb in
+    let bool_val = expr pred_builder predicate in
+
+    let merge_bb = L.append_block context "merge" the_function in
+    ignore(L.build_cond_br bool_val body_bb merge_bb pred_builder);
+    L.builder_at_end context merge_bb
+
+      (* Implement for loops as while loops *)
+      | SFor (e1, e2, e3, body) -> stmt builder
+      ( SBlock [SExpr e1 ; SWhile (e2, SBlock [body ; SExpr e3]) ] )
+    in
+
+    (* Build the code for each statement in the function *)
+    let builder = stmt builder (SBlock fdecl.sf_statements) in
+
+    (* Add a return if the last block falls off the end *)
+    add_terminal builder (match fdecl.styp with
+        A.Void -> L.build_ret_void
+      | A.Num -> L.build_ret (L.const_float float_t 0.0)
+      | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
+  in
+
+  List.iter build_function_body functions;
+  the_module
 
 
