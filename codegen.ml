@@ -58,7 +58,8 @@ let translate (globals, functions) =
     let printf_func : L.llvalue = 
       L.declare_function "printn" printf_t the_module in
     (* exponent function *)
-    let exp_func = L.declare_function "pow" pow_t the_module in
+    let exp_t = L.function_type float_t [| float_t; float_t |] in
+    let exp_func = L.declare_function "exp" exp_t the_module in
 
     (* Define each function (arguments and return type) so we can 
         call it even before we've created its body *)
@@ -184,7 +185,7 @@ let translate (globals, functions) =
 
       | SAssign (s, e) -> let e' = expr builder e in
                           ignore(L.build_store e' (lookup s) builder); e'
-      | SCall ("printf", [e]) -> 
+      | SCall ("printn", [e]) -> 
 	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
 	    "printn" builder
       | SCall (f, args) ->
