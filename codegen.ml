@@ -129,7 +129,7 @@ let translate (globals, functions) =
       | SUnop(op, ((t, _) as e)) ->
           let e' = expr builder e in 
           (match op with
-	    A.Neg when t = A.Float -> L.build_fneg 
+	    A.Neg when t = A.Num -> L.build_fneg 
 	  | A.Neg                  -> L.build_neg
           | A.Not                  -> L.build_not) e' "tmp" builder
       (*In fashion of microc have typechecking for *)
