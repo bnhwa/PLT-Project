@@ -56,10 +56,10 @@ let translate (globals, functions) =
     L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
     (*print num aka a float*)
     let printf_func : L.llvalue = 
-      L.declare_function "printn" printf_t the_module in
+      L.declare_function "printf" printf_t the_module in
     (* exponent function *)
     let exp_t = L.function_type float_t [| float_t; float_t |] in
-    let exp_func = L.declare_function "exp" exp_t the_module in
+    let exp_func = L.declare_function "pow" exp_t the_module in
 
     (* Define each function (arguments and return type) so we can 
         call it even before we've created its body *)
@@ -72,8 +72,6 @@ let translate (globals, functions) =
         in let ftype = L.function_type (ltype_of_typ fdecl.styp) formal_types in
         StringMap.add name (L.define_function name ftype the_module, fdecl) m in
       List.fold_left function_decl StringMap.empty functions in
-
-
 
   (* Fill in the body of the given function *)
   let build_function_body fdecl =
