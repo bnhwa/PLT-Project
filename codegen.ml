@@ -140,7 +140,7 @@ let translate (globals, functions) =
             | A.Equal   -> L.build_icmp L.Icmp.Eq e1' e2' "tmp" builder
             | A.Neq     -> L.build_icmp L.Icmp.Ne e1' e2' "tmp" builder
             | _         -> raise (Failure "internal error: semant should have rejected and/or on float"))
-          (* um operations*)
+          (* num operations*)
           | A.Num -> (match op with 
             A.Add     -> L.build_fadd
               | A.Sub     -> L.build_fsub
@@ -152,7 +152,7 @@ let translate (globals, functions) =
               | A.Neq     -> L.build_fcmp L.Fcmp.One
               | A.Less    -> L.build_fcmp L.Fcmp.Olt
               | A.Leq     -> L.build_fcmp L.Fcmp.Ole
-              | A.Greater -> L.build_fcmp L.Fcmp.Ogt
+              | A.Great -> L.build_fcmp L.Fcmp.Ogt
               | A.Geq     -> L.build_fcmp L.Fcmp.Oge
               | A.And 
               | A.Or      -> raise (Failure "internal error: semant should have rejected and/or on float")
