@@ -6,7 +6,7 @@ citation: microc compiler shown in class
 (*unary operations*)
 type op_un = Not | Neg
 
-type op_bin = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Great | Geq | And | Or |Mod | Exp 
+type op_bin = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Great | Geq | And | Or | Mod | Exp 
 
 type typ =  
    Num

@@ -40,7 +40,6 @@ rule tokenize = parse
 | "||" {OR}
 | "if"     {IF}
 | "else"   {ELSE}
-| "else if" {ELSEIF}
 | "for"    {FOR}
 | "while" {WHILE}
 | "return" {RETURN}
