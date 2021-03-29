@@ -22,6 +22,10 @@ rule tokenize = parse
 | '*'	{TIMES}
 | '/'	{DIV}
 | '='	{ASSIGN }
+(*optional operators? should we implement these later, putting them here so we can just uncomment and go| '%' {MOD}*)
+| '%' {MOD}
+| '^'  {EXP}
+
 | "!"	{NOT}
 | "=="	{EQ}
 | "!="	{NEQ}
