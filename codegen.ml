@@ -130,8 +130,8 @@ let translate (globals, functions) =
       | SUnop(op, ((t, _) as e)) ->
           let e' = expr builder e in 
           (match op with
-	    A.Neg when t = A.Num -> L.build_fneg 
-	  | A.Neg                  -> L.build_neg
+	          A.Neg when t = A.Num -> L.build_fneg 
+	        | A.Neg                  -> L.build_neg
           | A.Not                  -> L.build_not) e' "tmp" builder
       (*In fashion of microc have typechecking for *)
       | SBinop (e1, op, e2) -> 
@@ -146,7 +146,7 @@ let translate (globals, functions) =
             | A.Equal   -> L.build_icmp L.Icmp.Eq e1' e2' "tmp" builder
             | A.Neq     -> L.build_icmp L.Icmp.Ne e1' e2' "tmp" builder
             | _         -> raise (Failure "internal error: semant should have rejected and/or on float"))
-          (* um operations*)N
+          (* um operations*)
           | A.Num -> (match op with 
             A.Add     -> L.build_fadd
               | A.Sub     -> L.build_fsub
@@ -163,7 +163,7 @@ let translate (globals, functions) =
               | A.And 
               | A.Or      -> raise (Failure "internal error: semant should have rejected and/or on float")
               ) e1' e2' "tmp" builder)
-        )        (*binary bool operations*)
+        (*binary bool operations*)
         (*original is below*)
         (* 
         (match op with
