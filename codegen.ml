@@ -25,7 +25,9 @@ let translate (globals, functions) =
     (* i1 is for Boolean *)
     let i1_t       = L.i1_type     context (*i1_t = context.i1_type *)
     and float_t    = L.double_type context
-    and char_point_t = L.pointer_type i8_t context
+    and i32_t      = L.i32_type    context
+    and i8_t       = L.i8_type     context
+    and char_point_t = L.pointer_type (L.i8_type     context)
     and void_t     = L.void_type   context in
 
     let ltype_of_typ = function 
@@ -98,8 +100,8 @@ let translate (globals, functions) =
       when adding local vars or the func vars
       *)
       let filter_args_helper (_type, _var_id, _) = (_type, _var_id) in 
-      let formatted_args   = filter_args_helper fdecl.sf_args in
-      let formatted_locals = filter_args_helper fdecl.sf_locals in
+      let formatted_args   = List.map filter_args_helper fdecl.sf_args in
+      let formatted_locals = List.map filter_args_helper fdecl.sf_locals in
       let formals          = List.fold_left2 add_formal StringMap.empty formatted_args
           (Array.to_list (L.params the_function)) in
       List.fold_left add_local formals formatted_locals
@@ -117,9 +119,10 @@ let translate (globals, functions) =
 
         (* Construct code for an expression; return its value *)
     let rec expr builder ((_, e) : sexpr) = match e with
-	  SNumLit l  -> L.const_float_of_string float_t l
+     SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
+	    | SNumLit l  -> L.const_float float_t l
     (*| SStrLit s -> *)
-      | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
+      
       | SId id -> L.build_load (lookup id) id builder
       | SUnop(op, ((t, _) as e)) ->
           let e' = expr builder e in 
@@ -146,8 +149,8 @@ let translate (globals, functions) =
               | A.Sub     -> L.build_fsub
               | A.Mult    -> L.build_fmul
               | A.Div     -> L.build_fdiv 
-              | A.Mod     -> L.build_frem  e1' e2' "tmp" builder
-              | A.Exp     -> L.build_call exp_func [| e1'; e2'|] "exp" builder (*double check this*)
+              (* | A.Mod     -> L.build_frem  e1' e2' "tmp" builder *)
+              (* | A.Exp     -> L.build_call exp_func [| e1'; e2'|] "exp" builder double check this *)
               | A.Equal   -> L.build_fcmp L.Fcmp.Oeq
               | A.Neq     -> L.build_fcmp L.Fcmp.One
               | A.Less    -> L.build_fcmp L.Fcmp.Olt
@@ -183,7 +186,6 @@ let translate (globals, functions) =
 	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
 	    "printn" builder
       | SCall (f, args) ->
-      (**)
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in
 	 let result = (match fdecl.styp with 

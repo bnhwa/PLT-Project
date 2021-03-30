@@ -6,14 +6,13 @@ citation: microc compiler shown in class
 (*unary operations*)
 type op_un = Not | Neg
 
-type op_bin = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Great | Geq | And | Or | Mod | Exp 
+type op_bin = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Great | Geq | And | Or 
 
 type typ =  
    Num
   | Bool
   | String
   | Void
-  | Func
 
 type expr =
 	(*Primitives and expressions*)
@@ -54,7 +53,6 @@ type stmt =
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
   | Continue
-  | Elseif of expr * stmt * stmt
   | While of expr * stmt (*the while loop is back in business*)
 
 type func_decl = {
@@ -84,8 +82,8 @@ let string_of_op = function
   | And -> "&&"
   | Or -> "||"
   (*nonimplemented operators*)
-  | Mod -> "%"
-  | Exp -> "^"
+  (* | Mod -> "%"
+  | Exp -> "^" *)
 
 let string_of_uop = function
     Neg -> "-"
@@ -111,7 +109,6 @@ let string_of_typ = function
   (* | Float -> "float" *)
   | String -> "string"
   | Void -> "void"
-  | Func -> "function"
   (* maybe have matrix of different types??? errorcheck type is rights*) 
   (*  sidelining this for now
 
@@ -135,7 +132,6 @@ let rec string_of_stmt = function
   | For(e1, e2, e3, s) ->
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^ string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-  | Elseif(a,b,c) -> "PLACEHOLDER"
   (* on hold
   | VDeclList(t, decls) -> string_of_typ t ^ " " ^ String.concat ", " (List.map string_of_var_decl_list decls) ^ ";\n"
   | VDecl(t, n, e) -> string_of_typ t ^ " " ^ n ^
