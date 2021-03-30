@@ -29,7 +29,6 @@ type sstmt =
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SWhile of sexpr * sstmt (* adding while loop back*)
   | SContinue
-  | SElseif of sexpr * sstmt * sstmt
 
 
 (*should make sbind because these should be semantically checked!*)
@@ -73,8 +72,6 @@ let rec string_of_sstmt = function
   | SFor(e1, e2, e3, s) ->
       "for (" ^ string_of_sexpr e1  ^ " ; " ^ string_of_sexpr e2 ^ " ; " ^ string_of_sexpr e3  ^ ") " ^ string_of_sstmt s
   | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s (* we should implement this I think*)
-
-  | SElseif(a,b,c) -> "PLACEHOLDER" (*should we sideline this too?*)
   (* sidelining these for now, keep things simple
   | SVDecl(t, n, e) -> string_of_typ t ^ " " ^ n ^ (match e with
       (_, SEmpty) -> ""

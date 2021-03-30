@@ -23,8 +23,8 @@ rule tokenize = parse
 | '/'	{DIV}
 | '='	{ASSIGN }
 (*optional operators? should we implement these later, putting them here so we can just uncomment and go| '%' {MOD}*)
-| '%' {MOD}
-| '^'  {EXP}
+(* | '%' {MOD} *)
+(* | '^'  {EXP} *)
 
 | "!"	{NOT}
 | "=="	{EQ}
@@ -56,7 +56,6 @@ rule tokenize = parse
 | "num"    {NUM}
 | "bool"   {BOOL}
 | "string" {STRING}
-| "function" {FUNC}
 | "void"   {VOID}
 (* Xirtam functions CHECK IF THIS CONFLICTS WITH VAR NAMING
 if so, make it so users cant name variables xirtam function names

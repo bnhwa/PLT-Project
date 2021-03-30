@@ -27,13 +27,13 @@ let parse_error s =
 /* Tokens: syntax */
 %token PAREN_L PAREN_R CURLY_L CURLY_R SQUARE_L SQUARE_R SEMICOL COMMA
 /* Tokens: Operators & literals */
-%token ADD SUB TIMES EXP ASSIGN NOT EQ NEQ GT LT LEQ GEQ PERIOD TRUE FALSE DIV MOD/**/
+%token ADD SUB TIMES ASSIGN NOT EQ NEQ GT LT LEQ GEQ PERIOD TRUE FALSE DIV/**/
 /* Tokens: program flow */
 %token AND OR IF ELSE FOR WHILE RETURN CONTINUE NEW DEL NULL /*BREAK*/
 /* Tokens: matrix functions */
 %token MAT_FILL MAT_TRANSPOSE MAT_ROWS MAT_COLS MAT_EQ MAT_ADD MAT_MULT_SCALAR MAT_MULT /*MAT_IDENTITY*/
 /* Tokens: Datatypes */
-%token NUM BOOL STRING FUNC VOID 
+%token NUM BOOL STRING VOID 
 
 /*Literals*/
 %token <float> NUMLIT
@@ -54,8 +54,7 @@ let parse_error s =
 %left EQ NEQ
 %left GT LT GEQ LEQ
 %left ADD SUB
-%left TIMES DIV MOD
-%left EXP
+%left TIMES DIV
 %right NOT NEG /*boolean negation and negative*/
 
 %%
@@ -107,7 +106,6 @@ typ:
   	| BOOL    {Bool}
   	| STRING  {String}
   	| VOID    {Void}
-	| FUNC    {Func}
   /*if we are doing matrix of things other than numerics, use below*/
   /*
 mat_typ:
@@ -156,8 +154,8 @@ expr:
   	| expr TIMES      expr { Binop($1, Mult,      $3) }
     /* optional, i think we should implement these */
   	| expr DIV   		expr { Binop($1, Div,      $3) }
-    | expr MOD        expr  {Binop($1, Mod,      $3) }
-    | expr EXP        expr  {Binop($1, Exp,      $3) }
+    /* | expr MOD        expr  {Binop($1, Mod,      $3) }
+    | expr EXP        expr  {Binop($1, Exp,      $3) } */
   	| expr EQ         expr { Binop($1, Equal,   $3) }
   	| expr NEQ        expr { Binop($1, Neq,      $3) }
   	| expr GT         expr { Binop($1, Great,     $3) }
