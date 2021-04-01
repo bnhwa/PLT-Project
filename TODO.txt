@@ -1,1 +1,19 @@
-1. String assignment does not work. 
+TODO:
+	Run llvm code to see what the output is
+
+	LLVM CodeGen testing/outputs for:
+		Unary and Binary Operations
+		Control Flow
+			If
+			While
+			For
+			Return
+		Other Function Returns
+COMPLETED:
+	LLVM CodeGen outputs fine for:
+		Empty Main/function declaration
+		Variable Assignment/reassignment
+			Bool
+			String
+			Num
+		Printn
