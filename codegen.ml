@@ -122,8 +122,7 @@ let translate (globals, functions) =
     let rec expr builder ((_, e) : sexpr) = match e with
      SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
 	    | SNumLit l  -> L.const_float float_t l
-    (*| SStrLit s -> *)
-      
+      | SStrLit s ->  L.build_global_stringptr s "tmp" builder
       | SId id -> L.build_load (lookup id) id builder
       | SUnop(op, ((t, _) as e)) ->
           let e' = expr builder e in 
@@ -139,11 +138,12 @@ let translate (globals, functions) =
         (*this looks much cleaner*)
         (*binary bool operations!*)
           A.Bool -> (match op with 
-            A.And     -> L.build_and e1' e2' "tmp" builder
-            | A.Or      -> L.build_or e1' e2' "tmp" builder
-            | A.Equal   -> L.build_icmp L.Icmp.Eq e1' e2' "tmp" builder
-            | A.Neq     -> L.build_icmp L.Icmp.Ne e1' e2' "tmp" builder
-            | _         -> raise (Failure "internal error: semant should have rejected and/or on float"))
+            A.And     -> L.build_and
+            | A.Or      -> L.build_or 
+            | A.Equal   -> L.build_icmp L.Icmp.Eq 
+            | A.Neq     -> L.build_icmp L.Icmp.Ne
+            | _         -> raise (Failure "internal error: semant should have rejected and/or on float")
+          ) e1' e2' "tmp" builder
           (* num operations*)
           | A.Num -> (match op with 
             A.Add     -> L.build_fadd
