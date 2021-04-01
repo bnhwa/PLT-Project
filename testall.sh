@@ -133,12 +133,12 @@ LLIFail() {
   exit 1
 }
 which "$LLI" >> $globallog || LLIFail
-if [ ! -f printbig.o ]
-then
-    echo "Could not find printbig.o"
-    echo "Try \"make printbig.o\""
-    exit 1
-fi
+# if [ ! -f printbig.o ]
+# then
+#     echo "Could not find printbig.o"
+#     echo "Try \"make printbig.o\""
+#     exit 1
+# fi
 if [ $# -ge 1 ]
 then
     files=$@

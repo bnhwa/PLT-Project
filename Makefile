@@ -8,7 +8,7 @@ test : all testall.sh
 # to test linking external code
 
 .PHONY : all
-all : xirtam.native printbig.o
+all : xirtam.native
 
 # "make microc.native" compiles the compiler
 #
@@ -26,12 +26,12 @@ xirtam.native :
 .PHONY : clean
 clean :
 	ocamlbuild -clean
-	rm -rf testall.log ocamlllvm *.diff *.ll *.exe *.s printbig.o
+	rm -rf testall.log ocamlllvm *.diff *.ll *.exe *.s
 
 # Testing the "printbig" example
 
-printbig : printbig.c
-	cc -o printbig -DBUILD_TEST printbig.c
+# printbig : printbig.c
+# 	cc -o printbig -DBUILD_TEST printbig.c
 
 # Building the tarball
 
