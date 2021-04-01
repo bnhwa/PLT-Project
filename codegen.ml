@@ -27,7 +27,8 @@ let translate (globals, functions) =
     and float_t    = L.double_type context
     and i32_t      = L.i32_type    context
     and i8_t       = L.i8_type     context
-    and char_point_t = L.pointer_type (L.i8_type     context)
+    in 
+    let char_point_t = L.pointer_type i8_t
     and void_t     = L.void_type   context in
 
     let ltype_of_typ = function 
