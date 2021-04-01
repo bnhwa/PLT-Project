@@ -26,7 +26,7 @@ xirtam.native :
 .PHONY : clean
 clean :
 	ocamlbuild -clean
-	rm -rf testall.log ocamlllvm *.diff *.exe *.ll *.s
+	rm -rf testall.log ocamlllvm *.diff *.ll *.exe *.s printbig.o
 
 # Testing the "printbig" example
 
