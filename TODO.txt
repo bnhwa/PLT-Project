@@ -1,5 +1,7 @@
 TODO:
 
+	We cannot print boolean for now. Need a way to test.
+
 	LLVM CodeGen testing/outputs for:
 		Unary and Binary Operations
 		Control Flow
