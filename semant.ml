@@ -72,7 +72,8 @@ let built_in_decls =
     and dup_err = "duplicate function " ^ fd.f_name
     and make_err er = raise (Failure er)
     and n = fd.f_name (* Name of the function *)
-    in match fd with (* No duplicate functions or redefinitions of built-ins *)
+    in
+    match fd with (* No duplicate functions or redefinitions of built-ins *)
          _ when StringMap.mem n built_in_decls -> make_err built_in_err
        | _ when StringMap.mem n map -> make_err dup_err
        (* add to prevent user from creating functions with same name as built-in functions? *)
@@ -217,9 +218,21 @@ let built_in_decls =
           in SBlock(check_stmt_list sl)
 
     in (* body of check_function, get expression for assignment *)
+
+    (*if func is main, make it hidden int type, 
+    if it is somehow int and not main, return error
+  *)
     let arg_helper (_type,_name,_val) = (_type,_name, expr _val)
+    and int_illegal_err =  func.f_name ^ " is of illegal type int"
+    and make_err er = raise (Failure er)
     in
-    { styp = func.typ;
+    let typ_helper _nm _tp = (match _nm with
+      "main" -> Int
+      | _ -> (match _tp with 
+          Int -> make_err int_illegal_err
+          |_   -> _tp))
+    in
+    { styp = typ_helper func.f_name func.typ;
       sf_name = func.f_name; 
       sf_args = List.map arg_helper func.f_args;
       sf_locals = List.map arg_helper func.f_locals;

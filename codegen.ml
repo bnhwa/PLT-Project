@@ -36,6 +36,7 @@ let translate (globals, functions) =
     |   A.Bool -> i1_t 
     |   A.Void -> void_t
     |   A.String -> char_point_t
+    |   A.Int    -> i32_t
 
     in 
 

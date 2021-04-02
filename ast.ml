@@ -13,6 +13,7 @@ type typ =
   | Bool
   | String
   | Void
+  | Int
 
 type expr =
 	(*Primitives and expressions*)
@@ -109,6 +110,8 @@ let string_of_typ = function
   (* | Float -> "float" *)
   | String -> "string"
   | Void -> "void"
+  | Int -> "int" 
+  (*only for main function, user is not allowed to define this, this is done bc llvm requires entry point to be int*)
   (* maybe have matrix of different types??? errorcheck type is rights*) 
   (*  sidelining this for now
 
