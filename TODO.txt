@@ -1,5 +1,6 @@
 TODO:
 	Run llvm code to see what the output is
+    Run testall.sh
 
 	LLVM CodeGen testing/outputs for:
 		Unary and Binary Operations
