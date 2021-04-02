@@ -1,11 +1,31 @@
 num main() {
-    bool b;
-    b = (6 == 6);
-    printn(b);
-    
-    /*if (6 == 6) {
-        printn("6 is 6");
+
+    if (6 == 6) {
+        printn(1);
     } else {
-        printn("6 is not 6");
-    }*/
+        printn(0);
+    }
+
+    if (true) {
+        printn(1);
+    } else {
+        printn(0);
+    }
+
+    if (true) {
+        printn(1);
+    }
+
+    if (6 != 6) {
+        printn(0);
+    } else {
+        printn(1);
+    }
+
+    if (false) {
+        printn(0);
+    } else {
+        printn(1);
+    }
+
 }

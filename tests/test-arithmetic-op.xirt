@@ -7,7 +7,7 @@ num main() {
     k = 1 + -9;
     printn(k);
 
-    k = 9 + (-4);
+    k = 9 + -4;
     printn(k);
 
     k = -8 + 2;
