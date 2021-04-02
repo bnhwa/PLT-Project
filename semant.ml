@@ -222,10 +222,19 @@ let built_in_decls =
     SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
       | While(p, s) -> SWhile(check_bool_expr p, check_stmt s)
       | Return e -> let (t, e') = expr e in
-        if t = func.typ then SReturn (t, e') 
-        else raise (
-    Failure ("return gives " ^ string_of_typ t ^ " expected " ^
-       string_of_typ func.typ ^ " in " ^ string_of_expr e))
+      (match func.f_name with 
+        (*The user should not give main a return value*)
+        "main" -> make_err ("function main should not have a return value!")
+        | _ ->
+          if t = func.typ then
+            SReturn (t, e') 
+          else 
+          make_err("return gives " ^ string_of_typ t ^ " expected " ^
+       string_of_typ func.typ ^ " in function" ^ string_of_expr e)
+      )
+
+
+
       
       (* A block is correct if each statement is correct and nothing
          follows any Return statement.  Nested blocks are flattened. *)

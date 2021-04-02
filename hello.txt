@@ -42,6 +42,4 @@ num main()
   printn(76); /* L */
   printn(68); /* D */
 
-
-  return 0;
 }

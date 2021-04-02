@@ -1,6 +1,4 @@
 TODO:
-	Run llvm code to see what the output is
-    Run testall.sh
 
 	LLVM CodeGen testing/outputs for:
 		Unary and Binary Operations
@@ -10,6 +8,9 @@ TODO:
 			For
 			Return
 		Other Function Returns
+	Test Suite:
+		Add tests for fails:
+			If user tries to give main function return value
 COMPLETED:
 	Entry point is "main" is always made to be hidden int type, decl/return is same type
 	LLVM CodeGen outputs fine for:
