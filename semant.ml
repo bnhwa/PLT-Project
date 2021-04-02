@@ -10,6 +10,16 @@ module StringMap = Map.Make(String)
 
    Check each global variable, then check each function *)
 
+(* global semant functions*)
+(* make error msg*)
+let make_err er = raise (Failure er) ;;
+(*if func is main, make it hidden int type, if it is somehow int and not main, return error*)
+let typ_helper _nm _tp = (match _nm with
+      "main" -> Int
+      | _ -> (match _tp with 
+          Int -> make_err ("function "^_nm ^" is of illegal type int")
+          |_   -> _tp));;
+
 let check (globals, functions) =
 
   (* function binding checks, shouldnt have duplicated of that*)
@@ -70,9 +80,20 @@ let built_in_decls =
   let add_func map fd = 
     let built_in_err = "function " ^ fd.f_name ^ " may not be defined"
     and dup_err = "duplicate function " ^ fd.f_name
-    and make_err er = raise (Failure er)
+    (* and make_err er = raise (Failure er) *)
     and n = fd.f_name (* Name of the function *)
     in
+    (* ensure again that func main is int as well as return type*)
+    let _ret = {
+      typ = typ_helper n fd.typ;
+      f_name = fd.f_name; 
+      f_args = fd.f_args;
+      f_locals = fd.f_locals;
+      f_statements = fd.f_statements;
+    } 
+    in
+    (* print_endline (string_of_typ _ret.typ) ; *)
+
     match fd with (* No duplicate functions or redefinitions of built-ins *)
          _ when StringMap.mem n built_in_decls -> make_err built_in_err
        | _ when StringMap.mem n map -> make_err dup_err
@@ -87,7 +108,7 @@ let built_in_decls =
           || n = "multScalar"
           || n = "multMat" *)
             -> make_err dup_err  
-       | _ ->  StringMap.add n fd map 
+       | _ ->  StringMap.add n _ret map 
   in
 
   (* Collect all function names into one symbol table *)
@@ -219,18 +240,9 @@ let built_in_decls =
 
     in (* body of check_function, get expression for assignment *)
 
-    (*if func is main, make it hidden int type, 
-    if it is somehow int and not main, return error
-  *)
+
+  
     let arg_helper (_type,_name,_val) = (_type,_name, expr _val)
-    and int_illegal_err =  func.f_name ^ " is of illegal type int"
-    and make_err er = raise (Failure er)
-    in
-    let typ_helper _nm _tp = (match _nm with
-      "main" -> Int
-      | _ -> (match _tp with 
-          Int -> make_err int_illegal_err
-          |_   -> _tp))
     in
     { styp = typ_helper func.f_name func.typ;
       sf_name = func.f_name; 
