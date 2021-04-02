@@ -11,6 +11,7 @@ TODO:
 			Return
 		Other Function Returns
 COMPLETED:
+	Entry point is "main" is always made to be hidden int type, decl/return is same type
 	LLVM CodeGen outputs fine for:
 		Empty Main/function declaration
 		Variable Assignment/reassignment
