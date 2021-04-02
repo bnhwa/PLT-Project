@@ -77,7 +77,7 @@ let built_in_decls =
          _ when StringMap.mem n built_in_decls -> make_err built_in_err
        | _ when StringMap.mem n map -> make_err dup_err
        (* add to prevent user from creating functions with same name as built-in functions? *)
-       | _ when n = "print" (* 
+       | _ when n = "printn" (* 
           || n = "fillMat"
           || n = "transpose"
           || n = "getrows"
