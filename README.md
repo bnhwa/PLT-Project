@@ -1,7 +1,5 @@
 # XIRTAM Programming Language:
 
-by:
-
 Bailey Nozomu Hwa( bnh2128)
 
 Shida Jing( sj2670) 
