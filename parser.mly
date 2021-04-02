@@ -27,7 +27,7 @@ let parse_error s =
 /* Tokens: syntax */
 %token PAREN_L PAREN_R CURLY_L CURLY_R SQUARE_L SQUARE_R SEMICOL COMMA
 /* Tokens: Operators & literals */
-%token ADD SUB TIMES ASSIGN NOT EQ NEQ GT LT LEQ GEQ PERIOD TRUE FALSE DIV/**/
+%token ADD SUB TIMES ASSIGN NOT EQ NEQ GT LT LEQ GEQ PERIOD TRUE FALSE DIV MOD/**/
 /* Tokens: program flow */
 %token AND OR IF ELSE FOR WHILE RETURN CONTINUE NEW DEL NULL /*BREAK*/
 /* Tokens: matrix functions */
@@ -54,7 +54,7 @@ let parse_error s =
 %left EQ NEQ
 %left GT LT GEQ LEQ
 %left ADD SUB
-%left TIMES DIV
+%left TIMES DIV MOD
 %right NOT NEG /*boolean negation and negative*/
 
 %%
@@ -152,10 +152,10 @@ expr:
   	| expr ADD       	expr { Binop($1, Add,      $3) }
   	| expr SUB      	expr { Binop($1, Sub,      $3) }
   	| expr TIMES      expr { Binop($1, Mult,      $3) }
-    /* optional, i think we should implement these */
   	| expr DIV   		expr { Binop($1, Div,      $3) }
-    /* | expr MOD        expr  {Binop($1, Mod,      $3) }
-    | expr EXP        expr  {Binop($1, Exp,      $3) } */
+    /* optional, i think we should implement these */
+    | expr MOD        expr  {Binop($1, Mod,      $3) }
+    /*| expr EXP        expr  {Binop($1, Exp,      $3) } */
   	| expr EQ         expr { Binop($1, Equal,   $3) }
   	| expr NEQ        expr { Binop($1, Neq,      $3) }
   	| expr GT         expr { Binop($1, Great,     $3) }

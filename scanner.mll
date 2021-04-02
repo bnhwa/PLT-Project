@@ -23,7 +23,7 @@ rule tokenize = parse
 | '/'	{DIV}
 | '='	{ASSIGN }
 (*optional operators? should we implement these later, putting them here so we can just uncomment and go| '%' {MOD}*)
-(* | '%' {MOD} *)
+| '%' {MOD}
 (* | '^'  {EXP} *)
 
 | "!"	{NOT}

@@ -190,7 +190,7 @@ let built_in_decls =
           let same = t1 = t2 in
           (* Determine expression type based on operator and operand types *)
           let ty = match op with
-            Add | Sub | Mult | Div when same && t1 = Num   -> Num
+            Add | Sub | Mult | Div | Mod when same && t1 = Num   -> Num
           | Equal | Neq            when same               -> Bool
           | Less | Leq | Great | Geq
                      when same && (t1 = Num) -> Bool (*castable to bool, should we like python have string "" = false and "asdfasdf"  be true?*)

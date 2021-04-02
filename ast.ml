@@ -6,7 +6,7 @@ citation: microc compiler shown in class
 (*unary operations*)
 type op_un = Not | Neg
 
-type op_bin = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Great | Geq | And | Or 
+type op_bin = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Great | Geq | And | Or | Mod
 
 type typ =  
    Num
@@ -82,9 +82,9 @@ let string_of_op = function
   | Leq -> "<="
   | And -> "&&"
   | Or -> "||"
+  | Mod -> "%"
   (*nonimplemented operators*)
-  (* | Mod -> "%"
-  | Exp -> "^" *)
+  (* | Exp -> "^" *)
 
 let string_of_uop = function
     Neg -> "-"
