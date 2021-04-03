@@ -1,8 +1,6 @@
 num main() {
     num i;
-    num m;
     i = 0;
-    m = i % 2;
     while(i < 10) {
         if (i == 3) {
             printn(1);
@@ -10,6 +8,5 @@ num main() {
             printn(100);
         }
         i = i + 1;
-        m = i % 2;
     }
 }
