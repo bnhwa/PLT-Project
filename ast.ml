@@ -14,6 +14,7 @@ type typ =
   | String
   | Void
   | Int
+  | Xirtam
 
 type expr =
 	(*Primitives and expressions*)
@@ -26,8 +27,7 @@ type expr =
 	| Assign of string * expr 
 	| Call of string * expr list
 	(*IMPLEMENT Xirtam specific below*)
-  (* | XirtamDec_lit of expr list list *)
-  (* | XirtamDec_rc of int * int *)
+  | XirtamLit of expr list
 (* maybe have these already in the function dictionary?
   | MAT_TRANSPOSE   PAREN_L expr PAREN_R {XirtamTranspose($3) }
   | MAT_ROWS      PAREN_L expr  PAREN_R {XirtamRows($3)}
@@ -94,6 +94,7 @@ let rec string_of_expr = function
   | NumLit(l) -> string_of_float l
   | BoolLit(true) -> "true"
   | BoolLit(false) -> "false"
+  | XirtamLit(l) -> "[\n" ^ String.concat "," (List.map string_of_expr l) ^ "]\n"
   | Id(s) -> s
   | StrLit(s) -> s
   (* | XirtamLit(x) -> "[" ^ String.concat "," (List.map (fun lst -> "[" ^ String.concat "," (List.map string_of_expr lst) ^ "]") x) ^ "]" *)
@@ -111,6 +112,7 @@ let string_of_typ = function
   | String -> "string"
   | Void -> "void"
   | Int -> "int" 
+  | Xirtam -> "xirtam"
   (*only for main function, user is not allowed to define this, this is done bc llvm requires entry point to be int*)
   (* maybe have matrix of different types??? errorcheck type is rights*) 
   (*  sidelining this for now

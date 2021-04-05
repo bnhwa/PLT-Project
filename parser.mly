@@ -33,7 +33,7 @@ let parse_error s =
 /* Tokens: matrix functions */
 %token MAT_FILL MAT_TRANSPOSE MAT_ROWS MAT_COLS MAT_EQ MAT_ADD MAT_MULT_SCALAR MAT_MULT /*MAT_IDENTITY*/
 /* Tokens: Datatypes */
-%token NUM BOOL STRING VOID 
+%token NUM BOOL STRING VOID XIRTAM
 
 /*Literals*/
 %token <float> NUMLIT
@@ -99,28 +99,14 @@ args_opt:
 args_list: 
       expr             {    [$1]    }
  	| args_list COMMA expr { ($3 :: $1) }
-
-  /*datatypes*/
+/*datatypes*/
 typ:
     NUM		  {Num}
   	| BOOL    {Bool}
   	| STRING  {String}
   	| VOID    {Void}
-  /*if we are doing matrix of things other than numerics, use below*/
-  /*
-mat_typ:
-    NUM     {Num}
-    | BOOL    {Bool}
-    | STRING  {String}
-  */
-
-/*
-remove this, make it more like microc rather var1=2,var2
-var_decl_stmts:
-    ID             {[($1, Empty)]}
-  	| ID ASSIGN expr {[($1, $3)]}
-  	| var_decl_stmts COMMA ID             {($3, Empty) ::$1}just variables, no assignment
-  	| var_decl_stmts COMMA ID ASSIGN expr {($3, $5):: $1}assignment to expression variables*/
+    /*matrix*/
+    | XIRTAM  {Xirtam}
 
 stmt_list:
 	{[]}
@@ -149,6 +135,9 @@ expr:
   	| STRLIT               { StrLit($1)              }
   	| NUMLIT                 { NumLit($1)            }
   	| ID                   { Id($1)                  }
+    /*matrix  WARNING*/
+    | SQUARE_L   mat   SQUARE_R {XirtamLit($2)}
+
   	| expr ADD       	expr { Binop($1, Add,      $3) }
   	| expr SUB      	expr { Binop($1, Sub,      $3) }
   	| expr TIMES      expr { Binop($1, Mult,      $3) }
@@ -169,6 +158,14 @@ expr:
   	| ID ASSIGN expr       { Assign($1, $3)          }
   	| ID PAREN_L args_opt PAREN_R { Call($1, $3)     }
   	| PAREN_L expr PAREN_R   { $2                    }/*grouping func1((a+b)(b+c))*/
+
+
+
+
+/*Xirtam matrix*/
+mat:
+  SQUARE_L        args_list   SQUARE_R          {[XirtamLit(List.rev $2)]}    /*[[1,2,3]]*/
+  | SQUARE_L      args_list SQUARE_R COMMA mat  {XirtamLit(List.rev $2)::$5}/*[[1,2,3],          [1,2,3],MAT    ]*/
 
 
 

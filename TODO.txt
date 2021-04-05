@@ -1,15 +1,9 @@
 TODO:
 
 	We cannot print boolean for now. Need a way to test.
-
+	Operator
 	LLVM CodeGen testing/outputs for:
-		Unary and Binary Operations
-		Control Flow
-			If
-			While
-			For
-			Return
-		Other Function Returns
+		Operator Mod: Somehow works indibvidually but not within a loop (lli works though .. strange !)
 	Test Suite:
 		Add tests for fails:
 			If user tries to give main function return value
@@ -22,3 +16,11 @@ COMPLETED:
 			String
 			Num
 		Printn
+
+	Unary and Binary Operations
+		Control Flow
+			If
+			While
+			For
+			Return
+		Other Function Returns

@@ -72,12 +72,7 @@ let rec string_of_sstmt = function
   | SFor(e1, e2, e3, s) ->
       "for (" ^ string_of_sexpr e1  ^ " ; " ^ string_of_sexpr e2 ^ " ; " ^ string_of_sexpr e3  ^ ") " ^ string_of_sstmt s
   | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s (* we should implement this I think*)
-  (* sidelining these for now, keep things simple
-  | SVDecl(t, n, e) -> string_of_typ t ^ " " ^ n ^ (match e with
-      (_, SEmpty) -> ""
-      | _ -> " = " ^ string_of_sexpr e) ^ ";\n"
-  | SVDeclList(t, decls) -> "" (* string_of_typ t ^ " " ^ String.concat ", " (List.map string_of_var_decl_list decls) ^ ";\n" *)
-  *)
+
 
 (* Print out argument type and argument identifier *)
 let string_of_sfdecl fdecl =
