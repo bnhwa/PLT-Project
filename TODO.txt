@@ -2,6 +2,11 @@ TODO:
 
 	We cannot print boolean for now. Need a way to test.
 	Operator
+	Find way to prevent user from working with uninitialized variables:
+	For instance:
+		num i;
+		i+5;
+	What we can do maybe is assign default value?
 	LLVM CodeGen testing/outputs for:
 		Operator Mod: Somehow works indibvidually but not within a loop (lli works though .. strange !)
 	Test Suite:

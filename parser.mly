@@ -29,7 +29,7 @@ let parse_error s =
 /* Tokens: Operators & literals */
 %token ADD SUB TIMES ASSIGN NOT EQ NEQ GT LT LEQ GEQ PERIOD TRUE FALSE DIV MOD/**/
 /* Tokens: program flow */
-%token AND OR IF ELSE FOR WHILE RETURN CONTINUE NEW DEL NULL /*BREAK*/
+%token AND OR IF ELSE FOR WHILE RETURN NEW DEL NULL /*BREAK CONTINUE*/
 /* Tokens: matrix functions */
 %token MAT_FILL MAT_TRANSPOSE MAT_ROWS MAT_COLS MAT_EQ MAT_ADD MAT_MULT_SCALAR MAT_MULT /*MAT_IDENTITY*/
 /* Tokens: Datatypes */
@@ -117,7 +117,7 @@ stmt: /*all statements must end with semicolon*/
 	/*typ var_decl_stmts SEMICOL                 { VDeclList($1, List.rev $2)  }*/
   expr SEMICOL                                          { Expr $1               }
   | RETURN expr_opt SEMICOL                             { Return $2             }
-  | CONTINUE SEMICOL                                    { Continue              }
+  /*| CONTINUE SEMICOL                                    { Continue              }*/
   /*| BREAK SEMICOL                              { Break               } *//*are we going to implement this?*/
   | CURLY_L stmt_list CURLY_R                           { Block(List.rev $2)    }
   | IF PAREN_L expr PAREN_R stmt %prec HTELSE { If($3, $5, Block([])) }

@@ -53,7 +53,7 @@ type stmt =
   | Return of expr
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
-  | Continue
+  (* | Continue *)
   | While of expr * stmt (*the while loop is back in business*)
 
 type func_decl = {
@@ -94,7 +94,7 @@ let rec string_of_expr = function
   | NumLit(l) -> string_of_float l
   | BoolLit(true) -> "true"
   | BoolLit(false) -> "false"
-  | XirtamLit(l) -> "[\n" ^ String.concat "," (List.map string_of_expr l) ^ "]\n"
+  | XirtamLit(l) -> "\n[" ^ String.concat "," (List.map string_of_expr l) ^ "]\n"
   | Id(s) -> s
   | StrLit(s) -> s
   (* | XirtamLit(x) -> "[" ^ String.concat "," (List.map (fun lst -> "[" ^ String.concat "," (List.map string_of_expr lst) ^ "]") x) ^ "]" *)
@@ -130,7 +130,7 @@ let rec string_of_stmt = function
   | Expr(expr) -> string_of_expr expr ^ ";\n";
   | Return(expr) -> "return " ^ string_of_expr expr ^ ";\n";
   (*| Break(n) -> "break " ^ string_of_int n ^ ";\n";*) (*are we adding break?*)
-  | Continue -> "continue;\n";
+  (* | Continue -> "continue;\n"; *)
   | If(e, s, Block([])) -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s
   | If(e, s1, s2) ->  "if (" ^ string_of_expr e ^ ")\n" ^
       string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2

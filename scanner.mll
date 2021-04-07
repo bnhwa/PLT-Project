@@ -43,7 +43,7 @@ rule tokenize = parse
 | "for"    {FOR}
 | "while" {WHILE}
 | "return" {RETURN}
-| "continue" { CONTINUE }
+(*| "continue" { CONTINUE }*)(*no more continue*)
 | "new" {NEW}
 | "del" {DEL}
 | "NULL" {NULL}
@@ -57,6 +57,7 @@ rule tokenize = parse
 | "bool"   {BOOL}
 | "string" {STRING}
 | "void"   {VOID}
+| "xirtam"   {XIRTAM}
 (* Xirtam functions CHECK IF THIS CONFLICTS WITH VAR NAMING
 if so, make it so users cant name variables xirtam function names
 *)

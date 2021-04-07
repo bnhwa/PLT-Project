@@ -7,6 +7,7 @@ and sx =
 	SNumLit of float
 	| SStrLit of string
 	| SBoolLit of bool
+  | SXirtamLit of sexpr list * int * int 
 	| SId of string
 	| SUnop of  op_un * sexpr
 	| SBinop of sexpr * op_bin * sexpr
@@ -28,7 +29,7 @@ type sstmt =
   | SIf of sexpr * sstmt * sstmt
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SWhile of sexpr * sstmt (* adding while loop back*)
-  | SContinue
+  (* | SContinue *)
 
 
 (*should make sbind because these should be semantically checked!*)
@@ -52,6 +53,8 @@ let rec string_of_sexpr (t, e) =
   | SId(s) -> s
   | SStrLit(s) -> s
   (* | XirtamLit(x) -> "[" ^ String.concat "," (List.map (fun lst -> "[" ^ String.concat "," (List.map string_of_expr lst) ^ "]") x) ^ "]" *)
+  (* check row col sizes in semant for SXirtamLit*)
+  | SXirtamLit(x, r, c) -> "(rows: " ^ string_of_int r ^ ", cols: " ^ string_of_int c ^ ") : [" ^ String.concat ", " (List.map string_of_sexpr x) ^ "]"
   (*we use fun instead of function because fun can take in multiple arguments*)
   | SBinop(e1, o, e2) -> string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
   | SUnop(o, e) -> string_of_uop o ^ string_of_sexpr e
@@ -65,7 +68,7 @@ let rec string_of_sstmt = function
   | SExpr(expr) -> string_of_sexpr expr ^ ";\n";
   | SReturn(expr) -> "return " ^ string_of_sexpr expr ^ ";\n";
   (*| Break(n) -> "break " ^ string_of_int n ^ ";\n";*) (*are we adding break?*)
-  | SContinue -> "continue;\n";
+  (* | SContinue -> "continue;\n"; *)
   | SIf(e, s, SBlock([])) -> "if (" ^ string_of_sexpr e ^ ")\n" ^ string_of_sstmt s
   | SIf(e, s1, s2) ->  "if (" ^ string_of_sexpr e ^ ")\n" ^
       string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2
