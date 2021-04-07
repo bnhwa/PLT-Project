@@ -157,22 +157,28 @@ let built_in_decls =
       with Not_found -> raise (Failure ("undeclared identifier " ^ s))
     in
 
-    (* check if vars within expressions where relevant are initialized,
+    (* check if vars within expressions where relevant are initialized, return e if ok
+      maybe do type conversion here?? idk
       maybe we want to auto set variables to default value if they r not initialized? *)
     let rec expr_init_check e = 
-      let init_err _i _e = ("cannot use unitialized variable"^ _i ^" in expression"^ (string_of_expr _e)) in
+      (*fix the error print*)
+      let init_err _i _e = ("cannot use unitialized variable "^ _i ^" in expression "^ (string_of_expr _e)) in
       match e with
-          NumLit  _   -> []
-        | BoolLit _   -> []
-        | StrLit _ -> []
-        | Empty       -> []
-        | XirtamLit _ -> []
+          NumLit  _   -> e
+        | BoolLit _   -> e
+        | StrLit _ -> e
+        | Empty       -> e
+        | XirtamLit _ -> e (*double check *)
         | Id i ->
             let var_dat = type_of_identifier i in
             if var_dat.v_init = false then
                 make_err (init_err i e)
             else
-          []
+                e
+      | Call(fname, args) as call ->   List.iter (fun _ex -> ignore (expr_init_check _ex)) args; e
+      | Unop (op, ex) -> expr_init_check ex
+      | Binop (e1, op, e2)  -> (expr_init_check e1);( expr_init_check e2);e
+
     in
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr = function
@@ -181,6 +187,7 @@ let built_in_decls =
       | StrLit l -> (String, SStrLit l)
       | Empty       -> (Void, SEmpty)
       | XirtamLit l ->
+
         (*
         if matrix is at outer level, then check each to make sure they r not staggered
         Also we want to map expr to each value in the matrix
@@ -267,7 +274,7 @@ let built_in_decls =
           in (fd.typ, SCall(fname, args')) *)
 
       | Unop (op, l) as ex ->
-        let (t, l') = expr l in
+        let (t, l') = expr (expr_init_check l) in
           let ty = match op with
           (*double check this, *)
             Neg when t = Num -> t
@@ -276,9 +283,10 @@ let built_in_decls =
                                  string_of_uop op ^ string_of_typ t ^
                                  " applied to " ^ string_of_expr ex))
         in (ty, SUnop(op, (t, l')))
-      | Binop (e1, op, e2) as e -> 
-          let (t1, e1') = expr e1 
-          and (t2, e2') = expr e2 in
+      | Binop (e1, op, e2) as e ->
+
+          let (t1, e1') = expr (expr_init_check e1) 
+          and (t2, e2') = expr (expr_init_check e2) in
           (* Based on the MicroC, all binary operators require operands of the same type, 
           However, should we allow type casting between bool and num? 
           Someone look into this please
@@ -301,7 +309,7 @@ let built_in_decls =
           let var_dat = type_of_identifier id in 
           let _left = var_dat.v_type  in
           (* let _left = type_of_identifier id in  *)
-          let (_right, val') = expr v in
+          let (_right, val') = expr (expr_init_check v) in
           let err = 
             "illegal assignment " ^ string_of_typ _left ^ " = " ^ string_of_typ _right ^ " in " ^ string_of_expr _exp
           in 
@@ -318,10 +326,10 @@ let built_in_decls =
     (* Return a semantically-checked statement i.e. containing sexprs *)
     let rec check_stmt = function
         Expr e -> SExpr (expr e)
-      | If(p, b1, b2) -> SIf(check_bool_expr p, check_stmt b1, check_stmt b2)
+      | If(p, b1, b2) -> SIf(check_bool_expr (expr_init_check p), check_stmt b1, check_stmt b2)
       | For(e1, e2, e3, st) ->
-    SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
-      | While(p, s) -> SWhile(check_bool_expr p, check_stmt s)
+    SFor(expr (expr_init_check e1), check_bool_expr (expr_init_check e2), expr (expr_init_check e3), check_stmt st)
+      | While(p, s) -> SWhile(check_bool_expr (expr_init_check p), check_stmt s)
       | Return e -> let (t, e') = expr e in
       (match func.f_name with 
         (*The user should not give main a return value*)
