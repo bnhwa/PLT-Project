@@ -1,4 +1,10 @@
+![alt text](bin/xirtamLogo.png)
+
+(Logo Designed by Bailey Hwa)
+
 # XIRTAM Programming Language:
+
+
 
 Bailey Nozomu Hwa( bnh2128)
 
