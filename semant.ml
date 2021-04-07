@@ -334,7 +334,7 @@ let built_in_decls =
       | For(e1, e2, e3, st) ->
     SFor(expr (expr_init_check e1), check_bool_expr (expr_init_check e2), expr (expr_init_check e3), check_stmt st)
       | While(p, s) -> SWhile(check_bool_expr (expr_init_check p), check_stmt s)
-      | Return e -> let (t, e') = expr e in
+      | Return e -> let (t, e') = expr (expr_init_check e) in
       (match func.f_name with 
         (*The user should not give main a return value*)
         "main" -> make_err ("function main should not have a return value!")
