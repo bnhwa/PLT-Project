@@ -132,9 +132,19 @@ let built_in_decls =
           v_init  = false;
           } _val)
         )
-        StringMap.empty (globals @ func.f_args @ func.f_locals )
+        StringMap.empty (globals @ func.f_args @ func.f_locals )(*(globals @ func.f_args @ func.f_locals )*)
     in
-
+    (* function args only, use to avoid program seeing function args as uninitialized *)
+    let func_arg_symbols =
+      List.fold_left 
+        (fun _val (_type, _name, _) -> (StringMap.add _name {
+          v_type = _type;
+          v_id = _name;
+          v_init  = false;
+          } _val)
+        )
+        StringMap.empty (func.f_args )(*(globals @ func.f_args @ func.f_locals )*)
+      in
 (*     let symbols_inited = 
         let a =
       {v_type = Int;
@@ -160,10 +170,10 @@ let built_in_decls =
     (* check if vars within expressions where relevant are initialized, return e if ok
       maybe do type conversion here?? idk
       maybe we want to auto set variables to default value if they r not initialized? *)
-    let rec expr_init_check e = 
+    let expr_init_check e_in = 
       (*fix the error print*)
-      let init_err _i _e = ("cannot use unitialized variable "^ _i ^" in expression "^ (string_of_expr _e)) in
-      match e with
+      let init_err _i _e = ("cannot use unitialized variable "^ _i ^" in expression "^ (string_of_expr e_in)) in
+      let rec init_check_helper e = match e with
           NumLit  _   -> e
         | BoolLit _   -> e
         | StrLit _ -> e
@@ -171,13 +181,21 @@ let built_in_decls =
         | XirtamLit _ -> e (*double check *)
         | Id i ->
             let var_dat = type_of_identifier i in
-            if var_dat.v_init = false then
+            if (var_dat.v_init = false ) && not (StringMap.mem i func_arg_symbols) then
                 make_err (init_err i e)
             else
                 e
-      | Call(fname, args) as call ->   List.iter (fun _ex -> ignore (expr_init_check _ex)) args; e
-      | Unop (op, ex) -> expr_init_check ex
-      | Binop (e1, op, e2)  -> (expr_init_check e1);( expr_init_check e2);e
+      | Call(fname, args) as call ->   List.iter (fun _ex -> ignore (init_check_helper _ex)) args; e
+      | Unop (op, ex) -> init_check_helper ex
+      | Binop (e1, op, e2)  -> (init_check_helper e1);( init_check_helper e2);e
+      | Assign (id, v) as _exp ->
+          let var_dat = type_of_identifier id in 
+          (*set variable as initialized! we need to have let _ = or it won't work*)
+          let _ = var_dat.v_init <- true ;
+          in e
+      in
+      init_check_helper e_in;
+
 
     in
     (* Return a semantically-checked expression, i.e., with a type *)
@@ -252,7 +270,8 @@ let built_in_decls =
           let var_dat = type_of_identifier s in
             (var_dat.v_type, SId s)
           (* (type_of_identifier s, SId s) *)
-      | Call(fname, args) as call ->  
+      | Call(fname, args) as call ->
+          call = expr_init_check  call;
           let fd = find_func fname in
           let param_length = List.length fd.f_args in
           if List.length args != param_length then
