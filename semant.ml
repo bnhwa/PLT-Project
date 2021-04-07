@@ -124,6 +124,7 @@ let built_in_decls =
         (fun _val (_type, _name, _) -> StringMap.add _name _type _val)
         StringMap.empty (globals @ func.f_args @ func.f_locals )
     in *)
+    (*make symboltable have information about type, name, and whether the variable is initialized or not*)
     let symbols =
       List.fold_left 
         (fun _val (_type, _name, _) -> (StringMap.add _name {
@@ -145,22 +146,6 @@ let built_in_decls =
         )
         StringMap.empty (func.f_args )(*(globals @ func.f_args @ func.f_locals )*)
       in
-(*     let symbols_inited = 
-        let a =
-      {v_type = Int;
-      v_id = "main";
-      v_init  = false;
-      } in
-      let tinit = StringMap.empty in
-      let testkey = "main" in 
-      let tinit=(StringMap.add  "main" a tinit) in 
-      if not (StringMap.mem testkey tinit) then
-          print_endline "fuck"
-      else
-        let test1 = StringMap.find "main" tinit in
-        print_endline test1.v_id
-     in *)
-
 
      let type_of_identifier s =
       try StringMap.find s symbols
