@@ -172,7 +172,7 @@ let built_in_decls =
       maybe we want to auto set variables to default value if they r not initialized? *)
     let expr_init_check e_in = 
       (*fix the error print*)
-      let init_err _i _e = ("cannot use unitialized variable "^ _i ^" in expression "^ (string_of_expr e_in)) in
+      let init_err _i = ("cannot use unitialized variable "^ _i ^" in expression "^ (string_of_expr e_in)) in
       let rec init_check_helper e = match e with
           NumLit  _   -> e
         | BoolLit _   -> e
@@ -182,13 +182,13 @@ let built_in_decls =
         | Id i ->
             let var_dat = type_of_identifier i in
             if (var_dat.v_init = false ) && not (StringMap.mem i func_arg_symbols) then
-                make_err (init_err i e)
+                make_err (init_err i)
             else
                 e
-      | Call(fname, args) as call ->   List.iter (fun _ex -> ignore (init_check_helper _ex)) args; e
-      | Unop (op, ex) -> init_check_helper ex
-      | Binop (e1, op, e2)  -> (init_check_helper e1);( init_check_helper e2);e
-      | Assign (id, v) as _exp ->
+      | Call(_, args) as call ->   List.iter (fun _ex -> ignore (init_check_helper _ex)) args; e
+      | Unop (_, ex) -> init_check_helper ex
+      | Binop (e1, _, e2)  -> (init_check_helper e1);( init_check_helper e2);e
+      | Assign (id, _) as _exp ->
           let var_dat = type_of_identifier id in 
           (*set variable as initialized! we need to have let _ = or it won't work*)
           let _ = var_dat.v_init <- true ;
@@ -235,7 +235,7 @@ let built_in_decls =
 
             *)
             | Xirtam -> make_err("Xirtam Literals are only allowed in matrices!")
-            |  _ -> expr _mat_val
+            |  _ -> expr (expr_init_check _mat_val)
           )
 
           
