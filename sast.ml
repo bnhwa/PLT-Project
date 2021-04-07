@@ -40,7 +40,12 @@ type sfunc_decl = {
     sf_locals     : sbind list; (*add local variables *)
     sf_statements : sstmt list;
   }
-
+(*add this so we can check if variables are initialized or not!*)
+type inited = {
+    v_type          : typ;
+    v_id            : string;
+    mutable v_init  : bool;
+  }
 (* Pretty-printing functions below:*)
 
 type sprogram = bind list * sfunc_decl list

@@ -118,23 +118,69 @@ let built_in_decls =
     in   
 
     (* Build local symbol table of variables for a given function *)
-    let symbols =
+    (* original*)
+(*     let symbols =
       List.fold_left 
         (fun _val (_type, _name, _) -> StringMap.add _name _type _val)
         StringMap.empty (globals @ func.f_args @ func.f_locals )
+    in *)
+    let symbols =
+      List.fold_left 
+        (fun _val (_type, _name, _) -> (StringMap.add _name {
+          v_type = _type;
+          v_id = _name;
+          v_init  = false;
+          } _val)
+        )
+        StringMap.empty (globals @ func.f_args @ func.f_locals )
     in
+
+(*     let symbols_inited = 
+        let a =
+      {v_type = Int;
+      v_id = "main";
+      v_init  = false;
+      } in
+      let tinit = StringMap.empty in
+      let testkey = "main" in 
+      let tinit=(StringMap.add  "main" a tinit) in 
+      if not (StringMap.mem testkey tinit) then
+          print_endline "fuck"
+      else
+        let test1 = StringMap.find "main" tinit in
+        print_endline test1.v_id
+     in *)
+
 
      let type_of_identifier s =
       try StringMap.find s symbols
       with Not_found -> raise (Failure ("undeclared identifier " ^ s))
     in
 
+    (* check if vars within expressions where relevant are initialized,
+      maybe we want to auto set variables to default value if they r not initialized? *)
+    let rec expr_init_check e = 
+      let init_err _i _e = ("cannot use unitialized variable"^ _i ^" in expression"^ (string_of_expr _e)) in
+      match e with
+          NumLit  _   -> []
+        | BoolLit _   -> []
+        | StrLit _ -> []
+        | Empty       -> []
+        | XirtamLit _ -> []
+        | Id i ->
+            let var_dat = type_of_identifier i in
+            if var_dat.v_init = false then
+                make_err (init_err i e)
+            else
+          []
+    in
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr = function
         NumLit  l   -> (Num, SNumLit l)
       | BoolLit l   -> (Bool, SBoolLit l)
+      | StrLit l -> (String, SStrLit l)
       | Empty       -> (Void, SEmpty)
-      | XirtamLit l -> 
+      | XirtamLit l ->
         (*
         if matrix is at outer level, then check each to make sure they r not staggered
         Also we want to map expr to each value in the matrix
@@ -195,7 +241,10 @@ let built_in_decls =
           )
 
 
-      | Id s       -> (type_of_identifier s, SId s)
+      | Id s       ->
+          let var_dat = type_of_identifier s in
+            (var_dat.v_type, SId s)
+          (* (type_of_identifier s, SId s) *)
       | Call(fname, args) as call ->  
           let fd = find_func fname in
           let param_length = List.length fd.f_args in
@@ -216,7 +265,7 @@ let built_in_decls =
           (*
           let args' = List.map2 check_call fd.f_args args
           in (fd.typ, SCall(fname, args')) *)
-      | StrLit l -> (String, SStrLit l)
+
       | Unop (op, l) as ex ->
         let (t, l') = expr l in
           let ty = match op with
@@ -249,10 +298,15 @@ let built_in_decls =
           in (ty, SBinop((t1, e1'), op, (t2, e2')))
 
       | Assign (id, v) as _exp ->
-          let _left = type_of_identifier id in 
+          let var_dat = type_of_identifier id in 
+          let _left = var_dat.v_type  in
+          (* let _left = type_of_identifier id in  *)
           let (_right, val') = expr v in
           let err = 
             "illegal assignment " ^ string_of_typ _left ^ " = " ^ string_of_typ _right ^ " in " ^ string_of_expr _exp
+          in 
+          (*set variable as initialized! we need to have let _ = or it won't work*)
+          let _ = var_dat.v_init <- true ;
           in (check_assign _left _right err, SAssign(id, (_right, val')))
     in
     (* check boolean statement*)
