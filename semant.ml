@@ -180,6 +180,7 @@ let built_in_decls =
           in e
       in
       init_check_helper e_in;
+      e_in;
 
 
     in
