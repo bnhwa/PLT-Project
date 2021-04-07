@@ -175,7 +175,7 @@ let built_in_decls =
             let row_len   = List.hd test_col in (*same column we compare it to*)
             let row_check = List.length hd in (*row we need to check*)
             if row_len != row_check then
-              make_err ("No staggered Matrices allowed, columns must be same size for all rows")
+              make_err ("No staggered Matrices allowed, rows must be same size")
             else 
               (check_stagger (List.tl test_col) hd) @ (check_stagger test_col tl)
           (*for individual row, which is list, map expr to each matrix element*)
