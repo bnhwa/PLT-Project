@@ -1,0 +1,4 @@
+num main() {
+    num k;
+    k = 1;
+}

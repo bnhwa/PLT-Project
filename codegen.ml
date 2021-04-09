@@ -57,9 +57,6 @@ let translate (globals, functions) =
     (*print num aka a float*)
     let printf_func : L.llvalue = 
       L.declare_function "printf" printf_t the_module in
-    (* exponent function *)
-    let exp_t = L.function_type float_t [| float_t; float_t |] in
-    let exp_func = L.declare_function "pow" exp_t the_module in
 
     (* Define each function (arguments and return type) so we can 
         call it even before we've created its body *)
@@ -78,8 +75,7 @@ let translate (globals, functions) =
     let (the_function, _) = StringMap.find fdecl.sf_name function_decls in
     let builder = L.builder_at_end context (L.entry_block the_function) in
 
-    let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
-    and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in
+    let float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in
 
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
@@ -132,6 +128,7 @@ let translate (globals, functions) =
 	        | A.Neg                  -> L.build_neg
           | A.Not                  -> L.build_not) e' "tmp" builder
       (*In fashion of microc have typechecking for *)
+      | SEmpty -> L.const_int i32_t 0
       | SBinop (e1, op, e2) -> 
         let (_typ, _ ) = e1 in (*get type of first expression, semant should have checked that both types of e1 and e2 should be same*)
         let e1' = expr builder e1 in
@@ -146,7 +143,7 @@ let translate (globals, functions) =
             | _         -> raise (Failure "internal error: semant should have rejected and/or on float")
           ) e1' e2' "tmp" builder
           (* num operations*)
-          | A.Num -> (match op with 
+          | A.Int | A.String | A.Void | A.Num -> (match op with 
             A.Add     -> L.build_fadd
               | A.Sub     -> L.build_fsub
               | A.Mult    -> L.build_fmul

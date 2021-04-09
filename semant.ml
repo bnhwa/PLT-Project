@@ -171,17 +171,17 @@ let built_in_decls =
                 make_err (init_err i)
             else
                 true
-      | Call(_, args) as call ->   List.iter (fun _ex -> ignore (init_check_helper _ex)) args; true
+      | Call(_, args) ->   List.iter (fun _ex -> ignore (init_check_helper _ex)) args; true
       | Unop (_, ex) -> init_check_helper ex
       | Binop (e1, _, e2)  -> (init_check_helper e1) && ( init_check_helper e2)
       | Assign (id, _) as _exp ->
           let var_dat = type_of_identifier id in 
           (*set variable as initialized! we need to have let _ = or it won't work*)
-          let _ = var_dat.v_init <- true ;
+          let _ = var_dat.v_init <- true 
           in true
       in
-      init_check_helper e_in;
-      e_in;
+      let x = init_check_helper e_in in 
+      e_in
 
 
     in
@@ -258,7 +258,7 @@ let built_in_decls =
             (var_dat.v_type, SId s)
           (* (type_of_identifier s, SId s) *)
       | Call(fname, args) as call ->
-          call = expr_init_check  call;
+          let call = expr_init_check  call in
           let fd = find_func fname in
           let param_length = List.length fd.f_args in
           if List.length args != param_length then
