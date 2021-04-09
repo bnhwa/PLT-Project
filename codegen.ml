@@ -27,17 +27,21 @@ let translate (globals, functions) =
     and float_t    = L.double_type context
     and i32_t      = L.i32_type    context
     and i8_t       = L.i8_type     context
+    and array_t    = L.array_type
     in 
     let char_point_t = L.pointer_type i8_t
     and void_t     = L.void_type   context in
-
+ 
     let ltype_of_typ = function 
         A.Num  -> float_t
     |   A.Bool -> i1_t 
     |   A.Void -> void_t
     |   A.String -> char_point_t
     |   A.Int    -> i32_t
-
+    |   A.Xirtam(r, c) ->
+            let rows = int_of_float r in
+            let cols = int_of_float c in
+            array_t (array_t float_t cols) rows
     in 
 
 
