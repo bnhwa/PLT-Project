@@ -5,7 +5,7 @@ Citation: microC processor code
 */
 	  
 
-%{ open Ast %}
+%{ open Ast %} 
 
 
 /* Tokens: syntax */
@@ -90,7 +90,7 @@ typ:
   	| STRING  {String}
   	| VOID    {Void}
     /*matrix*/
-    | XIRTAM  {Xirtam}
+    | XIRTAM SQUARE_L NUMLIT SQUARE_R SQUARE_L NUMLIT SQUARE_R {Xirtam($3, $6)}
 
 stmt_list:
 	{[]}

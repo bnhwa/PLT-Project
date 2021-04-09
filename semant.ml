@@ -180,8 +180,7 @@ let built_in_decls =
           let _ = var_dat.v_init <- true 
           in true
       in
-      let x = init_check_helper e_in in 
-      e_in
+      ignore(init_check_helper e_in); e_in
 
 
     in
@@ -221,7 +220,7 @@ let built_in_decls =
                   boolean casting
 
             *)
-            | Xirtam -> make_err("Xirtam Literals are only allowed in matrices!")
+            | Xirtam(_, _) -> make_err("Xirtam Literals are only allowed in matrices!")
             |  _ -> expr (expr_init_check _mat_val)
           )
 
@@ -248,7 +247,7 @@ let built_in_decls =
         (* print_endline ("("^(string_of_int _rows) ^", " ^(string_of_int _cols)^")"); *)
         (*map expr to each of the matrix elements*)
           (
-            Xirtam, 
+            Xirtam(float_of_int _rows, float_of_int _cols), 
             SXirtamLit (check_stagger _cols_check l, _rows, _cols)
           )
 
