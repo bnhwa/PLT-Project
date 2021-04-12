@@ -18,6 +18,8 @@ module StringMap = Map.Make(String)
 (* translate : Sast.program -> Llvm.module *)
 let translate (globals, functions) =
     let context    = L.global_context () in
+    let llmem = L.MemoryBuffer.of_file "matrix.bc" in
+    let llm = Llvm_bitreader.parse_bitcode context llmem in
 
     let the_module = L.create_module context "xirtam" in
 
@@ -27,10 +29,13 @@ let translate (globals, functions) =
     and float_t    = L.double_type context
     and i32_t      = L.i32_type    context
     and i8_t       = L.i8_type     context
-    and array_t    = L.array_type
     in 
     let char_point_t = L.pointer_type i8_t
-    and void_t     = L.void_type   context in
+    and void_t     = L.void_type   context
+    and xirtam_t     = L.pointer_type (match L.type_by_name llm "struct.matrix" with
+      None -> raise (Failure "Missing implementation for struct Matrix")
+    | Some t -> t)
+     in
  
     let ltype_of_typ = function 
         A.Num  -> float_t
@@ -38,10 +43,7 @@ let translate (globals, functions) =
     |   A.Void -> void_t
     |   A.String -> char_point_t
     |   A.Int    -> i32_t
-    |   A.Xirtam(r, c) ->
-            let rows = int_of_float r in
-            let cols = int_of_float c in
-            array_t (array_t float_t cols) rows
+    |   A.Xirtam -> xirtam_t 
     in 
 
 
@@ -61,6 +63,15 @@ let translate (globals, functions) =
     (*print num aka a float*)
     let printf_func : L.llvalue = 
       L.declare_function "printf" printf_t the_module in
+
+    let printMatrix_t = L.function_type i32_t [| xirtam_t |] in
+    let printMatrix_f = L.declare_function "display" printMatrix_t the_module in
+    let matrix_init_t = L.function_type xirtam_t [|i32_t ; i32_t|] in
+    let matrix_init_f = L.declare_function "initMatrix_CG" matrix_init_t the_module in
+    let store_matrix_t = L.function_type xirtam_t [|i32_t ; i32_t |] in
+    let store_matrix_f = L.declare_function "storeVal" store_matrix_t the_module in
+
+
 
     (* Define each function (arguments and return type) so we can 
         call it even before we've created its body *)
@@ -125,6 +136,17 @@ let translate (globals, functions) =
 	    | SNumLit l  -> L.const_float float_t l
       | SStrLit s ->  L.build_global_stringptr s "tmp" builder
       | SId id -> L.build_load (lookup id) id builder
+      | SXirtamLit (contents, rows, cols) ->
+              let rec expr_list = function
+                [] -> []
+                | hd::tl -> expr builder hd::expr_list tl
+              in
+              let contents' = expr_list contents
+              in
+              let m = L.build_call matrix_init_f [| L.const_int i32_t cols; L.const_int i32_t rows |] "matrix_init" builder
+              in
+              ignore(List.map (fun v -> L.build_call store_matrix_f [| m ; v |] "store_val" builder) contents'); m
+
       | SUnop(op, ((t, _) as e)) ->
           let e' = expr builder e in 
           (match op with
@@ -188,6 +210,8 @@ let translate (globals, functions) =
       | SCall ("printn", [e]) -> 
 	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
 	    "printf" builder
+      | SCall ("printm", [e]) ->
+        L.build_call printMatrix_f [| (expr builder e) |] "printm" builder
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in
