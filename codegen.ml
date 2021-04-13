@@ -68,7 +68,7 @@ let translate (globals, functions) =
     let printMatrix_f = L.declare_function "display" printMatrix_t the_module in
     let matrix_init_t = L.function_type xirtam_t [|i32_t ; i32_t|] in
     let matrix_init_f = L.declare_function "initMatrix_CG" matrix_init_t the_module in
-    let store_matrix_t = L.function_type xirtam_t [|i32_t ; i32_t |] in
+    let store_matrix_t = L.function_type xirtam_t [|xirtam_t ; float_t |] in
     let store_matrix_f = L.declare_function "storeVal" store_matrix_t the_module in
 
 
