@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
-static void die(const char *message)
-{
-    perror(message);
-    exit(1);
-}
+// static void die(const char *message)
+// {
+//     perror(message);
+//     exit(1);
+// }
 
 struct matrix {
   int num_rows;
@@ -80,39 +80,39 @@ matrix* initMatrix_CG( int num_cols, int num_rows) {
     return initMatrix(NULL, num_cols, num_rows);
 }
 
-matrix* mAdd(matrix* lhs, matrix* rhs) {
-  //check dimensions
-  if (lhs->num_rows != rhs->num_rows || lhs->num_cols != rhs->num_rows) {
-    die("matrix add size mismatch");
-  }
-  int rows = lhs->num_rows;
-  int cols= lhs->num_cols;
-  matrix *result = initMatrix(NULL, rows, cols);
-  for(int i=0; i<rows; i++) {
-    for(int j=0; j<cols; j++) {
-        int sum = lhs->matrixAddr[i][j] + rhs->matrixAddr[i][j];
-        result->matrixAddr[i][j] = sum;
-    }
-  }
+// matrix* mAdd(matrix* lhs, matrix* rhs) {
+//   //check dimensions
+//   if (lhs->num_rows != rhs->num_rows || lhs->num_cols != rhs->num_rows) {
+//     die("matrix add size mismatch");
+//   }
+//   int rows = lhs->num_rows;
+//   int cols= lhs->num_cols;
+//   matrix *result = initMatrix(NULL, rows, cols);
+//   for(int i=0; i<rows; i++) {
+//     for(int j=0; j<cols; j++) {
+//         int sum = lhs->matrixAddr[i][j] + rhs->matrixAddr[i][j];
+//         result->matrixAddr[i][j] = sum;
+//     }
+//   }
 
-  return result;
-}
+//   return result;
+// }
 
 
-void getCofactor(matrix* m, matrix* temp, int p, int q, int n) {
-    int i=0, j=0;
-    for(int row=0; row<n; row++) {
-        for(int col=0; col<n; col++) {
-            if(row != p && col != q) {
-                temp->matrixAddr[i][j++] = m->matrixAddr[row][col];
-                if(j == n-1) {
-                    j=0;
-                    i++;
-                }
-            }
-        }
-    }
-}
+// void getCofactor(matrix* m, matrix* temp, int p, int q, int n) {
+//     int i=0, j=0;
+//     for(int row=0; row<n; row++) {
+//         for(int col=0; col<n; col++) {
+//             if(row != p && col != q) {
+//                 temp->matrixAddr[i][j++] = m->matrixAddr[row][col];
+//                 if(j == n-1) {
+//                     j=0;
+//                     i++;
+//                 }
+//             }
+//         }
+//     }
+// }
 
 
 // int determinant(matrix* input, int n) {
@@ -271,7 +271,7 @@ int main(int argc,char** argv) {
   //run tests of each function
   //initMatrix and display of empty matrix
   matrix *null_matrix=initMatrix(NULL, 2, 2);
-  printf("NULL MATRIX: \n");
+  // printf("NULL MATRIX: \n");
   display(null_matrix);
 
   
@@ -281,7 +281,7 @@ int main(int argc,char** argv) {
   double vals1[] = {3, 8, 4, 6};
   double *list1 = vals1;
   matrix *m = initMatrix(list1, 2, 2);
-  printf("2x2 MATRIX: \n");
+  // printf("2x2 MATRIX: \n");
   display(m);
 
   // //TODO test codegen builder
