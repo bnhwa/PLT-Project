@@ -6,6 +6,7 @@
 // {
 //     perror(message);
 //     exit(1);
+
 // }
 
 struct matrix {
@@ -21,6 +22,7 @@ int debug = 0;
 
 
 matrix* storeVal(matrix* target, double value) {
+
     int position = target->buildPosition;
     int curr_row = position / target->num_cols;
     int curr_col = position % target->num_cols;
@@ -284,12 +286,12 @@ int main(int argc,char** argv) {
   // printf("2x2 MATRIX: \n");
   display(m);
 
-  // //TODO test codegen builder
-  // for( int i = 0; i < 4; i++) {
-  //     m = storeVal(m, 5);
-  //     printf("Stroring 5: \n");
-  //     display(m);
-  // }
+  //TODO test codegen builder
+  for( int i = 0; i < 4; i++) {
+      m = storeVal(m, 5);
+      printf("Stroring 5: \n");
+      display(m);
+  }
   
   
   // //add 2 of the same matrix
@@ -311,17 +313,17 @@ int main(int argc,char** argv) {
   // printf("The determinant is %d\n", determinant(m, 2));
   
   // //determinant of 3x3 matrix
-  // double vals2[] = {6, 1, 1, 4, -2, 5, 2, 8, 7};
-  // double *list2 = vals2;
+  // int vals2[] = {6, 1, 1, 4, -2, 5, 2, 8, 7};
+  // int *list2 = vals2;
   // matrix *n = initMatrix(list2, 3, 3);
   // printf("3x3 MATRIX: \n");
   // display(n);
   // printf("The determinant is %d\n", determinant(n, 3));
   
   // //dot product tests
-  // double values_1[4] = {1,2,3,4};
+  // int values_1[4] = {1,2,3,4};
   // matrix* m1 = initMatrix(&values_1[0], 2, 2);
-  // double values_2[4] = {5,6,7,8};
+  // int values_2[4] = {5,6,7,8};
   // matrix* m2 = initMatrix(&values_2[0], 2, 2);
 
   // printf("The dot product of matrices 1 and 2 is %d\n", dotProduct(m1,m2));
