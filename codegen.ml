@@ -5,7 +5,7 @@
     3. There are two SBinops in the original MicroC. Did I copy the right one?
     4. Printf definition needs revision
     5. Find a way to deal with the llargs and result having the optional 3rd parameter lines 156-161,
-     test first, and if it doesnt work, maybe use an ignore?
+     test first, and if it doesnt work, maybe use an ignore?  
  *)
 
 module L = Llvm
