@@ -86,15 +86,16 @@ matrix* mAdd(matrix* lhs, matrix* rhs) {
   //check dimensions
   if (lhs->num_rows != rhs->num_rows || lhs->num_cols != rhs->num_cols) {
     perror("Addition size mismatch.");
+    perror("Add");
     exit(1);
   }
   int rows = lhs->num_rows;
   int cols= lhs->num_cols;
-  matrix *result = initMatrix(NULL, rows, cols);
-  for(int i=0; i<rows; i++) {
-    for(int j=0; j<cols; j++) {
-        int sum = lhs->matrixAddr[i][j] + rhs->matrixAddr[i][j];
-        result->matrixAddr[i][j] = sum;
+  matrix *result = initMatrix(NULL, cols, rows);
+  for(int i=0; i < rows; i++) {
+    for(int j=0; j < cols; j++) {
+        double sum = lhs->matrixAddr[i][j] + rhs->matrixAddr[i][j];
+       result->matrixAddr[i][j] = sum;
     }
   }
 
