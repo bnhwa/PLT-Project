@@ -1,0 +1,43 @@
+# Based on 20.04 LTS
+FROM ubuntu:focal
+
+RUN apt-get -yq update && \
+    apt-get -y upgrade && \
+    apt-get -yq --no-install-suggests --no-install-recommends install \
+    ocaml \
+    menhir \
+    llvm-10.0 \
+    llvm-10.0-dev \
+    m4 \
+    git \
+    aspcud \
+    ca-certificates \
+    python2.7 \
+    pkg-config \
+    cmake \
+    opam
+
+RUN ln -s /usr/bin/lli-10.0 /usr/bin/lli
+RUN ln -s /usr/bin/llc-10.0 /usr/bin/llc
+
+RUN opam init
+RUN opam install \
+    llvm.10.0.0 \
+    ocamlfind
+
+RUN apt-get update && apt-get install -y \
+    xz-utils \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -SL https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz \
+    | tar -xJC . && \
+    mv clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04 clang_10.0.0 && \
+    echo 'export PATH=/clang_10.0.0/bin:$PATH' >> ~/.bashrc && \
+    echo 'export LD_LIBRARY_PATH=/clang_10.0.0/lib:$LD_LIBRARY_PATH' >> ~/.bashrc
+
+WORKDIR /root
+
+ENTRYPOINT ["opam", "config", "exec", "--"]
+
+CMD ["bash"]
