@@ -1,11 +1,10 @@
-
 (* TODO: 
     1. Deal with strings overall.
     2. Examine line 68 - 116.
     3. There are two SBinops in the original MicroC. Did I copy the right one?
     4. Printf definition needs revision
     5. Find a way to deal with the llargs and result having the optional 3rd parameter lines 156-161,
-     test first, and if it doesnt work, maybe use an ignore?  
+     test first, and if it doesnt work, maybe use an ignore?
  *)
 
 module L = Llvm
@@ -18,6 +17,8 @@ module StringMap = Map.Make(String)
 (* translate : Sast.program -> Llvm.module *)
 let translate (globals, functions) =
     let context    = L.global_context () in
+    let llmem = L.MemoryBuffer.of_file "matrix.bc" in
+    let llm = Llvm_bitreader.parse_bitcode context llmem in
 
     let the_module = L.create_module context "xirtam" in
 
@@ -27,10 +28,13 @@ let translate (globals, functions) =
     and float_t    = L.double_type context
     and i32_t      = L.i32_type    context
     and i8_t       = L.i8_type     context
-    and array_t    = L.array_type
     in 
     let char_point_t = L.pointer_type i8_t
-    and void_t     = L.void_type   context in
+    and void_t     = L.void_type   context
+    and xirtam_t     = L.pointer_type (match L.type_by_name llm "struct.matrix" with
+      None -> raise (Failure "Missing implementation for struct Matrix")
+    | Some t -> t)
+     in
  
     let ltype_of_typ = function 
         A.Num  -> float_t
@@ -38,10 +42,7 @@ let translate (globals, functions) =
     |   A.Void -> void_t
     |   A.String -> char_point_t
     |   A.Int    -> i32_t
-    |   A.Xirtam(r, c) ->
-            let rows = int_of_float r in
-            let cols = int_of_float c in
-            array_t (array_t float_t cols) rows
+    |   A.Xirtam -> xirtam_t 
     in 
 
 
@@ -61,6 +62,19 @@ let translate (globals, functions) =
     (*print num aka a float*)
     let printf_func : L.llvalue = 
       L.declare_function "printf" printf_t the_module in
+
+    let printMatrix_t = L.function_type i32_t [| xirtam_t |] in
+    let printMatrix_f = L.declare_function "display" printMatrix_t the_module in
+    let matrix_init_t = L.function_type xirtam_t [|i32_t ; i32_t|] in
+    let matrix_init_f = L.declare_function "initMatrix_CG" matrix_init_t the_module in
+    let store_matrix_t = L.function_type xirtam_t [|xirtam_t ; float_t |] in
+    let store_matrix_f = L.declare_function "storeVal" store_matrix_t the_module in
+
+    let mult_matrix_t = L.function_type xirtam_t [|xirtam_t; xirtam_t|] in
+    let mult_matrix_f = L.declare_function "matrixMult" mult_matrix_t the_module in
+    let add_matrix_t = L.function_type xirtam_t [|xirtam_t; xirtam_t|] in
+    let add_matrix_f = L.declare_function "mAdd" add_matrix_t the_module in
+
 
     (* Define each function (arguments and return type) so we can 
         call it even before we've created its body *)
@@ -87,15 +101,15 @@ let translate (globals, functions) =
     let local_vars =
       let add_formal m (t, n) p = 
         L.set_value_name n p;
-	let local = L.build_alloca (ltype_of_typ t) n builder in
+  let local = L.build_alloca (ltype_of_typ t) n builder in
         ignore (L.build_store p local builder);
-	StringMap.add n local m 
+  StringMap.add n local m 
 
       (* Allocate space for any locally declared variables and add the
        * resulting registers to our map *)
       and add_local m (t, n) =
-	let local_var = L.build_alloca (ltype_of_typ t) n builder
-	in StringMap.add n local_var m 
+  let local_var = L.build_alloca (ltype_of_typ t) n builder
+  in StringMap.add n local_var m 
       in
       (*
       we should reshape these to get rid of the optional 3rd value that we don't care about in the argument list
@@ -122,14 +136,25 @@ let translate (globals, functions) =
         (* Construct code for an expression; return its value *)
     let rec expr builder ((_, e) : sexpr) = match e with
      SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
-	    | SNumLit l  -> L.const_float float_t l
+      | SNumLit l  -> L.const_float float_t l
       | SStrLit s ->  L.build_global_stringptr s "tmp" builder
       | SId id -> L.build_load (lookup id) id builder
+      | SXirtamLit (contents, rows, cols) ->
+              let rec expr_list = function
+                [] -> []
+                | hd::tl -> expr builder hd::expr_list tl
+              in
+              let contents' = expr_list contents
+              in
+              let m = L.build_call matrix_init_f [| L.const_int i32_t cols; L.const_int i32_t rows |] "matrix_init" builder
+              in
+              ignore(List.map (fun v -> L.build_call store_matrix_f [| m ; v |] "store_val" builder) contents'); m
+
       | SUnop(op, ((t, _) as e)) ->
           let e' = expr builder e in 
           (match op with
-	          A.Neg when t = A.Num -> L.build_fneg 
-	        | A.Neg                  -> L.build_neg
+            A.Neg when t = A.Num -> L.build_fneg 
+          | A.Neg                  -> L.build_neg
           | A.Not                  -> L.build_not) e' "tmp" builder
       (*In fashion of microc have typechecking for *)
       | SEmpty -> L.const_int i32_t 0
@@ -180,18 +205,24 @@ let translate (globals, functions) =
         | A.Leq     -> L.build_icmp L.Icmp.Sle
         | A.Great -> L.build_icmp L.Icmp.Sgt
         | A.Geq     -> L.build_icmp L.Icmp.Sge
-        	  ) e1' e2' "tmp" builder
+            ) e1' e2' "tmp" builder
         *)
 
       | SAssign (s, e) -> let e' = expr builder e in
                           ignore(L.build_store e' (lookup s) builder); e'
       | SCall ("printn", [e]) -> 
-	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
-	    "printf" builder
+    L.build_call printf_func [| float_format_str ; (expr builder e) |]
+      "printf" builder
+      | SCall ("printm", [e]) ->
+        L.build_call printMatrix_f [| (expr builder e) |] "printm" builder
+      | SCall ("matmult", [e1; e2]) ->
+        L.build_call mult_matrix_f [| (expr builder e1); (expr builder e2) |] "matmult" builder
+      | SCall ("matadd", [e1; e2]) ->
+        L.build_call add_matrix_f [| (expr builder e1); (expr builder e2) |] "matadd" builder
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in
-	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in
-	 let result = (match fdecl.styp with 
+   let llargs = List.rev (List.map (expr builder) (List.rev args)) in
+   let result = (match fdecl.styp with 
                         A.Void -> ""
                       | _ -> f ^ "_result") in
          L.build_call fdef (Array.of_list llargs) result builder
@@ -204,7 +235,7 @@ let translate (globals, functions) =
        e.g., to handle the "fall off the end of the function" case. *)
     let add_terminal builder instr =
       match L.block_terminator (L.insertion_block builder) with
-	   Some _ -> ()
+     Some _ -> ()
       | None -> ignore (instr builder) in
 (* statements and control flow*)
  let rec stmt builder = function
@@ -266,5 +297,3 @@ let translate (globals, functions) =
 
   List.iter build_function_body functions;
   the_module
-
-

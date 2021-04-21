@@ -90,7 +90,7 @@ typ:
   	| STRING  {String}
   	| VOID    {Void}
     /*matrix*/
-    | XIRTAM SQUARE_L NUMLIT SQUARE_R SQUARE_L NUMLIT SQUARE_R {Xirtam($3, $6)}
+    | XIRTAM {Xirtam}/*SQUARE_L NUMLIT SQUARE_R SQUARE_L NUMLIT SQUARE_R {Xirtam($3, $6)}*/
 
 stmt_list:
 	{[]}

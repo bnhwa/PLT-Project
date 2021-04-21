@@ -58,7 +58,9 @@ let built_in_decls =
       } map_in
     in List.fold_left add_bind StringMap.empty [
       (*build in functions:  _name, [_argument_types], return types*)
-     ("printn", [Num], Void);
+      ("printn", [Num], Void);
+      ("matmult", [Xirtam; Xirtam], Xirtam);
+      ("matadd", [Xirtam; Xirtam], Xirtam);
      ]
   in
 
@@ -220,7 +222,7 @@ let built_in_decls =
                   boolean casting
 
             *)
-            | Xirtam(_, _) -> make_err("Xirtam Literals are only allowed in matrices!")
+            | Xirtam -> make_err("Xirtam Literals are only allowed in matrices!")
             |  _ -> expr (expr_init_check _mat_val)
           )
 
@@ -246,8 +248,7 @@ let built_in_decls =
         (* debug print *)
         (* print_endline ("("^(string_of_int _rows) ^", " ^(string_of_int _cols)^")"); *)
         (*map expr to each of the matrix elements*)
-          (
-            Xirtam(float_of_int _rows, float_of_int _cols), 
+          (Xirtam,
             SXirtamLit (check_stagger _cols_check l, _rows, _cols)
           )
 
