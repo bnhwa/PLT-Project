@@ -198,7 +198,7 @@ matrix* matrixMult(matrix* lhs, matrix* rhs) {
   }
   int rows = lhs->num_rows;
   int cols= lhs->num_cols;
-  matrix *result = initMatrix(NULL, rows, cols);
+  matrix *result = initMatrix(NULL, cols, rows);
   for(int i=0; i<rows; i++) {
     for(int j=0; j<cols; j++) {
         double product = lhs->matrixAddr[i][j] * rhs->matrixAddr[i][j];
@@ -213,7 +213,7 @@ matrix* matrixMult(matrix* lhs, matrix* rhs) {
 // matrix* timesScalar(matrix* input, int scalar) {
 //   int rows = input->num_rows;
 //   int cols= input->num_cols;
-//   matrix *result = initMatrix(NULL, rows, cols);
+//   matrix *result = initMatrix(NULL, cols, rows);
 //   for(int i=0; i<rows; i++) {
 //     for(int j=0; j<cols; j++) {
 //         int product = input->matrixAddr[i][j] * scalar;
