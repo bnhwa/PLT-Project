@@ -1,0 +1,3 @@
+num main(){
+	Xirtam [2][2] matrix1 = new Matrix([[1,2],[1,2]]);
+}
