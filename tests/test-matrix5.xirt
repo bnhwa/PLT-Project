@@ -1,4 +1,4 @@
 num main(){
-	Xirtam [3][3] matrix = new ();
+	Xirtam [3][3] matrix;
 	matrix = [ [1+5, 2, 3], [4, 5, 6], [7, 8, 9]];
 }

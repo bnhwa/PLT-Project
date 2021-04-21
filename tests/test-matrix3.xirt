@@ -1,5 +1,5 @@
 num foo(){
-	Xirtam [1][1] matrix1 = new Matrix([[1]]);
+	Xirtam [1][1] matrix1;
 }
 
 num main(){
