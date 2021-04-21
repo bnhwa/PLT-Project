@@ -1,4 +1,3 @@
-
 /* 
 XIRTAM Parser alternate version
 Citation: microC processor code
@@ -90,7 +89,7 @@ typ:
   	| STRING  {String}
   	| VOID    {Void}
     /*matrix*/
-    | XIRTAM SQUARE_L NUMLIT SQUARE_R SQUARE_L NUMLIT SQUARE_R {Xirtam($3, $6)}
+    | XIRTAM {Xirtam}/*SQUARE_L NUMLIT SQUARE_R SQUARE_L NUMLIT SQUARE_R {Xirtam($3, $6)}*/
 
 stmt_list:
 	{[]}
@@ -150,6 +149,3 @@ expr:
 mat:
   SQUARE_L        args_list   SQUARE_R          {[XirtamLit(List.rev $2)]}    /*[[1,2,3]]*/
   | SQUARE_L      args_list SQUARE_R COMMA mat  {XirtamLit(List.rev $2)::$5}/*[[1,2,3],          [1,2,3],MAT    ]*/
-
-
-

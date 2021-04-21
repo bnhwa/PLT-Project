@@ -7,7 +7,6 @@ module StringMap = Map.Make(String)
 
 (* Semantic checking of the AST. Returns an SAST if successful,
    throws an exception if something is wrong.
-
    Check each global variable, then check each function *)
 
 (* global semant functions*)
@@ -58,7 +57,10 @@ let built_in_decls =
       } map_in
     in List.fold_left add_bind StringMap.empty [
       (*build in functions:  _name, [_argument_types], return types*)
-     ("printn", [Num], Void);
+      ("printn", [Num], Void);
+      ("printm", [Xirtam], Void);
+      ("matmult", [Xirtam; Xirtam], Xirtam);
+      ("matadd", [Xirtam; Xirtam], Xirtam);
      ]
   in
 
@@ -195,7 +197,6 @@ let built_in_decls =
         (*
         if matrix is at outer level, then check each to make sure they r not staggered
         Also we want to map expr to each value in the matrix
-
                           in c 
                             matrix**, int row, int col
         [1,2,3],[1,2,3]->   [1,2,3,1,2,3], 2, 3
@@ -215,12 +216,10 @@ let built_in_decls =
               this also prevents unwanted self referencing of undeclared matrices:
               xirtam mat;
               mat = [[1,2,3],[1,2,true]];
-
             TODO: see if variables when put into matrix literals copy by value 
                   boolean casting
-
             *)
-            | Xirtam(_, _) -> make_err("Xirtam Literals are only allowed in matrices!")
+            | Xirtam -> make_err("Xirtam Literals are only allowed in matrices!")
             |  _ -> expr (expr_init_check _mat_val)
           )
 
@@ -246,8 +245,7 @@ let built_in_decls =
         (* debug print *)
         (* print_endline ("("^(string_of_int _rows) ^", " ^(string_of_int _cols)^")"); *)
         (*map expr to each of the matrix elements*)
-          (
-            Xirtam(float_of_int _rows, float_of_int _cols), 
+          (Xirtam,
             SXirtamLit (check_stagger _cols_check l, _rows, _cols)
           )
 
