@@ -1,5 +1,4 @@
 (*bnh2128
-
 citation: microc compiler shown in class
 *)
 
@@ -15,6 +14,7 @@ type typ =
   | Void
   | Int
   | Xirtam
+  (* | Xirtam of float * float *)
  
 type expr =
 	(*Primitives and expressions*)
@@ -112,11 +112,11 @@ let string_of_typ = function
   | String -> "string"
   | Void -> "void"
   | Int -> "int" 
-  | Xirtam -> "xirtam" 
+  | Xirtam -> "xirtam"
+  (* | Xirtam(r, c) -> "xirtam (" ^ string_of_float r ^ ", " ^ string_of_float c ^ ")" *)
   (*only for main function, user is not allowed to define this, this is done bc llvm requires entry point to be int*)
   (* maybe have matrix of different types??? errorcheck type is rights*) 
   (*  sidelining this for now
-
 let string_of_var_decl_list (n, e) =
   let suffix ex =
     if ex = Empty then ""

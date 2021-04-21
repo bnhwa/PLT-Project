@@ -84,7 +84,7 @@ matrix* initMatrix_CG( int num_cols, int num_rows) {
 
 matrix* mAdd(matrix* lhs, matrix* rhs) {
   //check dimensions
-  if (lhs->num_rows != rhs->num_rows || lhs->num_cols != rhs->num_rows) {
+  if (lhs->num_rows != rhs->num_rows || lhs->num_cols != rhs->num_cols) {
     perror("Addition size mismatch.");
     exit(1);
   }

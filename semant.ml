@@ -7,7 +7,6 @@ module StringMap = Map.Make(String)
 
 (* Semantic checking of the AST. Returns an SAST if successful,
    throws an exception if something is wrong.
-
    Check each global variable, then check each function *)
 
 (* global semant functions*)
@@ -58,8 +57,8 @@ let built_in_decls =
       } map_in
     in List.fold_left add_bind StringMap.empty [
       (*build in functions:  _name, [_argument_types], return types*)
-     ("printn", [Num], Void);
-     ("printm", [Xirtam], Void);
+      ("printn", [Num], Void);
+      ("printm", [Xirtam], Void);
       ("matmult", [Xirtam; Xirtam], Xirtam);
       ("matadd", [Xirtam; Xirtam], Xirtam);
      ]
@@ -184,17 +183,7 @@ let built_in_decls =
           in true
       in
       ignore(init_check_helper e_in); e_in
-    in 
 
-    let rec get_dims = function
-        XirtamLit l -> List.length l :: get_dims (List.hd l)
-      | _ -> []
-    in
-    (* Raise an exception if dimensions of Matrix are not balanced *)
-    let rec flatten d = function
-      [] -> []
-      | XirtamLit hd::tl -> if List.length hd != List.hd d then raise (Failure("Invalid dims")) else List.append (flatten (List.tl d) hd) (flatten d tl)
-      | a -> a
 
     in
     (* Return a semantically-checked expression, i.e., with a type *)
@@ -203,20 +192,62 @@ let built_in_decls =
       | BoolLit l   -> (Bool, SBoolLit l)
       | StrLit l -> (String, SStrLit l)
       | Empty       -> (Void, SEmpty)
-      | XirtamLit l -> 
-          let d = get_dims (XirtamLit l) in
-          let rec all_match = function
-            [] -> ignore()
-            | hd::tl -> if tl != [] then
-                          let (t1, _) = expr hd in let (t2, _) = expr (List.hd tl) in
-                          if t1 = t2 then all_match tl else raise (Failure ("Data Mismatch in MatrixLit: " ^ string_of_typ t1 ^ " does not match " ^ string_of_typ t2))
-                        else ignore()
-          in
-          all_match l;
-          if List.length d > 2 then (Xirtam, SXirtamLit ((List.map expr l), List.hd d, List.hd (List.tl d)))
-          else if List.length d = 2 then (Xirtam, SXirtamLit ( (List.map expr (flatten (List.tl d) l)), List.hd d, List.hd (List.tl d)))
-          else if List.length d = 1 then (Xirtam, SXirtamLit ( (List.map expr (flatten (List.tl d) l)), List.hd d, 1))
-          else (Xirtam, SXirtamLit ( (List.map expr l), 0,0))
+      | XirtamLit l ->
+
+        (*
+        if matrix is at outer level, then check each to make sure they r not staggered
+        Also we want to map expr to each value in the matrix
+                          in c 
+                            matrix**, int row, int col
+        [1,2,3],[1,2,3]->   [1,2,3,1,2,3], 2, 3
+        *)
+        (*get list of row lengths in matrix*)
+        let rec mat_length_list _mat_in =  match _mat_in with
+          XirtamLit x -> List.length x :: mat_length_list (List.hd x)
+          | _ -> [] 
+        in
+        (*given list of matrix elements, check type and return error if not*)
+        let check_mat_val_type _mat_val= 
+          let (_typ,_e) = expr _mat_val in
+          (match _typ with
+            String -> make_err("no strings allowed in matrices!")
+            | Bool -> make_err("no booleans allowed in matrices!")
+            (* for now, no matrices except literals allowed within each other
+              this also prevents unwanted self referencing of undeclared matrices:
+              xirtam mat;
+              mat = [[1,2,3],[1,2,true]];
+            TODO: see if variables when put into matrix literals copy by value 
+                  boolean casting
+            *)
+            | Xirtam -> make_err("Xirtam Literals are only allowed in matrices!")
+            |  _ -> expr (expr_init_check _mat_val)
+          )
+
+          
+        in
+        (*turn matrix into flattened single array while checking fo staggered matrix, i.e., all row must have same col length*)
+        let rec check_stagger test_col = function
+          XirtamLit hd::tl ->
+            let row_len   = List.hd test_col in (*same column we compare it to*)
+            let row_check = List.length hd in (*row we need to check*)
+            if row_len != row_check then
+              make_err ("No staggered Matrices allowed, rows must be same size")
+            else 
+              (check_stagger (List.tl test_col) hd) @ (check_stagger test_col tl)
+          (*for individual row, which is list, map expr to each matrix element*)
+          | _mat_row -> List.map check_mat_val_type _mat_row      
+        in
+        (*get list containing length of matrix rows *)
+        let mat_rc = mat_length_list (XirtamLit l) in
+        let _cols_check = List.tl mat_rc in (*get the rest of the cols*)
+        let _rows = List.hd mat_rc in (*rows*)
+        let _cols = List.hd _cols_check in (*cols*)
+        (* debug print *)
+        (* print_endline ("("^(string_of_int _rows) ^", " ^(string_of_int _cols)^")"); *)
+        (*map expr to each of the matrix elements*)
+          (Xirtam,
+            SXirtamLit (check_stagger _cols_check l, _rows, _cols)
+          )
 
 
       | Id s       ->
