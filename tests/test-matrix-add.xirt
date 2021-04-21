@@ -1,0 +1,7 @@
+num main() {
+    xirtam m;
+    xirtam p;
+    m = [[1, 2], [3, 4], [5, 6]];
+    p = [[-1, -1], [5, 3.1], [-2, -1.11365]];
+    printm(matadd(m, p));
+}

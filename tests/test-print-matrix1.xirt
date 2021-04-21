@@ -1,0 +1,5 @@
+num main() {
+    xirtam m;
+    m = [[1, 2], [3,4], [5,6]];
+    printm(m);
+}

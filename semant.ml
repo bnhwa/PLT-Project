@@ -60,6 +60,8 @@ let built_in_decls =
       (*build in functions:  _name, [_argument_types], return types*)
      ("printn", [Num], Void);
      ("printm", [Xirtam], Void);
+      ("matmult", [Xirtam; Xirtam], Xirtam);
+      ("matadd", [Xirtam; Xirtam], Xirtam);
      ]
   in
 

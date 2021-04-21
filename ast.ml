@@ -14,7 +14,7 @@ type typ =
   | String
   | Void
   | Int
-  | Xirtam 
+  | Xirtam
  
 type expr =
 	(*Primitives and expressions*)

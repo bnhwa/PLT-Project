@@ -71,6 +71,10 @@ let translate (globals, functions) =
     let store_matrix_t = L.function_type xirtam_t [|xirtam_t ; float_t |] in
     let store_matrix_f = L.declare_function "storeVal" store_matrix_t the_module in
 
+    let mult_matrix_t = L.function_type xirtam_t [|xirtam_t; xirtam_t|] in
+    let mult_matrix_f = L.declare_function "matrixMult" mult_matrix_t the_module in
+    let add_matrix_t = L.function_type xirtam_t [|xirtam_t; xirtam_t|] in
+    let add_matrix_f = L.declare_function "mAdd" add_matrix_t the_module in
 
 
     (* Define each function (arguments and return type) so we can 
@@ -212,6 +216,10 @@ let translate (globals, functions) =
 	    "printf" builder
       | SCall ("printm", [e]) ->
         L.build_call printMatrix_f [| (expr builder e) |] "printm" builder
+      | SCall ("matmult", [e1; e2]) ->
+        L.build_call mult_matrix_f [| (expr builder e1); (expr builder e2) |] "matmult" builder
+      | SCall ("matadd", [e1; e2]) ->
+        L.build_call add_matrix_f [| (expr builder e1); (expr builder e2) |] "matadd" builder
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in

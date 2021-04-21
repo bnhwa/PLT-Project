@@ -2,12 +2,12 @@
 #include <stdio.h>
 #include <string.h>
 
-// static void die(const char *message)
-// {
-//     perror(message);
-//     exit(1);
+static void die(const char *message)
+{
+    perror(message);
+    exit(1);
 
-// }
+}
 
 struct matrix {
   int num_rows;
@@ -82,23 +82,24 @@ matrix* initMatrix_CG( int num_cols, int num_rows) {
     return initMatrix(NULL, num_cols, num_rows);
 }
 
-// matrix* mAdd(matrix* lhs, matrix* rhs) {
-//   //check dimensions
-//   if (lhs->num_rows != rhs->num_rows || lhs->num_cols != rhs->num_rows) {
-//     die("matrix add size mismatch");
-//   }
-//   int rows = lhs->num_rows;
-//   int cols= lhs->num_cols;
-//   matrix *result = initMatrix(NULL, rows, cols);
-//   for(int i=0; i<rows; i++) {
-//     for(int j=0; j<cols; j++) {
-//         int sum = lhs->matrixAddr[i][j] + rhs->matrixAddr[i][j];
-//         result->matrixAddr[i][j] = sum;
-//     }
-//   }
+matrix* mAdd(matrix* lhs, matrix* rhs) {
+  //check dimensions
+  if (lhs->num_rows != rhs->num_rows || lhs->num_cols != rhs->num_rows) {
+    perror("Addition size mismatch.");
+    exit(1);
+  }
+  int rows = lhs->num_rows;
+  int cols= lhs->num_cols;
+  matrix *result = initMatrix(NULL, rows, cols);
+  for(int i=0; i<rows; i++) {
+    for(int j=0; j<cols; j++) {
+        int sum = lhs->matrixAddr[i][j] + rhs->matrixAddr[i][j];
+        result->matrixAddr[i][j] = sum;
+    }
+  }
 
-//   return result;
-// }
+  return result;
+}
 
 
 // void getCofactor(matrix* m, matrix* temp, int p, int q, int n) {
@@ -189,23 +190,23 @@ matrix* initMatrix_CG( int num_cols, int num_rows) {
 // }
 
 
-// matrix* matrixMult(matrix* lhs, matrix* rhs) {
-//   //check dimensions
-//   if (lhs->num_rows != rhs->num_rows || lhs->num_cols != rhs->num_rows) {
-//     die("matrix add size mismatch");
-//   }
-//   int rows = lhs->num_rows;
-//   int cols= lhs->num_cols;
-//   matrix *result = initMatrix(NULL, rows, cols);
-//   for(int i=0; i<rows; i++) {
-//     for(int j=0; j<cols; j++) {
-//         int product = lhs->matrixAddr[i][j] * rhs->matrixAddr[i][j];
-//         result->matrixAddr[i][j] = product;
-//     }
-//   }
+matrix* matrixMult(matrix* lhs, matrix* rhs) {
+  //check dimensions
+  if (lhs->num_rows != rhs->num_rows || lhs->num_cols != rhs->num_rows) {
+    die("matrix add size mismatch");
+  }
+  int rows = lhs->num_rows;
+  int cols= lhs->num_cols;
+  matrix *result = initMatrix(NULL, rows, cols);
+  for(int i=0; i<rows; i++) {
+    for(int j=0; j<cols; j++) {
+        double product = lhs->matrixAddr[i][j] * rhs->matrixAddr[i][j];
+        result->matrixAddr[i][j] = product;
+    }
+  }
 
-//   return result;
-// }
+  return result;
+}
 
 
 // matrix* timesScalar(matrix* input, int scalar) {
@@ -228,7 +229,7 @@ void display(matrix* input) {
     int col = input->num_cols;
     for(int i = 0; i<row; i++) {
         for(int j=0; j<col; j++) {
-            printf(" %f", input->matrixAddr[i][j]);
+            printf(" %.2f", input->matrixAddr[i][j]);
         }
         printf("\n");
     }
@@ -274,15 +275,15 @@ int main(int argc,char** argv) {
   //initMatrix and display of empty matrix
   matrix *null_matrix=initMatrix(NULL, 2, 2);
   // printf("NULL MATRIX: \n");
-  display(null_matrix);
+  // display(null_matrix);
 
   
 
 
   //initMatrix and display of 2x2 matrix
-  double vals1[] = {3, 8, 4, 6};
+  double vals1[] = {91, 2, 3, 222, 5, 6};
   double *list1 = vals1;
-  matrix *m = initMatrix(list1, 2, 2);
+  matrix *m = initMatrix(list1, 2, 3);
   // printf("2x2 MATRIX: \n");
   display(m);
 
