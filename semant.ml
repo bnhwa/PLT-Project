@@ -61,6 +61,9 @@ let built_in_decls =
       ("printm", [Xirtam], Void);
       ("matmult", [Xirtam; Xirtam], Xirtam);
       ("matadd", [Xirtam; Xirtam], Xirtam);
+      (*get and access*)
+      ("matget",[Xirtam;Num;Num], Num);
+      ("matset",[Xirtam;Num;Num;Num], Void);
      ]
   in
 
@@ -86,15 +89,12 @@ let built_in_decls =
          _ when StringMap.mem n built_in_decls -> make_err built_in_err
        | _ when StringMap.mem n map -> make_err dup_err
        (* add to prevent user from creating functions with same name as built-in functions? *)
-       | _ when n = "printn" (* 
-          || n = "fillMat"
-          || n = "transpose"
-          || n = "getrows"
-          || n = "getcols"
-          || n = "equals"
-          || n = "addMat"
-          || n = "multScalar"
-          || n = "multMat" *)
+       | _ when n = "printn" 
+              || n = "printm"
+              || n = "matmult"
+              || n = "matadd"
+              || n = "matget"
+              || n = "matset"
             -> make_err dup_err  
        | _ ->  StringMap.add n _ret map 
   in
