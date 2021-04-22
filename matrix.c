@@ -246,6 +246,17 @@ printf("\n===========testing list init========\n");
   // 320.00 335.00
   display(result_product);
 
+  printf("\n Shida testing matrix multi on weird cases.\n");
+  double k1[] = {-4, 2, 4, 422, 21, 2, 0.4, 6.2, -3};
+  double k2[] = {1.01, 2, 0.91, 422, 21, -3, 0.4, 6.2, 32.74};
+  matrix *n1 = initMatrix(k1, 3, 3);
+  matrix *n2 = initMatrix(k2, 3, 3);
+  matrix *result_product2 = mAdd(n2, n1);
+  // Should yield
+  // 140.00 146.00
+  // 320.00 335.00
+  display(result_product2);
+
   // //scalar multiplication
   // matrix *result_scalar = timesScalar(m, 3);
   // printf("SCALAR MULTIPLICATION OF ORIGINAL MATRIX BY 3: \n");
