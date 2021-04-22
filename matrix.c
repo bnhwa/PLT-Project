@@ -188,6 +188,9 @@ void display(matrix* input) {
 //
 //======================================================================
 
+// TEMP FUNCS FROM SHIDA'S TESTING
+
+// SHIDA'S TEMP FUNCS END
 
 
 #ifdef BUILD_TEST
@@ -246,7 +249,7 @@ printf("\n===========testing list init========\n");
   // 320.00 335.00
   display(result_product);
 
-  printf("\n Shida testing matrix multi on weird cases.\n");
+  printf("\n Below are Shida testing on weird cases.\n");
   double k1[] = {-4, 2, 4, 422, 21, 2, 0.4, 6.2, -3};
   double k2[] = {1.01, 2, 0.91, 422, 21, -3, 0.4, 6.2, 32.74};
   matrix *n1 = initMatrix(k1, 3, 3);
@@ -256,6 +259,43 @@ printf("\n===========testing list init========\n");
   // 140.00 146.00
   // 320.00 335.00
   display(result_product2);
+
+
+  // double source[] = {0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0};
+  // double dest[] = {0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0};
+  // matrix* d = initMatrix(dest, 5, 6);
+  // matrix* s = initMatrix(source, 5, 6);
+  
+
+  // int cur_r;
+  //   int cur_c;
+  //   double desired_min;
+  //   double desired_min_plus_1;
+
+  //   d = copy_first_row(s, d);
+  //   d = copy_first_col(s, d);
+
+  //   for (cur_r = 1; cur_r < 6; cur_r = cur_r + 1) {
+  //       for (cur_c = 1; cur_c < 5; cur_c = cur_c + 1) {
+            
+  //           if (get(s, cur_r, cur_c) == 1) {
+  //               desired_min = min(get(d, cur_r-1, cur_c), get(d, cur_r, cur_c-1), get(d, cur_r-1, cur_c-1));
+  //               desired_min_plus_1 = desired_min + 1;
+  //               set(d, cur_r, cur_c, desired_min_plus_1);
+
+  //               if (cur_r == 4 && cur_c == 3) {
+  //                 printf("WE ARE HERE \n");
+  //                 printf("%f", desired_min);
+  //               }
+  //           } else {
+  //               set(d, cur_r, cur_c, 0);
+  //           }
+
+
+  //       }
+  //   }
+
+  //   display(d);
 
   // //scalar multiplication
   // matrix *result_scalar = timesScalar(m, 3);
