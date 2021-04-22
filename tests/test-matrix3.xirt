@@ -1,8 +1,0 @@
-num foo(){
-	Xirtam [1][1] matrix1;
-}
-
-num main(){
-	foo();
-}
-

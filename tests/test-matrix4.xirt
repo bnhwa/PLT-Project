@@ -1,4 +1,0 @@
-num main(){
-	Xirtam [2][2] matrix1;
-	matrix1 = [[1,2],[1,2]]
-}
