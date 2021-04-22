@@ -12,14 +12,63 @@ static void die(const char *message)
 struct matrix {
   int num_rows;
   int num_cols;
-  double** matrixAddr; // accessed [row][col]
+  double* matrixAddr; // accessed [row][col]
   int buildPosition;
 };
 typedef struct matrix matrix;
 
 int debug = 0;
 
+double get(struct matrix* m, int r,int c){
+  //set m[r][c]
+  int kill = 0;
+  if (r>((m->num_rows)-1)){
+    perror("row index out of range when setting matrix ");
+    kill = 1;
+  }
+  if (c>((m->num_cols)-1)){
+    perror("col index out of range when setting matrix ");
+    kill = 1;
+  }
+  if(kill==1){
+    die("");
+  }
+  int idx = c + (r * (m->num_cols));
+  return m->matrixAddr[idx];
+}
 
+void set( struct matrix* m,int r,int c,double v){
+  //get
+  int kill = 0;
+  if (r>((m->num_rows)-1)){
+    perror("row index out of range when setting matrix ");
+    kill = 1;
+  }
+  if (c>((m->num_cols)-1)){
+    perror("col index out of range when setting matrix ");
+    kill = 1;
+  }
+  if(kill==1){
+    die("");
+  }
+  int idx = c + (r * (m->num_cols));
+  m->matrixAddr[idx]=v;
+}
+
+double pub_get(struct matrix* m, double r,double c){
+  //public getter
+  //set m[r][c]
+  // int idx = r + (c * (m->num_rows));
+  //cast row and col to int
+  return get(m,(int)r,(int)c);
+}
+
+void pub_set( struct matrix* m,int r,double c,double v){
+  //public setter
+  // int idx = r + (c * (m->num_rows));
+  //cast row and col to int
+  set(m,(int)r,(int)c,v);
+}
 
 matrix* storeVal(matrix* target, double value) {
 
@@ -33,13 +82,15 @@ matrix* storeVal(matrix* target, double value) {
         printf("in col: %d\n", curr_col);
     }
 
-    target->matrixAddr [curr_row][curr_col] = value;
+    target->matrixAddr[position] = value;
     target->buildPosition = target->buildPosition + 1;
     return target;
 }
 
+
+
 matrix* initMatrix(double* listOfValues, int num_cols, int num_rows) {
-  double** matrixValues = malloc(num_rows * sizeof(double*));
+  double* matrixValues = malloc(num_rows * num_cols * sizeof(double*));
 
   if(debug == 1) {
       printf("Building matrix:\n");
@@ -47,25 +98,24 @@ matrix* initMatrix(double* listOfValues, int num_cols, int num_rows) {
       printf("num_cols: %d\n", num_cols);
   }
 
-  //set all values in matrix to NULL if list of values is NULL
+  //set all values in matrix to 0 if list of values is NULL
   if (listOfValues == NULL) {
-    for(int i = 0; i < num_rows; i++) {
-      double* matrix_row = malloc(num_cols * sizeof(double));
-      *(matrixValues + i) = matrix_row;
-      for(int j = 0; j < num_cols; j++) {
-        matrix_row[j] = 0;
+    for(int r = 0; r < num_rows; r++) {
+      for(int c = 0; c < num_cols; c++) {
+        // matrixValues[r + (c * num_rows)]=0;
+        matrixValues[c + (r * num_cols)]=0;
       }
     }
   }
     
   //load values from a list of values
   else {
-    for(int i = 0; i < num_cols; i++) {
-      double* matrix_col = malloc(num_rows * sizeof(double));
-      *(matrixValues + i) = matrix_col;
-      for(int j = 0; j < num_rows; j++) {
-        matrix_col[j] = listOfValues[i*num_rows + j];
-      } 
+    for(int r = 0; r < num_rows; r++) {
+      for(int c = 0; c < num_cols; c++) {
+        // int idx = c + (r * num_cols);
+        int idx = c + (r * num_cols);
+        matrixValues[idx]=listOfValues[idx];
+      }
     }
   }
 
@@ -94,179 +144,45 @@ matrix* mAdd(matrix* lhs, matrix* rhs) {
   matrix *result = initMatrix(NULL, cols, rows);
   for(int i=0; i < rows; i++) {
     for(int j=0; j < cols; j++) {
-        double sum = lhs->matrixAddr[i][j] + rhs->matrixAddr[i][j];
-       result->matrixAddr[i][j] = sum;
+        double sum = get(lhs,i,j)+get(rhs,i,j);
+        set(result,i,j,sum);
     }
   }
 
   return result;
 }
-
-
-// void getCofactor(matrix* m, matrix* temp, int p, int q, int n) {
-//     int i=0, j=0;
-//     for(int row=0; row<n; row++) {
-//         for(int col=0; col<n; col++) {
-//             if(row != p && col != q) {
-//                 temp->matrixAddr[i][j++] = m->matrixAddr[row][col];
-//                 if(j == n-1) {
-//                     j=0;
-//                     i++;
-//                 }
-//             }
-//         }
-//     }
-// }
-
-
-// int determinant(matrix* input, int n) {
-//     int row = input->num_rows;
-//     int col = input->num_cols;
-//     int d = 0;
-
-//     if(row==col) {
-//         //base case: matrix contains single element
-//         if(n == 1) 
-//             return input->matrixAddr[0][0];
-
-//         matrix* temp = initMatrix(NULL, row, col);
-
-//         int sign=1;
-//         for(int f=0; f<n; f++) {
-//             getCofactor(input, temp, 0, f, n);
-//             d += sign * input->matrixAddr[0][f] * determinant(temp, n-1);
-//             sign = -sign;
-//         }
-
-//         return d;
-
-//     }
-//     else {
-//         printf("Your matrix must be square to compute the determinant.\n");
-//         return 0;
-//     }
-
-// }
-
-
-// matrix* dotProduct(matrix* lhs, matrix* rhs) {
-//     //check to make sure matrices are the same size
-//     if (lhs->num_cols != rhs->num_rows) {
-//         die("Matrices are not the same size!");
-//     } 
-//     //once we know that matrices are same size, we can compute result
-//     matrix *result = initMatrix(NULL, rhs->num_cols, lhs->num_rows);
-//     for (int i=0; i < lhs->num_rows; i++)
-//     {
-//         for (int j=0; j < rhs->num_cols; j++)
-//         {
-//             for (int k=0; k < rhs->num_rows; k++)
-//             {
-//                 result->matrixAddr[i][j] += lhs->matrixAddr[i][k] * rhs->matrixAddr[k][j];
-//             }
-//         }
-//     }
-//     return result;
-// }
-
-// matrix* transpose(matrix* input) {
-//     int rows = input->num_cols;
-//     int cols = input->num_rows;
-
-//     int** matrixValues = malloc(cols * sizeof(int*));
-
-//     for (int i = 0; i < rows; i++) {
-//         int* matrix_col = malloc(rows * sizeof(int));
-//         *(matrixValues + i) = matrix_col;
-//         for (int j = 0; j < cols; j++) {
-//             matrix_col[j] = *(*((input->matrixAddr) + j)+i);
-//         }
-//     } 
-
-//     input->num_rows = rows;
-//     input->num_cols = cols;
-//     input->matrixAddr = matrixValues;
-
-//     return input;
-// }
-
-
 matrix* matrixMult(matrix* lhs, matrix* rhs) {
-  //check dimensions
-  if (lhs->num_rows != rhs->num_rows || lhs->num_cols != rhs->num_rows) {
-    die("matrix add size mismatch");
+  //check dimensions//our original code xirtam
+  if (lhs->num_cols != rhs->num_rows) {
+    die("matrix multiplication dimensions mismatch, must have (AxM)*(MxB)");
   }
   int rows = lhs->num_rows;
-  int cols= lhs->num_cols;
+  int cols= rhs->num_cols;//(r1xc1)*(r2xc2)
   matrix *result = initMatrix(NULL, cols, rows);
   for(int i=0; i<rows; i++) {
     for(int j=0; j<cols; j++) {
-        double product = lhs->matrixAddr[i][j] * rhs->matrixAddr[i][j];
-        result->matrixAddr[i][j] = product;
+      for (int k=0; k < rhs->num_rows; k++){
+        set(result,i,j,get(result,i,j)+(get(lhs,i,k)*get(rhs,k,j)));
+      }
     }
   }
-
   return result;
 }
-
-
-// matrix* timesScalar(matrix* input, int scalar) {
-//   int rows = input->num_rows;
-//   int cols= input->num_cols;
-//   matrix *result = initMatrix(NULL, cols, rows);
-//   for(int i=0; i<rows; i++) {
-//     for(int j=0; j<cols; j++) {
-//         int product = input->matrixAddr[i][j] * scalar;
-//         result->matrixAddr[i][j] = product;
-//     }
-//   }
-
-//   return result;
-// }
-
-
 void display(matrix* input) {
     int row = input->num_rows;
     int col = input->num_cols;
     for(int i = 0; i<row; i++) {
         for(int j=0; j<col; j++) {
-            printf(" %.2f", input->matrixAddr[i][j]);
+          printf(" %.2f", get(input,i,j));
+            // printf(" %.2f", input->matrixAddr[i][j]);
         }
         printf("\n");
     }
 }
-
-// int string_length(char *s) {
-//     return strlen(s);
-// }
-
-// char *string_get(char *s, int i) {
-//     char *c = malloc(2);
-//     c[0] = s[i];
-//     c[1] = '\0';
-//     return c;
-// }
-
-// char *string_concat(char *s1, char *s2) {
-//     char *new = (char *) malloc(strlen(s1) + strlen(s2) + 1);
-//     strcpy(new, s1);
-//     strcat(new, s2);
-//     return new;
-// }
-
-// int string_equals(char *s1, char *s2) {
-//     return (strcmp(s1, s2) == 0);
-// }
-
-// char *string_substr(char *s, int start, int end) {
-//   char *substr = malloc(end - start+1);
-//     int i;
-//     for(i = 0; i < (end - start); i++) {
-//         substr[i] = s[start + i];
-//     }
-//     substr[end-start]=0;
-//     return substr;
-// }
+//======================================================================
+// Test below: move the function above this line if it works
+//
+//======================================================================
 
 
 
@@ -274,37 +190,57 @@ void display(matrix* input) {
 int main(int argc,char** argv) {
   //run tests of each function
   //initMatrix and display of empty matrix
+  printf("\n===========testing empty init========\n");
   matrix *null_matrix=initMatrix(NULL, 2, 2);
   // printf("NULL MATRIX: \n");
   // display(null_matrix);
 
   
 
-
+printf("\n===========testing list init========\n");
   //initMatrix and display of 2x2 matrix
-  double vals1[] = {91, 2, 3, 222, 5, 6};
+  double vals1[] = {91, 2, 3, 222, 7, 6};
   double *list1 = vals1;
-  matrix *m = initMatrix(list1, 2, 3);
+  matrix *m = initMatrix(list1, 3, 2);
   // printf("2x2 MATRIX: \n");
-  display(m);
 
-  //TODO test codegen builder
-  for( int i = 0; i < 4; i++) {
+  display(m);
+    for( int i = 0; i < 4; i++) {
+      //fill first 4 values, i,e., first row as wel as first element of second row
       m = storeVal(m, 5);
-      printf("Stroring 5: \n");
+      printf("Storing 5: \n");
       display(m);
   }
+  printf("\n===========testing public get and set ========\n");
+  double r = 1.1; double c = 0;double setval = 151.99;
+  printf("get 1,0 of above matrix: %.2f\n", pub_get(m,r,c));
+  pub_set(m,r,c,setval);
+  printf("set 1,0 of above matrix: \n");
+  display(m);
+
+
   
   
   // //add 2 of the same matrix
-  // matrix *result_sum = mAdd(m, m);
-  // printf("ADD TWO OF THE ORIGINAL 2x2 MATRIX: \n");
-  // display(result_sum);
+  printf("\n===========testing addition========\n");
+  double vals1a[] = {1,2,3,4,5,6};
+  double *list1a = vals1a;
+  matrix *ma = initMatrix(list1a, 2, 3);
+  matrix *result_sum = mAdd(ma, ma);
+  display(result_sum);//
+
 
   // //multiply two matrices
-  // matrix *result_product = matrixMult(m, m);
-  // printf("MULTIPLY TWO OF THE ORIGINAL 2X2 MATRIX: \n");
-  // display(result_product);
+  printf("\n===========testing multiplication========\n");
+  double v1[] = {1,2,3,4,5,6};
+  double v2[] = {10,11,20,21,30,31};
+  matrix *m1 = initMatrix(v1, 3, 2);
+  matrix *m2 = initMatrix(v2, 2, 3);
+  matrix *result_product = matrixMult(m1, m2);
+  // Should yield
+  // 140.00 146.00
+  // 320.00 335.00
+  display(result_product);
 
   // //scalar multiplication
   // matrix *result_scalar = timesScalar(m, 3);

@@ -71,6 +71,13 @@ let translate (globals, functions) =
     let store_matrix_t = L.function_type xirtam_t [|xirtam_t ; float_t |] in
     let store_matrix_f = L.declare_function "storeVal" store_matrix_t the_module in
 
+    (*get  matrix m*,float r, float c                  r and c get casted in private calls*)
+    let get_matrix_el_t = L.function_type float_t [| xirtam_t;float_t;float_t |] in
+    let get_matrix_el_f = L.declare_function "pub_get" get_matrix_el_t the_module in
+    (*set  matrix m* float r, float c, float v         r and c get casted in private calls*)
+    let set_matrix_el_t = L.function_type i32_t [| xirtam_t;float_t;float_t;float_t |] in
+    let set_matrix_el_f = L.declare_function "pub_set" set_matrix_el_t the_module in
+
     let mult_matrix_t = L.function_type xirtam_t [|xirtam_t; xirtam_t|] in
     let mult_matrix_f = L.declare_function "matrixMult" mult_matrix_t the_module in
     let add_matrix_t = L.function_type xirtam_t [|xirtam_t; xirtam_t|] in
@@ -189,6 +196,7 @@ let translate (globals, functions) =
               | A.And 
               | A.Or      -> raise (Failure "internal error: semant should have rejected and/or on float")
               ) e1' e2' "tmp" builder)
+
         (*binary bool operations*)
         (*original is below*)
         (* 
@@ -220,6 +228,13 @@ let translate (globals, functions) =
         L.build_call mult_matrix_f [| (expr builder e1); (expr builder e2) |] "matmult" builder
       | SCall ("matadd", [e1; e2]) ->
         L.build_call add_matrix_f [| (expr builder e1); (expr builder e2) |] "matadd" builder
+        (* acces and get *)
+      | SCall ("matget", [e1; e2; e3;]) ->
+        L.build_call get_matrix_el_f [| (expr builder e1); (expr builder e2);(expr builder e3) |] "matget" builder
+      | SCall ("matset", [e1; e2; e3; e4;]) ->
+        L.build_call set_matrix_el_f [| (expr builder e1); (expr builder e2);(expr builder e3);(expr builder e4) |] "matset" builder
+
+
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in
