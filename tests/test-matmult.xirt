@@ -1,0 +1,10 @@
+num main() {
+    xirtam m;
+    xirtam n;
+    xirtam ret;
+    num r;
+    m = [[4, 2], [422, 21], [0.4, 6.2]];
+    n = [[1, 2, 3], [0.5, -1.2, 0]];
+    ret = matmult(m, n);
+    printm(ret);
+}

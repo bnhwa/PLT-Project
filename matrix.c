@@ -63,7 +63,7 @@ double pub_get(struct matrix* m, double r,double c){
   return get(m,(int)r,(int)c);
 }
 
-void pub_set( struct matrix* m,int r,double c,double v){
+void pub_set( struct matrix* m, double r,double c, double v){
   //public setter
   // int idx = r + (c * (m->num_rows));
   //cast row and col to int
@@ -173,7 +173,11 @@ void display(matrix* input) {
     int col = input->num_cols;
     for(int i = 0; i<row; i++) {
         for(int j=0; j<col; j++) {
+          if (j == 0) {
+            printf("%.2f", get(input,i,j));
+          } else {
           printf(" %.2f", get(input,i,j));
+          }
             // printf(" %.2f", input->matrixAddr[i][j]);
         }
         printf("\n");
