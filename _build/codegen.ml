@@ -83,7 +83,7 @@ let translate (globals, functions) =
     let add_matrix_t = L.function_type xirtam_t [|xirtam_t; xirtam_t|] in
     let add_matrix_f = L.declare_function "mAdd" add_matrix_t the_module in
 
-    let get_num_rows_t = L.function_type float_t [|xirtam_t|] in
+    let get_num_rows_t = L.function_type i32_t [|xirtam_t|] in
     let get_num_rows_f = L.declare_function "mNumRows" get_num_rows_t the_module in
 
 

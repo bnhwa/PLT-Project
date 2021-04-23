@@ -88,8 +88,6 @@ matrix* storeVal(matrix* target, double value) {
     return target;
 }
 
-
-
 matrix* initMatrix(double* listOfValues, int num_cols, int num_rows) {
   double* matrixValues = malloc(num_rows * num_cols * sizeof(double*));
 
@@ -174,9 +172,15 @@ matrix* matrixTranspose(matrix* lhs){
   int rows = lhs->num_rows;
   int cols = lhs->num_cols;
   matrix *transpose = initMatrix(NULL, cols, rows);
-  for (int i = 0; i< rows; i++){
-    for (int j = 0; j< cols; j++){
+  for (int i = 0; i< cols; i++){
+    for (int j = 0; j< rows; j++){
       set(transpose, j, i, get(lhs, i, j));
+      printf("row num: ");
+      printf("hi %d", j);
+      printf("\n");
+      printf("raw %f", get(lhs, i, j));
+      printf("\n");
+
     }
   }
   
@@ -224,11 +228,10 @@ void display(matrix* input) {
 // SHIDA'S TEMP FUNCS END
 
 
- #ifdef BUILD_TEST
 int main(int argc,char** argv) {
-  printf("lior's transpose funct");
+  printf("lior's transpose funct\n");
   double firstmat[] = {1,2,3,4,5,6};
-  matrix *matrix_OG = initMatrix(firstamt, 3, 2);
+  matrix *matrix_OG = initMatrix(firstmat, 3, 2);
   display(matrix_OG);
   matrix *matrix_result = matrixTranspose(matrix_OG);
   display(matrix_result);
@@ -366,4 +369,3 @@ printf("\n===========testing list init========\n");
   // transpose(m1);
   // display(m1);
 }
- #endif
