@@ -21,8 +21,15 @@ Xirtam is a language meant to work with matrices, done for Prof. Edwards's 2021 
 
 RUNNING THE DOCKER FILE:
 1. cd into the main directory, where the docker file is
-2. **"docker build ."**
-3. **"docker images"**
+2. build the image
+
+	**docker build .**
+	
+
+3. go into docker image
+
+ 	**"docker images"**
+	
 4. copy the **ID** (should be a number)
 5. (run it!) docker run -it 'pwd':
 	"enter in the exact directory where this entire project is located specificaly where the docker file is located" -r:"enter in that same exact path" "the numerical ID of the image"
