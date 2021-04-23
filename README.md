@@ -32,7 +32,7 @@ RUNNING THE DOCKER FILE:
 	docker run --rm -it -v `pwd`:/home/Documents/GitHub/PLT-Project -w=/home/Documents/GitHub/PLT-Project 5aeb403d9695 
 
 You can also name your docker image by saying:
-	"docker build -t myimage ."
+	**"docker build -t myimage ."**
 and then run it via:
 
 	docker run --rm -it -v `pwd`:/home/Documents/GitHub/PLT-Project -w=/home/Documents/GitHub/PLT-Project myimage
