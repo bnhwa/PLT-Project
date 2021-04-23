@@ -235,7 +235,7 @@ void display(matrix* input) {
 // SHIDA'S TEMP FUNCS END
 
 
- // #ifdef BUILD_TEST
+ #ifdef BUILD_TEST
 int main(int argc,char** argv) {
   printf("\n===========testing transpose========\n");
   printf("lior's transpose funct\n");
@@ -400,4 +400,4 @@ printf("\n===========testing list init========\n");
   // transpose(m1);
   // display(m1);
 }
- // #endif
+ #endif
