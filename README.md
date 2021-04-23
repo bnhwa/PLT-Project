@@ -45,3 +45,7 @@ RUNNING THE DOCKER FILE:
 and then run it via:
 
 	docker run --rm -it -v `pwd`:/home/Documents/GitHub/PLT-Project -w=/home/Documents/GitHub/PLT-Project myimage
+6. run the xirtam project by just typing "make"
+
+	**make**
+	
