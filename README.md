@@ -35,3 +35,5 @@ You can also name your docker image by saying:
 	"docker build -t myimage ."
 and then run it via:
 	"docker run --rm -it -v `pwd`:/home/Documents/GitHub/PLT-Project -w=/home/Documents/GitHub/PLT-Project myimage" 
+	
+	as a note, 'pwd' needs to be in single quotes
