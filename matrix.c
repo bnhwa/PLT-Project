@@ -173,12 +173,13 @@ description: return the inverse of the matrix input
 matrix* matrixTranspose(matrix* lhs){
   int rows = lhs->num_rows;
   int cols = lhs->num_cols;
-  matrix *transpose = initMatrix(NULL, cols, rows);
+  matrix *transpose = initMatrix(NULL, rows, cols);
   for (int i = 0; i< rows; i++){
     for (int j = 0; j< cols; j++){
       set(transpose, j, i, get(lhs, i, j));
     }
   }
+  return transpose;
   
 }
 
@@ -224,16 +225,23 @@ void display(matrix* input) {
 // SHIDA'S TEMP FUNCS END
 
 
- #ifdef BUILD_TEST
+ // #ifdef BUILD_TEST
 int main(int argc,char** argv) {
-  printf("lior's transpose funct");
-  double firstmat[] = {1,2,3,4,5,6};
-  matrix *matrix_OG = initMatrix(firstamt, 3, 2);
+  printf("\n===========testing transpose========\n");
+  printf("lior's transpose funct\n");
+  double firstmat[] = {1,2,3,4,5,6,7,8,9};
+  matrix *matrix_OG = initMatrix(firstmat, 3, 3);
   display(matrix_OG);
+  printf("transposed matrix is\n");
   matrix *matrix_result = matrixTranspose(matrix_OG);
   display(matrix_result);
-
-
+  printf("\nsecond trapose test original:\n");
+  double secondmat[] = {1,2,3,4,5,6};
+  matrix *matrix_OG2 = initMatrix(secondmat, 3, 2);
+  display(matrix_OG2);
+  printf("second test transposed matrix is:\n");
+  matrix *matrix_result2 = matrixTranspose(matrix_OG2);
+  display(matrix_result2);
 
 
 
@@ -366,4 +374,4 @@ printf("\n===========testing list init========\n");
   // transpose(m1);
   // display(m1);
 }
- #endif
+ // #endif
