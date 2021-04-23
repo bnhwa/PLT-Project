@@ -256,6 +256,14 @@ int main(int argc,char** argv) {
   int cols = mNumCols(matrix_lior);
   printf(" %d", cols);
 
+  printf("\n===========testing num rows========\n");
+  printf("original matrix:\n");
+  double array_lior1[] = {1,2,3,4,5,6};
+  matrix *matrix_lior1 = initMatrix(array_lior1, 3, 2);
+  display(matrix_lior1);
+  printf("number of rows:\n");
+  int rows = mNumRows(matrix_lior);
+  printf(" %d", rows);
 
   //run tests of each function
   //initMatrix and display of empty matrix
