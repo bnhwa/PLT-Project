@@ -23,7 +23,7 @@ RUNNING THE DOCKER FILE:
 1. cd into the main directory, where the docker file is
 2. build the image
 
-	**docker build .**
+	**"docker build ."**
 	
 
 3. go into docker image
