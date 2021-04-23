@@ -156,14 +156,20 @@ matrix* mAdd(matrix* lhs, matrix* rhs) {
 /*
 mNumRows
 input -> xirtam matrix object
-output -> int, number of rows
+output -> double, number of rows
 description: return the number of rows in a matrix
 */
-int mNumRows(matrix* lhs){
+double mNumRows(matrix* lhs){
     return lhs->num_rows;
 }
 
-int mNumCols(matrix* lhs){
+/*
+mNumCols
+input -> xirtam matrix object
+output -> double, number of cols
+description: return the number of cols in a matrix
+*/
+double mNumCols(matrix* lhs){
     return lhs->num_cols;
 }
 
@@ -253,8 +259,8 @@ int main(int argc,char** argv) {
   matrix *matrix_lior = initMatrix(array_lior, 3, 2);
   display(matrix_lior);
   printf("number of cols:\n");
-  int cols = mNumCols(matrix_lior);
-  printf(" %d", cols);
+  double cols = mNumCols(matrix_lior);
+  printf(" %f", cols);
 
   printf("\n===========testing num rows========\n");
   printf("original matrix:\n");
@@ -262,8 +268,8 @@ int main(int argc,char** argv) {
   matrix *matrix_lior1 = initMatrix(array_lior1, 3, 2);
   display(matrix_lior1);
   printf("number of rows:\n");
-  int rows = mNumRows(matrix_lior);
-  printf(" %d", rows);
+  double rows = mNumRows(matrix_lior);
+  printf(" %f", rows);
 
   //run tests of each function
   //initMatrix and display of empty matrix
