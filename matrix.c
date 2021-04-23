@@ -159,8 +159,12 @@ input -> xirtam matrix object
 output -> int, number of rows
 description: return the number of rows in a matrix
 */
-double mNumRows(matrix* lhs){
+int mNumRows(matrix* lhs){
     return lhs->num_rows;
+}
+
+int mNumCols(matrix* lhs){
+    return lhs->num_cols;
 }
 
 /*
@@ -243,6 +247,14 @@ int main(int argc,char** argv) {
   matrix *matrix_result2 = matrixTranspose(matrix_OG2);
   display(matrix_result2);
 
+  printf("\n===========testing num cols========\n");
+  printf("original matrix:\n");
+  double array_lior[] = {1,2,3,4,5,6};
+  matrix *matrix_lior = initMatrix(array_lior, 3, 2);
+  display(matrix_lior);
+  printf("number of cols:\n");
+  int cols = mNumCols(matrix_lior);
+  printf(" %d", cols);
 
 
   //run tests of each function
