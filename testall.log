@@ -1,0 +1,115 @@
+
+###### Testing test-arithmetic-op
+./xirtam.native tests/test-arithmetic-op.xirt > test-arithmetic-op.ll
+Fatal error: exception Llvm.IoError("No such file or directory")
+###### FAILED
+
+###### Testing test-assignment
+./xirtam.native tests/test-assignment.xirt > test-assignment.ll
+Fatal error: exception Llvm.IoError("No such file or directory")
+###### FAILED
+
+###### Testing test-emptymain
+./xirtam.native tests/test-emptymain.xirt > test-emptymain.ll
+Fatal error: exception Llvm.IoError("No such file or directory")
+###### FAILED
+
+###### Testing test-for-c
+./xirtam.native tests/test-for-c.xirt > test-for-c.ll
+Fatal error: exception Llvm.IoError("No such file or directory")
+###### FAILED
+
+###### Testing test-func-dec
+./xirtam.native tests/test-func-dec.xirt > test-func-dec.ll
+Fatal error: exception Llvm.IoError("No such file or directory")
+###### FAILED
+
+###### Testing test-if
+./xirtam.native tests/test-if.xirt > test-if.ll
+Fatal error: exception Llvm.IoError("No such file or directory")
+###### FAILED
+
+###### Testing test-matadd
+./xirtam.native tests/test-matadd.xirt > test-matadd.ll
+Fatal error: exception Llvm.IoError("No such file or directory")
+###### FAILED
+
+###### Testing test-matrix
+./xirtam.native tests/test-matrix.xirt > test-matrix.ll
+Fatal error: exception Parsing.Parse_error
+###### FAILED
+
+###### Testing test-matrix2
+./xirtam.native tests/test-matrix2.xirt > test-matrix2.ll
+Fatal error: exception Parsing.Parse_error
+###### FAILED
+
+###### Testing test-matrix3
+./xirtam.native tests/test-matrix3.xirt > test-matrix3.ll
+Fatal error: exception Parsing.Parse_error
+###### FAILED
+
+###### Testing test-matrix4
+./xirtam.native tests/test-matrix4.xirt > test-matrix4.ll
+Fatal error: exception Parsing.Parse_error
+###### FAILED
+
+###### Testing test-matrix5
+./xirtam.native tests/test-matrix5.xirt > test-matrix5.ll
+Fatal error: exception Parsing.Parse_error
+###### FAILED
+
+###### Testing test-matrix6
+./xirtam.native tests/test-matrix6.xirt > test-matrix6.ll
+Fatal error: exception Parsing.Parse_error
+###### FAILED
+
+###### Testing test-print-matrix1
+./xirtam.native tests/test-print-matrix1.xirt > test-print-matrix1.ll
+Fatal error: exception Llvm.IoError("No such file or directory")
+###### FAILED
+
+###### Testing test-print-matrix2
+./xirtam.native tests/test-print-matrix2.xirt > test-print-matrix2.ll
+Fatal error: exception Llvm.IoError("No such file or directory")
+###### FAILED
+
+###### Testing test-printn
+./xirtam.native tests/test-printn.xirt > test-printn.ll
+Fatal error: exception Llvm.IoError("No such file or directory")
+###### FAILED
+
+###### Testing test-temp
+./xirtam.native tests/test-temp.xirt > test-temp.ll
+Fatal error: exception Llvm.IoError("No such file or directory")
+###### FAILED
+
+###### Testing test-unary-and-bool-op
+./xirtam.native tests/test-unary-and-bool-op.xirt > test-unary-and-bool-op.ll
+Fatal error: exception Llvm.IoError("No such file or directory")
+###### FAILED
+
+###### Testing test-while-c
+./xirtam.native tests/test-while-c.xirt > test-while-c.ll
+Fatal error: exception Llvm.IoError("No such file or directory")
+###### FAILED
+
+###### Testing test-while
+./xirtam.native tests/test-while.xirt > test-while.ll
+Fatal error: exception Llvm.IoError("No such file or directory")
+###### FAILED
+
+###### Testing fail-assign1
+./xirtam.native < tests/fail-assign1.xirt 2> fail-assign1.err >> testall.log
+diff -b fail-assign1.err tests/fail-assign1.err > fail-assign1.diff
+###### SUCCESS
+
+###### Testing fail-assign2
+./xirtam.native < tests/fail-assign2.xirt 2> fail-assign2.err >> testall.log
+diff -b fail-assign2.err tests/fail-assign2.err > fail-assign2.diff
+###### SUCCESS
+
+###### Testing fail-uninit-var-usage
+./xirtam.native < tests/fail-uninit-var-usage.xirt 2> fail-uninit-var-usage.err >> testall.log
+diff -b fail-uninit-var-usage.err tests/fail-uninit-var-usage.err > fail-uninit-var-usage.diff
+###### SUCCESS

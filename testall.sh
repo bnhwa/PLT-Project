@@ -127,18 +127,19 @@ while getopts kdpsh c; do
     esac
 done
 shift `expr $OPTIND - 1`
-LLIFail() {
-  echo "Could not find the LLVM interpreter \"$LLI\"."
-  echo "Check your LLVM installation and/or modify the LLI variable in testall.sh"
-  exit 1
-}
-which "$LLI" >> $globallog || LLIFail
+# LLIFail() {
+#   echo "Could not find the LLVM interpreter \"$LLI\"."
+#   echo "Check your LLVM installation and/or modify the LLI variable in testall.sh"
+#   exit 1
+# }
+# which "$LLI" >> $globallog || LLIFail
 # if [ ! -f printbig.o ]
 # then
-#     echo "Could not find printbig.o"
-#     echo "Try \"make printbig.o\""
+#     echo "Could not find matrix.o"
+#     echo "Try \"make matrix.o\""
 #     exit 1
 # fi
+make matrix.o
 if [ $# -ge 1 ]
 then
     files=$@

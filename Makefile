@@ -31,6 +31,9 @@ clean :
 matrix : matrix.c 
 	cc -o matrix -DBUILD_TEST matrix.c 
 
+# matrix.o: matrix.c
+# 	cc -c matrix.c
+
 matrix.bc : matrix.c 
 	clang -emit-llvm -o matrix.bc -c matrix.c -Wno-varargs
 	
