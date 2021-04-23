@@ -24,7 +24,8 @@ RUNNING THE DOCKER FILE:
 2. "docker build ."
 3. "docker images"
 4. copy the ID (should be a number)
-5. docker run it 'pwd':<enter in the exact directory where this entire project is located specificaly where the docker file is located> -r:<enter in that same exact path> <the numerical ID of the image>
+5. (run it!) docker run -it 'pwd':
+	"enter in the exact directory where this entire project is located specificaly where the docker file is located" -r:"enter in that same exact path" "the numerical ID of the image"
 
 	Here is an example of mine:
 
