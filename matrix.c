@@ -261,6 +261,45 @@ printf("\n===========testing list init========\n");
   display(result_product2);
 
 
+
+  // Testing shida's cool program 2. please do not delete
+  double k3[] = {2, 5, 6, 7, 4, 1, 5, 6};
+  double retl[] = {0,0,0,0,0,0,0,0};
+  matrix *s = initMatrix(k3, 4, 2);
+  matrix *ret = initMatrix(retl, 4, 2);
+
+  int row = 2;
+  int col = 4;
+  int cur_col_has_1 = 0;
+  int cur_row_has_1 = 0;
+
+  for (int i = 0; i < row; i = i + 1) {
+        for (int j = 0; j < col; j = j + 1) {
+
+            cur_row_has_1 = 0;
+            cur_col_has_1 = 0;
+             
+             /* check if current row has a 1 */
+             for (int temp_col = 0; temp_col < col; temp_col = temp_col + 1) {
+                 cur_row_has_1 = cur_row_has_1 || (get(s, i, temp_col) == 1);
+             }
+
+             /* check if current col has a 1 */
+             for (int temp_row = 0; temp_row < row; temp_row = temp_row + 1) {
+                 cur_col_has_1 = cur_col_has_1 || (get(s, temp_row, j) == 1);
+             }
+
+            if ((cur_row_has_1 == 1) || (cur_col_has_1 == 1)) {
+                set(ret, i, j, 1);
+            } else {
+                set(ret, i, j, get(s, i, j));
+            }
+        }
+    }
+
+    display(ret);
+
+
   // double source[] = {0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0};
   // double dest[] = {0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0};
   // matrix* d = initMatrix(dest, 5, 6);
