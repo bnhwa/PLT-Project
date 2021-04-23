@@ -1,0 +1,23 @@
+
+num add_and_get(xirtam m1, xirtam m2, num r, num c) {
+    xirtam m3;
+    num ret;
+    m3 = matadd(m1, m2);
+    ret = matget(m3, r, c);
+    return ret;
+}
+
+
+num main() {
+    xirtam m;
+    xirtam m2;
+    num r1;
+    num r2;
+    /* m = [[1, 2, -9.00], [4, 2, -3]]; */
+    m = [[-4, 2, 4], [422, 21, 2], [0.4, 6.2, -3]];
+    m2 = [[1.01, 2, 0.91], [422, 21, -3], [0.4, 6.2, 32.74]];
+    r1 = add_and_get(m, m2, 0, 0);
+    r2 = add_and_get(m, m2, 2, 2);
+    printn(r1);
+    printn(r2);
+}

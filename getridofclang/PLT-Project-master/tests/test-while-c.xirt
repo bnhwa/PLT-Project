@@ -1,0 +1,10 @@
+num main()
+{
+  num i;
+  i = 5;
+  while (i > 0) {
+    printn(i);
+    i = i - 1;
+  }
+  printn(42);
+}

@@ -1,0 +1,40 @@
+TODO:
+
+	We cannot print boolean for now. Need a way to test.
+	Operator
+
+	What we can do maybe is assign default value?
+	LLVM CodeGen testing/outputs for:
+		Operator Mod: Somehow works indibvidually but not within a loop (lli works though .. strange !)
+	Test Suite:
+		Add tests for fails:
+			If user tries to give main function return value
+COMPLETED:
+	Entry point is "main" is always made to be hidden int type, decl/return is same type
+	LLVM CodeGen outputs fine for:
+		Empty Main/function declaration
+		Variable Assignment/reassignment
+			Bool
+			String
+			Num
+		Printn
+
+	Unary and Binary Operations
+		Control Flow
+			If
+			While
+			For
+			Return
+		Other Function Returns
+
+	Found way to prevent user from working with uninitialized variables:
+		Unops
+		Binops
+		control flow:
+			If/else, for/while
+		Assignment
+		Calls
+		Return
+	For instance:
+		num i;
+		i+5;

@@ -1,0 +1,70 @@
+/* https://www.geeksforgeeks.org/maximum-size-sub-matrix-with-all-1s-in-a-binary-matrix/ */
+
+/* we only work with 6 by 5 matrices */
+num min(num a, num b) {
+    if (a <= b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+xirtam copy_first_row(xirtam source, xirtam dest) {
+
+    num val;
+    num i;
+
+    for (i = 0 ; i < 5 ; i = i + 1) {
+        val = matget(source, 0, i);
+        matset(dest, 0, i, val);
+    }
+
+    return dest;
+    
+}
+
+
+
+xirtam copy_first_col(xirtam source, xirtam dest) {
+
+    num val;
+    num i;
+
+    for (i = 0 ; i < 6 ; i = i + 1) {
+        val = matget(source, i, 0);
+        matset(dest, i, 0, val);
+    }
+
+    return dest;
+    
+}
+
+num main() {
+    xirtam s;
+    xirtam d;
+    num cur_r;
+    num cur_c;
+    num desired_min;
+    num desired_min_plus_1;
+
+    s = [[0, 1, 1, 0, 1], [1, 1, 0, 1, 0], [0, 1, 1, 1, 0], [1, 1, 1, 1, 0], [1, 1, 1, 1, 1], [0, 0, 0, 0, 0]];
+    d = [[0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0]];
+    d = copy_first_row(s, d);
+    d = copy_first_col(s, d);
+
+    for (cur_r = 1; cur_r < 6; cur_r = cur_r + 1) {
+        for (cur_c = 1; cur_c < 5; cur_c = cur_c + 1) {
+            
+            if (matget(s, cur_r, cur_c) == 1) {
+                desired_min = min(matget(d, cur_r-1, cur_c), matget(d, cur_r, cur_c-1));
+                desired_min = min(desired_min, matget(d, cur_r-1, cur_c-1));
+                desired_min_plus_1 = desired_min + 1;
+                matset(d, cur_r, cur_c, desired_min_plus_1);
+            } else {
+                matset(d, cur_r, cur_c, 0);
+            }
+        }
+    }
+    
+    printm(d);
+}

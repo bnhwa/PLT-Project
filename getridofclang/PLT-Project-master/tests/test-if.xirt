@@ -1,0 +1,31 @@
+num main() {
+
+    if (6 == 6) {
+        printn(1);
+    } else {
+        printn(0);
+    }
+
+    if (true) {
+        printn(1);
+    } else {
+        printn(0);
+    }
+
+    if (true) {
+        printn(1);
+    }
+
+    if (6 != 6) {
+        printn(0);
+    } else {
+        printn(1);
+    }
+
+    if (false) {
+        printn(0);
+    } else {
+        printn(1);
+    }
+
+}
