@@ -6,6 +6,18 @@ num main() {
         printn(0);
     }
 
+    if (true && true) {
+        printn(1);
+    } else {
+        printn(0);
+    }
+
+    if(true || false) {
+        printn(1);
+    } else {
+        printn(0);
+    }
+
     if (true) {
         printn(1);
     } else {

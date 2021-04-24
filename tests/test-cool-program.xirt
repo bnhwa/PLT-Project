@@ -9,12 +9,12 @@ num min(num a, num b) {
     }
 }
 
-xirtam copy_first_row(xirtam source, xirtam dest) {
+xirtam copy_first_row(xirtam source, xirtam dest, num col) {
 
     num val;
     num i;
 
-    for (i = 0 ; i < 5 ; i = i + 1) {
+    for (i = 0 ; i < col ; i = i + 1) {
         val = matget(source, 0, i);
         matset(dest, 0, i, val);
     }
@@ -25,12 +25,12 @@ xirtam copy_first_row(xirtam source, xirtam dest) {
 
 
 
-xirtam copy_first_col(xirtam source, xirtam dest) {
+xirtam copy_first_col(xirtam source, xirtam dest, num row) {
 
     num val;
     num i;
 
-    for (i = 0 ; i < 6 ; i = i + 1) {
+    for (i = 0 ; i < row ; i = i + 1) {
         val = matget(source, i, 0);
         matset(dest, i, 0, val);
     }
@@ -39,21 +39,17 @@ xirtam copy_first_col(xirtam source, xirtam dest) {
     
 }
 
-num main() {
-    xirtam s;
-    xirtam d;
+xirtam find_intermediate_indicator_matrix(xirtam s, xirtam d, num row, num col) {
     num cur_r;
     num cur_c;
     num desired_min;
     num desired_min_plus_1;
 
-    s = [[0, 1, 1, 0, 1], [1, 1, 0, 1, 0], [0, 1, 1, 1, 0], [1, 1, 1, 1, 0], [1, 1, 1, 1, 1], [0, 0, 0, 0, 0]];
-    d = [[0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0]];
-    d = copy_first_row(s, d);
-    d = copy_first_col(s, d);
+    d = copy_first_row(s, d, col);
+    d = copy_first_col(s, d, row);
 
-    for (cur_r = 1; cur_r < 6; cur_r = cur_r + 1) {
-        for (cur_c = 1; cur_c < 5; cur_c = cur_c + 1) {
+    for (cur_r = 1; cur_r < row; cur_r = cur_r + 1) {
+        for (cur_c = 1; cur_c < col; cur_c = cur_c + 1) {
             
             if (matget(s, cur_r, cur_c) == 1) {
                 desired_min = min(matget(d, cur_r-1, cur_c), matget(d, cur_r, cur_c-1));
@@ -65,6 +61,26 @@ num main() {
             }
         }
     }
+    return d;
+}
+
+num main() {
+    xirtam s;
+    xirtam d;
+
+    s = [[0, 1, 1, 0, 1], [1, 1, 0, 1, 0], [0, 1, 1, 1, 0], [1, 1, 1, 1, 0], [1, 1, 1, 1, 1], [0, 0, 0, 0, 0]];
+    d = [[0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0]];
     
+    d = find_intermediate_indicator_matrix(s, d, 6, 5);
+    
+
     printm(d);
+
+    s = [[0, 1, 1, 0, 1, 1, 0, 0, 1], [1, 1, 0, 1, 0, 1, 1, 0, 1], [0, 1, 1, 1, 0, 1, 1, 1, 1], [1, 1, 1, 1, 0, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 1, 1, 1, 1]];
+    d = [[0,0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0,0]];
+
+    d = find_intermediate_indicator_matrix(s, d, 6, 9);
+
+    printm(d);
+    
 }

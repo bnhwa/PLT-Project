@@ -1,0 +1,43 @@
+xirtam populate_1(xirtam s, xirtam ret, num row, num col) {
+    num i;
+    num j;
+    num temp_col;
+    num temp_row;
+    bool cur_col_has_1;
+    bool cur_row_has_1;
+
+    for (i = 0; i < row; i = i + 1) {
+        for (j = 0; j < col; j = j + 1) {
+
+            cur_row_has_1 = false;
+            cur_col_has_1 = false;
+             
+             /* check if current row has a 1 */
+             for (temp_col = 0; temp_col < col; temp_col = temp_col + 1) {
+                 cur_row_has_1 = cur_row_has_1 || (matget(s, i, temp_col) == 1);
+             }
+
+             /* check if current col has a 1 */
+             for (temp_row = 0; temp_row < row; temp_row = temp_row + 1) {
+                 cur_col_has_1 = cur_col_has_1 || (matget(s, temp_row, j) == 1);
+             }
+
+            if ((cur_row_has_1 == true) || (cur_col_has_1 == true)) {
+                matset(ret, i, j, 1);
+            } else {
+                matset(ret, i, j, matget(s, i, j));
+            }
+        }
+    }
+
+    return ret;
+}
+
+num main() {
+    xirtam s;
+    xirtam ret;
+    s = [[2, 5, 6, 7], [4, 1, 5, 6]];
+    ret = [[0,0,0,0], [0,0,0,0]];
+    ret = populate_1(s, ret, 2, 4);
+    printm(ret);
+}

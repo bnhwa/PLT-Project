@@ -195,7 +195,9 @@ let translate (globals, functions) =
               | A.Geq     -> L.build_fcmp L.Fcmp.Oge
               | A.And 
               | A.Or      -> raise (Failure "internal error: semant should have rejected and/or on float")
-              ) e1' e2' "tmp" builder)
+              ) e1' e2' "tmp" builder
+        | A.Xirtam -> raise (Failure "cannot use binop on matrices")
+        )
 
         (*binary bool operations*)
         (*original is below*)
