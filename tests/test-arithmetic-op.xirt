@@ -56,7 +56,7 @@ num main() {
     k = -1 / -7;
     printn(k);
 
-    k = 1 % 1;
+    /* k = 1 % 1;
     printn(k);
 
     k = 9.3 % 6;
@@ -69,7 +69,7 @@ num main() {
     printn(k);
 
     k = 7 % 3;
-    printn(k);
+    printn(k); */
 
     /* mod does not work with negatives */
 }
