@@ -1,13 +1,6 @@
 
 (* 
 Authored by Bailey Hwa, Shida Jing, and Andrew Gorovoy
-TODO: 
-    1. Deal with strings overall.
-    2. Examine line 68 - 116.
-    3. There are two SBinops in the original MicroC. Did I copy the right one?
-    4. Printf definition needs revision
-    5. Find a way to deal with the llargs and result having the optional 3rd parameter lines 156-161,
-     test first, and if it doesnt work, maybe use an ignore?  
  *)
 
 module L = Llvm
@@ -210,25 +203,7 @@ let translate (globals, functions) =
         | A.Xirtam -> raise (Failure "cannot use binop on matrices")
         )
 
-        (*binary bool operations*)
-        (*original is below*)
-        (* 
-        (match op with
-          A.Add     -> L.build_add
-        | A.Sub     -> L.build_sub
-        | A.Mult    -> L.build_mul
-        | A.Div     -> L.build_sdiv
-        | A.Mod     -> L.build_srem  e1' e2' "tmp" builder (* mod for other stuff*)
-        | A.And     -> L.build_and
-        | A.Or      -> L.build_or
-        | A.Equal   -> L.build_icmp L.Icmp.Eq
-        | A.Neq     -> L.build_icmp L.Icmp.Ne
-        | A.Less    -> L.build_icmp L.Icmp.Slt
-        | A.Leq     -> L.build_icmp L.Icmp.Sle
-        | A.Great -> L.build_icmp L.Icmp.Sgt
-        | A.Geq     -> L.build_icmp L.Icmp.Sge
-        	  ) e1' e2' "tmp" builder
-        *)
+
 
       | SAssign (s, e) -> let e' = expr builder e in
                           ignore(L.build_store e' (lookup s) builder); e'
