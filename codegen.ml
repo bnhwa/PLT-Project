@@ -87,6 +87,10 @@ let translate (globals, functions) =
     let add_matrix_t = L.function_type xirtam_t [|xirtam_t; xirtam_t|] in
     let add_matrix_f = L.declare_function "mAdd" add_matrix_t the_module in
 
+    let autofill_t = L.function_type xirtam_t [|float_t; float_t;float_t|] in
+    let autofill_f = L.declare_function "autofill" autofill_t the_module in
+
+
 
     (* Define each function (arguments and return type) so we can 
         call it even before we've created its body *)
@@ -228,6 +232,8 @@ let translate (globals, functions) =
           L.build_call getrows_f [| (expr builder e) |] "getrows" builder
       | SCall ("getcols", [e]) ->
           L.build_call getcols_f [| (expr builder e) |] "getcols" builder
+      | SCall ("autofill", [e1; e2; e3;]) ->
+            L.build_call autofill_f [| (expr builder e1); (expr builder e2);(expr builder e3) |] "autofill" builder
 
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in

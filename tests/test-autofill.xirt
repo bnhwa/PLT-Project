@@ -1,0 +1,11 @@
+num main() {
+    xirtam m;
+
+
+    m = autofill(3,3,1);
+    printm(m);
+
+
+
+
+}

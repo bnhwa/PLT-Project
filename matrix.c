@@ -83,6 +83,37 @@ double getcols(matrix* m) {
   return (double) m->num_cols;
 }
 
+
+matrix* autofill(double num_cols, double num_rows, double value) {
+
+    if ((int) num_cols < 1 || (int) num_rows < 1) {
+      perror("Number of columns or number of rows is not valid.\nRows and columns must be a positive number.");
+
+      exit(1);
+    }
+
+    double* matrixValues = malloc( (int) num_rows * (int) num_cols * sizeof(double*));
+
+    for(int r = 0; r < num_rows; r++) {
+      for(int c = 0; c < num_cols; c++) {
+        // matrixValues[r + (c * num_rows)]=0;
+        matrixValues[c + (r * (int)num_cols)]=(int) value;
+      }
+    }
+ 
+  //return a pointer to matrix struct
+  matrix* result = malloc(sizeof(struct matrix));
+  result->num_cols = num_cols;
+  result->num_rows = num_rows;
+  result->matrixAddr = matrixValues;
+  result->buildPosition = 0;
+  return result;
+    
+    
+}
+
+
+
 matrix* storeVal(matrix* target, double value) {
 
     int position = target->buildPosition;

@@ -71,6 +71,7 @@ let built_in_decls =
       ("trans",[Xirtam], Xirtam);
       ("getrows",[Xirtam], Num);
       ("getcols",[Xirtam], Num);
+      ("autofill",[Num;Num;Num], Xirtam);
 
      ]
   in
@@ -104,6 +105,7 @@ let built_in_decls =
               || n = "trans"
               || n = "getrows"
               || n = "getcols"
+              || n = "autofill"
             -> make_err dup_err  
        | _ ->  StringMap.add n _ret map 
   in
