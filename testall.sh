@@ -1,4 +1,8 @@
 #!/bin/sh
+
+# Authored by Andrew Gorovoy, Annie Wang.
+# Citation: based on MicroC test script. 
+
 # Regression testing script for Xirtam
 # Step through a list of files
 #  Compile, run, and check the output of each expected-to-work test

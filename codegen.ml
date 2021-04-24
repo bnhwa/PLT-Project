@@ -1,7 +1,10 @@
 
-(* 
-Authored by Bailey Hwa, Shida Jing, and Andrew Gorovoy
- *)
+(* Authored by Bailey Hwa, Shida Jing, and Andrew Gorovoy.
+Co-debug with Lior Attias. *)
+
+(* Citation: based on MicroC compiler. Citation for past 
+project Matrx, specifically for defining the matrix type and 
+defining and calling built-in matrix functions. *)
 
 module L = Llvm
 module A = Ast
@@ -24,7 +27,7 @@ let translate (globals, functions) =
     and float_t    = L.double_type context
     and i32_t      = L.i32_type    context
     and i8_t       = L.i8_type     context
-    in 
+    in
     let char_point_t = L.pointer_type i8_t
     and void_t     = L.void_type   context
     and xirtam_t     = L.pointer_type (match L.type_by_name llm "struct.matrix" with

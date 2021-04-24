@@ -1,4 +1,4 @@
-(* authored by: Bailey Hwa and Shida Jing *)
+(* authored by: Bailey Hwa and Shida Jing, co-debug with Lior Attias *)
 (* Citation: Semantic checking for the MicroC compiler. 
   Also referenced past project Matrx, but eventually modified 
   everything, so it's pretty much original at this point. *)
