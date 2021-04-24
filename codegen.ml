@@ -79,6 +79,9 @@ let translate (globals, functions) =
     (*set  matrix m* float r, float c, float v         r and c get casted in private calls*)
     let set_matrix_el_t = L.function_type i32_t [| xirtam_t;float_t;float_t;float_t |] in
     let set_matrix_el_f = L.declare_function "pub_set" set_matrix_el_t the_module in
+    (*transpose: matrix  *)
+    let transpose_t = L.function_type xirtam_t [| xirtam_t |] in
+    let transpose_f = L.declare_function "transpose" transpose_t the_module in
 
     let mult_matrix_t = L.function_type xirtam_t [|xirtam_t; xirtam_t|] in
     let mult_matrix_f = L.declare_function "matrixMult" mult_matrix_t the_module in
@@ -237,7 +240,9 @@ let translate (globals, functions) =
         L.build_call get_matrix_el_f [| (expr builder e1); (expr builder e2);(expr builder e3) |] "matget" builder
       | SCall ("matset", [e1; e2; e3; e4;]) ->
         L.build_call set_matrix_el_f [| (expr builder e1); (expr builder e2);(expr builder e3);(expr builder e4) |] "matset" builder
-
+      (* transpose *)
+      | SCall ("trans", [e]) ->
+        L.build_call transpose_f [| (expr builder e) |] "trans" builder
 
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in

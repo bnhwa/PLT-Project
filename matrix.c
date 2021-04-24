@@ -187,7 +187,19 @@ void display(matrix* input) {
 // Test below: move the function above this line if it works
 //
 //======================================================================
-
+matrix* transpose(matrix* input) {
+  //switch rows and cols, get empty(i.e., zeroed matrix of transposed size, then fill)
+  int rows = input->num_rows;
+  int cols = input->num_cols;
+  matrix *result = initMatrix(NULL, rows, cols);
+  for(int i=0; i<rows; i++) {
+    for(int j=0; j<cols; j++) {
+        set(result, j,i, get(input,i,j));
+        // result->matrixAddr[j][i] = input->matrixAddr[i][j];
+    }
+  }
+  return result;
+}
 // TEMP FUNCS FROM SHIDA'S TESTING
 
 // SHIDA'S TEMP FUNCS END
@@ -248,6 +260,11 @@ printf("\n===========testing list init========\n");
   // 140.00 146.00
   // 320.00 335.00
   display(result_product);
+
+  printf("\n===========testing transpose========\n");
+  double v1t[] = {1,2,3,4,5,6};
+  matrix *m1t = initMatrix(v1t, 2, 3);
+  display(transpose(m1t));
 
   printf("\n Below are Shida testing on weird cases.\n");
   double k1[] = {-4, 2, 4, 422, 21, 2, 0.4, 6.2, -3};

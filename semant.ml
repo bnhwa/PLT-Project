@@ -64,6 +64,8 @@ let built_in_decls =
       (*get and access*)
       ("matget",[Xirtam;Num;Num], Num);
       ("matset",[Xirtam;Num;Num;Num], Void);
+      (*transpose*)
+      ("trans",[Xirtam], Xirtam);
      ]
   in
 
@@ -95,6 +97,7 @@ let built_in_decls =
               || n = "matadd"
               || n = "matget"
               || n = "matset"
+              || n = "trans"
             -> make_err dup_err  
        | _ ->  StringMap.add n _ret map 
   in
