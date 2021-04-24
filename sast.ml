@@ -1,6 +1,8 @@
 open Ast
 
  (* authored by: Bailey Hwa and Shida Jing *)
+ (* Citation: based on MicroC code *)
+
 type sexpr = typ * sx
 and sx =
 	(*Primitives and expressions*)
@@ -20,16 +22,11 @@ type sbind = typ * string * sexpr
 
 type sstmt = 
     SBlock of sstmt list
-  (*  
-  | SVDeclList of typ * (string * sexpr) list
-  | SVDecl of typ * string * sexpr
-*)
   | SExpr of sexpr
   | SReturn of sexpr
   | SIf of sexpr * sstmt * sstmt
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SWhile of sexpr * sstmt (* adding while loop back*)
-  (* | SContinue *)
 
 
 (*should make sbind because these should be semantically checked!*)
@@ -57,8 +54,6 @@ let rec string_of_sexpr (t, e) =
   | SBoolLit(false) -> "false"
   | SId(s) -> s
   | SStrLit(s) -> s
-  (* | XirtamLit(x) -> "[" ^ String.concat "," (List.map (fun lst -> "[" ^ String.concat "," (List.map string_of_expr lst) ^ "]") x) ^ "]" *)
-  (* check row col sizes in semant for SXirtamLit*)
   | SXirtamLit(x, r, c) -> "(rows: " ^ string_of_int r ^ ", cols: " ^ string_of_int c ^ ") : [" ^ String.concat ", " (List.map string_of_sexpr x) ^ "]"
   (*we use fun instead of function because fun can take in multiple arguments*)
   | SBinop(e1, o, e2) -> string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
@@ -72,8 +67,6 @@ let rec string_of_sstmt = function
     SBlock(stmts) -> "{\n" ^ String.concat "" (List.map string_of_sstmt stmts) ^ "}\n"
   | SExpr(expr) -> string_of_sexpr expr ^ ";\n";
   | SReturn(expr) -> "return " ^ string_of_sexpr expr ^ ";\n";
-  (*| Break(n) -> "break " ^ string_of_int n ^ ";\n";*) (*are we adding break?*)
-  (* | SContinue -> "continue;\n"; *)
   | SIf(e, s, SBlock([])) -> "if (" ^ string_of_sexpr e ^ ")\n" ^ string_of_sstmt s
   | SIf(e, s1, s2) ->  "if (" ^ string_of_sexpr e ^ ")\n" ^
       string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2

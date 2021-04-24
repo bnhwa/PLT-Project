@@ -1,5 +1,8 @@
-(* Semantic checking for the MicroC compiler *)
 (* authored by: Bailey Hwa and Shida Jing *)
+(* Citation: Semantic checking for the MicroC compiler. 
+  Also referenced past project Matrx, but eventually modified 
+  everything, so it's pretty much original at this point. *)
+
 open Ast
 open Sast
 
@@ -76,7 +79,6 @@ let built_in_decls =
   let add_func map fd = 
     let built_in_err = "function " ^ fd.f_name ^ " may not be defined"
     and dup_err = "duplicate function " ^ fd.f_name
-    (* and make_err er = raise (Failure er) *)
     and n = fd.f_name (* Name of the function *)
     in
     (* ensure again that func main is int as well as return type*)
@@ -88,7 +90,6 @@ let built_in_decls =
       f_statements = fd.f_statements;
     } 
     in
-    (* print_endline (string_of_typ _ret.typ) ; *)
 
     match fd with (* No duplicate functions or redefinitions of built-ins *)
          _ when StringMap.mem n built_in_decls -> make_err built_in_err
@@ -127,13 +128,6 @@ let built_in_decls =
        if lvaluet = rvaluet then lvaluet else raise (Failure err)
     in   
 
-    (* Build local symbol table of variables for a given function *)
-    (* original*)
-(*     let symbols =
-      List.fold_left 
-        (fun _val (_type, _name, _) -> StringMap.add _name _type _val)
-        StringMap.empty (globals @ func.f_args @ func.f_locals )
-    in *)
     (*make symboltable have information about type, name, and whether the variable is initialized or not*)
     let symbols =
       List.fold_left 
@@ -143,7 +137,7 @@ let built_in_decls =
           v_init  = false;
           } _val)
         )
-        StringMap.empty (globals @ func.f_args @ func.f_locals )(*(globals @ func.f_args @ func.f_locals )*)
+        StringMap.empty (globals @ func.f_args @ func.f_locals )
     in
     (* function args only, use to avoid program seeing function args as uninitialized *)
     let func_arg_symbols =
@@ -154,7 +148,7 @@ let built_in_decls =
           v_init  = false;
           } _val)
         )
-        StringMap.empty (func.f_args )(*(globals @ func.f_args @ func.f_locals )*)
+        StringMap.empty (func.f_args )
       in
 
      let type_of_identifier s =
@@ -201,14 +195,6 @@ let built_in_decls =
       | StrLit l -> (String, SStrLit l)
       | Empty       -> (Void, SEmpty)
       | XirtamLit l ->
-
-        (*
-        if matrix is at outer level, then check each to make sure they r not staggered
-        Also we want to map expr to each value in the matrix
-                          in c 
-                            matrix**, int row, int col
-        [1,2,3],[1,2,3]->   [1,2,3,1,2,3], 2, 3
-        *)
         (*get list of row lengths in matrix*)
         let rec mat_length_list _mat_in =  match _mat_in with
           XirtamLit x -> List.length x :: mat_length_list (List.hd x)
@@ -220,13 +206,6 @@ let built_in_decls =
           (match _typ with
             String -> make_err("no strings allowed in matrices!")
             | Bool -> make_err("no booleans allowed in matrices!")
-            (* for now, no matrices except literals allowed within each other
-              this also prevents unwanted self referencing of undeclared matrices:
-              xirtam mat;
-              mat = [[1,2,3],[1,2,true]];
-            TODO: see if variables when put into matrix literals copy by value 
-                  boolean casting
-            *)
             | Xirtam -> make_err("Xirtam Literals are only allowed in matrices!")
             |  _ -> expr (expr_init_check _mat_val)
           )
@@ -250,8 +229,6 @@ let built_in_decls =
         let _cols_check = List.tl mat_rc in (*get the rest of the cols*)
         let _rows = List.hd mat_rc in (*rows*)
         let _cols = List.hd _cols_check in (*cols*)
-        (* debug print *)
-        (* print_endline ("("^(string_of_int _rows) ^", " ^(string_of_int _cols)^")"); *)
         (*map expr to each of the matrix elements*)
           (Xirtam,
             SXirtamLit (check_stagger _cols_check l, _rows, _cols)
@@ -261,7 +238,6 @@ let built_in_decls =
       | Id s       ->
           let var_dat = type_of_identifier s in
             (var_dat.v_type, SId s)
-          (* (type_of_identifier s, SId s) *)
       | Call(fname, args) as call ->
           let call = expr_init_check  call in
           let fd = find_func fname in
@@ -280,14 +256,10 @@ let built_in_decls =
           let args' = List.map2 check_call _fd_func_args args
           in (fd.typ, SCall(fname, args'))
 
-          (*
-          let args' = List.map2 check_call fd.f_args args
-          in (fd.typ, SCall(fname, args')) *)
 
       | Unop (op, l) as ex ->
         let (t, l') = expr (expr_init_check l) in
           let ty = match op with
-          (*double check this, *)
             Neg when t = Num -> t
           | Not when t = Bool -> Bool
           | _ -> raise (Failure ("illegal unary operator " ^ 
@@ -319,7 +291,6 @@ let built_in_decls =
       | Assign (id, v) as _exp ->
           let var_dat = type_of_identifier id in 
           let _left = var_dat.v_type  in
-          (* let _left = type_of_identifier id in  *)
           let (_right, val') = expr (expr_init_check v) in
           let err = 
             "illegal assignment " ^ string_of_typ _left ^ " = " ^ string_of_typ _right ^ " in " ^ string_of_expr _exp
@@ -352,10 +323,6 @@ let built_in_decls =
           make_err("return gives " ^ string_of_typ t ^ " expected " ^
        string_of_typ func.typ ^ " in function" ^ string_of_expr e)
       )
-
-
-
-      
       (* A block is correct if each statement is correct and nothing
          follows any Return statement.  Nested blocks are flattened. *)
       | Block sl -> 
