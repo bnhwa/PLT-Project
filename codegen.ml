@@ -83,6 +83,12 @@ let translate (globals, functions) =
     let transpose_t = L.function_type xirtam_t [| xirtam_t |] in
     let transpose_f = L.declare_function "transpose" transpose_t the_module in
 
+    let getrows_t = L.function_type float_t [|xirtam_t|] in
+    let getrows_f = L.declare_function "getrows" getrows_t the_module in
+
+    let getcols_t = L.function_type float_t [|xirtam_t|] in
+    let getcols_f = L.declare_function "getcols" getcols_t the_module in
+
     let mult_matrix_t = L.function_type xirtam_t [|xirtam_t; xirtam_t|] in
     let mult_matrix_f = L.declare_function "matrixMult" mult_matrix_t the_module in
     let add_matrix_t = L.function_type xirtam_t [|xirtam_t; xirtam_t|] in
@@ -243,6 +249,10 @@ let translate (globals, functions) =
       (* transpose *)
       | SCall ("trans", [e]) ->
         L.build_call transpose_f [| (expr builder e) |] "trans" builder
+      | SCall ("getrows", [e]) ->
+          L.build_call getrows_f [| (expr builder e) |] "getrows" builder
+      | SCall ("getcols", [e]) ->
+          L.build_call getcols_f [| (expr builder e) |] "getcols" builder
 
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in

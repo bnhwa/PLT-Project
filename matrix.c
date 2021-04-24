@@ -70,6 +70,19 @@ void pub_set( struct matrix* m, double r,double c, double v){
   set(m,(int)r,(int)c,v);
 }
 
+
+double getrows(matrix* m) {
+
+  return (double) m->num_rows;
+
+
+}
+
+double getcols(matrix* m) {
+
+  return (double) m->num_cols;
+}
+
 matrix* storeVal(matrix* target, double value) {
 
     int position = target->buildPosition;

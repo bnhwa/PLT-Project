@@ -66,6 +66,9 @@ let built_in_decls =
       ("matset",[Xirtam;Num;Num;Num], Void);
       (*transpose*)
       ("trans",[Xirtam], Xirtam);
+      ("getrows",[Xirtam], Num);
+      ("getcols",[Xirtam], Num);
+
      ]
   in
 
@@ -98,6 +101,8 @@ let built_in_decls =
               || n = "matget"
               || n = "matset"
               || n = "trans"
+              || n = "getrows"
+              || n = "getcols"
             -> make_err dup_err  
        | _ ->  StringMap.add n _ret map 
   in
