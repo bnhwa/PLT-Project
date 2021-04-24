@@ -1,0 +1,193 @@
+/usr/bin/lli
+
+###### Testing test-arithmetic-op
+./xirtam.native tests/test-arithmetic-op.xirt > test-arithmetic-op.ll
+llc -relocation-model=pic test-arithmetic-op.ll > test-arithmetic-op.s
+cc -o test-arithmetic-op.exe test-arithmetic-op.s matrix.c
+./test-arithmetic-op.exe
+diff -b test-arithmetic-op.out tests/test-arithmetic-op.out > test-arithmetic-op.diff
+###### SUCCESS
+
+###### Testing test-assignment
+./xirtam.native tests/test-assignment.xirt > test-assignment.ll
+llc -relocation-model=pic test-assignment.ll > test-assignment.s
+cc -o test-assignment.exe test-assignment.s matrix.c
+./test-assignment.exe
+diff -b test-assignment.out tests/test-assignment.out > test-assignment.diff
+###### SUCCESS
+
+###### Testing test-cool-program
+./xirtam.native tests/test-cool-program.xirt > test-cool-program.ll
+llc -relocation-model=pic test-cool-program.ll > test-cool-program.s
+cc -o test-cool-program.exe test-cool-program.s matrix.c
+./test-cool-program.exe
+diff -b test-cool-program.out tests/test-cool-program.out > test-cool-program.diff
+###### SUCCESS
+
+###### Testing test-emptymain
+./xirtam.native tests/test-emptymain.xirt > test-emptymain.ll
+llc -relocation-model=pic test-emptymain.ll > test-emptymain.s
+cc -o test-emptymain.exe test-emptymain.s matrix.c
+./test-emptymain.exe
+diff -b test-emptymain.out tests/test-emptymain.out > test-emptymain.diff
+###### SUCCESS
+
+###### Testing test-for-c
+./xirtam.native tests/test-for-c.xirt > test-for-c.ll
+llc -relocation-model=pic test-for-c.ll > test-for-c.s
+cc -o test-for-c.exe test-for-c.s matrix.c
+./test-for-c.exe
+diff -b test-for-c.out tests/test-for-c.out > test-for-c.diff
+###### SUCCESS
+
+###### Testing test-func-dec
+./xirtam.native tests/test-func-dec.xirt > test-func-dec.ll
+llc -relocation-model=pic test-func-dec.ll > test-func-dec.s
+cc -o test-func-dec.exe test-func-dec.s matrix.c
+./test-func-dec.exe
+diff -b test-func-dec.out tests/test-func-dec.out > test-func-dec.diff
+###### SUCCESS
+
+###### Testing test-get-rows
+./xirtam.native tests/test-get-rows.xirt > test-get-rows.ll
+llc -relocation-model=pic test-get-rows.ll > test-get-rows.s
+cc -o test-get-rows.exe test-get-rows.s matrix.c
+./test-get-rows.exe
+diff -b test-get-rows.out tests/test-get-rows.out > test-get-rows.diff
+FAILED test-get-rows.out differs from tests/test-get-rows.out
+###### FAILED
+
+###### Testing test-if
+./xirtam.native tests/test-if.xirt > test-if.ll
+llc -relocation-model=pic test-if.ll > test-if.s
+cc -o test-if.exe test-if.s matrix.c
+./test-if.exe
+diff -b test-if.out tests/test-if.out > test-if.diff
+###### SUCCESS
+
+###### Testing test-matadd-2
+./xirtam.native tests/test-matadd-2.xirt > test-matadd-2.ll
+llc -relocation-model=pic test-matadd-2.ll > test-matadd-2.s
+cc -o test-matadd-2.exe test-matadd-2.s matrix.c
+./test-matadd-2.exe
+diff -b test-matadd-2.out tests/test-matadd-2.out > test-matadd-2.diff
+###### SUCCESS
+
+###### Testing test-matadd-3
+./xirtam.native tests/test-matadd-3.xirt > test-matadd-3.ll
+llc -relocation-model=pic test-matadd-3.ll > test-matadd-3.s
+cc -o test-matadd-3.exe test-matadd-3.s matrix.c
+./test-matadd-3.exe
+diff -b test-matadd-3.out tests/test-matadd-3.out > test-matadd-3.diff
+###### SUCCESS
+
+###### Testing test-matadd
+./xirtam.native tests/test-matadd.xirt > test-matadd.ll
+llc -relocation-model=pic test-matadd.ll > test-matadd.s
+cc -o test-matadd.exe test-matadd.s matrix.c
+./test-matadd.exe
+diff -b test-matadd.out tests/test-matadd.out > test-matadd.diff
+###### SUCCESS
+
+###### Testing test-matget
+./xirtam.native tests/test-matget.xirt > test-matget.ll
+llc -relocation-model=pic test-matget.ll > test-matget.s
+cc -o test-matget.exe test-matget.s matrix.c
+./test-matget.exe
+diff -b test-matget.out tests/test-matget.out > test-matget.diff
+###### SUCCESS
+
+###### Testing test-matmult-2
+./xirtam.native tests/test-matmult-2.xirt > test-matmult-2.ll
+llc -relocation-model=pic test-matmult-2.ll > test-matmult-2.s
+cc -o test-matmult-2.exe test-matmult-2.s matrix.c
+./test-matmult-2.exe
+diff -b test-matmult-2.out tests/test-matmult-2.out > test-matmult-2.diff
+###### SUCCESS
+
+###### Testing test-matmult
+./xirtam.native tests/test-matmult.xirt > test-matmult.ll
+llc -relocation-model=pic test-matmult.ll > test-matmult.s
+cc -o test-matmult.exe test-matmult.s matrix.c
+./test-matmult.exe
+diff -b test-matmult.out tests/test-matmult.out > test-matmult.diff
+###### SUCCESS
+
+###### Testing test-matset
+./xirtam.native tests/test-matset.xirt > test-matset.ll
+llc -relocation-model=pic test-matset.ll > test-matset.s
+cc -o test-matset.exe test-matset.s matrix.c
+./test-matset.exe
+diff -b test-matset.out tests/test-matset.out > test-matset.diff
+###### SUCCESS
+
+###### Testing test-print-matrix1
+./xirtam.native tests/test-print-matrix1.xirt > test-print-matrix1.ll
+llc -relocation-model=pic test-print-matrix1.ll > test-print-matrix1.s
+cc -o test-print-matrix1.exe test-print-matrix1.s matrix.c
+./test-print-matrix1.exe
+diff -b test-print-matrix1.out tests/test-print-matrix1.out > test-print-matrix1.diff
+###### SUCCESS
+
+###### Testing test-print-matrix2
+./xirtam.native tests/test-print-matrix2.xirt > test-print-matrix2.ll
+llc -relocation-model=pic test-print-matrix2.ll > test-print-matrix2.s
+cc -o test-print-matrix2.exe test-print-matrix2.s matrix.c
+./test-print-matrix2.exe
+diff -b test-print-matrix2.out tests/test-print-matrix2.out > test-print-matrix2.diff
+###### SUCCESS
+
+###### Testing test-printn
+./xirtam.native tests/test-printn.xirt > test-printn.ll
+llc -relocation-model=pic test-printn.ll > test-printn.s
+cc -o test-printn.exe test-printn.s matrix.c
+./test-printn.exe
+diff -b test-printn.out tests/test-printn.out > test-printn.diff
+###### SUCCESS
+
+###### Testing test-temp
+./xirtam.native tests/test-temp.xirt > test-temp.ll
+llc -relocation-model=pic test-temp.ll > test-temp.s
+cc -o test-temp.exe test-temp.s matrix.c
+./test-temp.exe
+diff -b test-temp.out tests/test-temp.out > test-temp.diff
+###### SUCCESS
+
+###### Testing test-unary-and-bool-op
+./xirtam.native tests/test-unary-and-bool-op.xirt > test-unary-and-bool-op.ll
+llc -relocation-model=pic test-unary-and-bool-op.ll > test-unary-and-bool-op.s
+cc -o test-unary-and-bool-op.exe test-unary-and-bool-op.s matrix.c
+./test-unary-and-bool-op.exe
+diff -b test-unary-and-bool-op.out tests/test-unary-and-bool-op.out > test-unary-and-bool-op.diff
+###### SUCCESS
+
+###### Testing test-while-c
+./xirtam.native tests/test-while-c.xirt > test-while-c.ll
+llc -relocation-model=pic test-while-c.ll > test-while-c.s
+cc -o test-while-c.exe test-while-c.s matrix.c
+./test-while-c.exe
+diff -b test-while-c.out tests/test-while-c.out > test-while-c.diff
+###### SUCCESS
+
+###### Testing test-while
+./xirtam.native tests/test-while.xirt > test-while.ll
+llc -relocation-model=pic test-while.ll > test-while.s
+cc -o test-while.exe test-while.s matrix.c
+./test-while.exe
+diff -b test-while.out tests/test-while.out > test-while.diff
+###### SUCCESS
+
+###### Testing fail-assign1
+./xirtam.native < tests/fail-assign1.xirt 2> fail-assign1.err >> testall.log
+diff -b fail-assign1.err tests/fail-assign1.err > fail-assign1.diff
+###### SUCCESS
+
+###### Testing fail-assign2
+./xirtam.native < tests/fail-assign2.xirt 2> fail-assign2.err >> testall.log
+diff -b fail-assign2.err tests/fail-assign2.err > fail-assign2.diff
+###### SUCCESS
+
+###### Testing fail-uninit-var-usage
+./xirtam.native < tests/fail-uninit-var-usage.xirt 2> fail-uninit-var-usage.err >> testall.log
+diff -b fail-uninit-var-usage.err tests/fail-uninit-var-usage.err > fail-uninit-var-usage.diff
+###### SUCCESS
