@@ -1,0 +1,81 @@
+
+num determ_two(xirtam s) {
+
+    num a;
+    num b;
+    num c;
+    num d;
+
+    a = matget(s,0,0);
+    b = matget(s,0,1);
+    c = matget(s,1,0);
+    d = matget(s,1,1);
+
+    return (a*d - c*b);
+
+
+}
+
+
+num determ_three(xirtam s) {
+
+    num a;
+    num b;
+    num c;
+    num d;
+    num e;
+    num f;
+    num g;
+    num h;
+    num i;
+    num val;
+
+    xirtam x;
+    xirtam y;
+    xirtam z;
+
+
+    a = matget(s,0,0);
+    b = matget(s,0,1);
+    c = matget(s,0,2);
+    d = matget(s,1,0);
+    e = matget(s,1,1);
+    f = matget(s,1,2);
+    g = matget(s,2,0);
+    h = matget(s,2,1);
+    i = matget(s,2,2);
+
+    x = [[e,f],[h,i]];
+    y = [[d,f],[g,i]];
+    z = [[d,e],[g,h]];
+
+    val = (a * determ_two(x) - b * determ_two(y) + c * determ_two(z));
+
+    return val;
+
+
+
+}
+
+
+
+
+
+
+num main() {
+    xirtam t;
+    xirtam thr;
+    num determResult;
+
+
+    t = [[ 10, 2 ], [ 3, 4 ]];
+    determResult = determ_two(t);
+    printn(determResult);
+
+
+    thr = [[ 25, 28 ,35], [ 3, 4, 8 ], [12,10,15]];
+    determResult = determ_three(thr);
+    printn(determResult);
+
+
+}
