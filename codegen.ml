@@ -143,7 +143,7 @@ let translate (globals, functions) =
 
         (* Construct code for an expression; return its value *)
     let rec expr builder ((_, e) : sexpr) = match e with
-     SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
+        SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
 	    | SNumLit l  -> L.const_float float_t l
       | SStrLit s ->  L.build_global_stringptr s "tmp" builder
       | SId id -> L.build_load (lookup id) id builder
@@ -181,7 +181,7 @@ let translate (globals, functions) =
           ) e1' e2' "tmp" builder
           (* num operations*)
           | A.Int | A.String | A.Void | A.Num -> (match op with 
-            A.Add     -> L.build_fadd
+                A.Add     -> L.build_fadd
               | A.Sub     -> L.build_fsub
               | A.Mult    -> L.build_fmul
               | A.Div     -> L.build_fdiv 
@@ -195,7 +195,10 @@ let translate (globals, functions) =
               | A.Geq     -> L.build_fcmp L.Fcmp.Oge
               | A.And 
               | A.Or      -> raise (Failure "internal error: semant should have rejected and/or on float")
-              ) e1' e2' "tmp" builder)
+              ) e1' e2' "tmp" builder
+        | A.Xirtam -> raise (Failure "cannot use binop on matrices")
+      )
+
 
         (*binary bool operations*)
         (*original is below*)
