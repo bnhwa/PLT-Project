@@ -1,7 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-//Authored by Bailey Hwa, Shida Jing, and Andrew Gorovoy
+
+// Authored by Bailey Hwa, Shida Jing, and Andrew Gorovoy
+// Referenced the past project Matrx. However, we noticed 
+// that the past project code did not work, and we
+// made heavy modifications. At this point, this file is pretty
+// much original, except for general skeleton stuff and helper functions.
+
 static void die(const char *message)
 {
     perror(message);
@@ -20,7 +26,7 @@ typedef struct matrix matrix;
 int debug = 0;
 
 double get(struct matrix* m, int r,int c){
-  //set m[r][c]
+  //get m[r][c]
   int kill = 0;
   if (r>((m->num_rows)-1)){
     perror("row index out of range when setting matrix ");
@@ -38,7 +44,7 @@ double get(struct matrix* m, int r,int c){
 }
 
 void set( struct matrix* m,int r,int c,double v){
-  //get
+  //set m[r][c] to v
   int kill = 0;
   if (r>((m->num_rows)-1)){
     perror("row index out of range when setting matrix ");
@@ -56,30 +62,19 @@ void set( struct matrix* m,int r,int c,double v){
 }
 
 double pub_get(struct matrix* m, double r,double c){
-  //public getter
-  //set m[r][c]
-  // int idx = r + (c * (m->num_rows));
-  //cast row and col to int
   return get(m,(int)r,(int)c);
 }
 
 void pub_set( struct matrix* m, double r,double c, double v){
-  //public setter
-  // int idx = r + (c * (m->num_rows));
-  //cast row and col to int
   set(m,(int)r,(int)c,v);
 }
 
 
 double getrows(matrix* m) {
-
   return (double) m->num_rows;
-
-
 }
 
 double getcols(matrix* m) {
-
   return (double) m->num_cols;
 }
 
@@ -146,7 +141,6 @@ matrix* initMatrix(double* listOfValues, int num_cols, int num_rows) {
   if (listOfValues == NULL) {
     for(int r = 0; r < num_rows; r++) {
       for(int c = 0; c < num_cols; c++) {
-        // matrixValues[r + (c * num_rows)]=0;
         matrixValues[c + (r * num_cols)]=0;
       }
     }
@@ -156,7 +150,6 @@ matrix* initMatrix(double* listOfValues, int num_cols, int num_rows) {
   else {
     for(int r = 0; r < num_rows; r++) {
       for(int c = 0; c < num_cols; c++) {
-        // int idx = c + (r * num_cols);
         int idx = c + (r * num_cols);
         matrixValues[idx]=listOfValues[idx];
       }
@@ -222,15 +215,12 @@ void display(matrix* input) {
           } else {
           printf(" %.2f", get(input,i,j));
           }
-            // printf(" %.2f", input->matrixAddr[i][j]);
         }
         printf("\n");
     }
 }
-//======================================================================
-// Test below: move the function above this line if it works
-//
-//======================================================================
+
+
 matrix* transpose(matrix* input) {
   //switch rows and cols, get empty(i.e., zeroed matrix of transposed size, then fill)
   int rows = input->num_rows;
@@ -239,14 +229,10 @@ matrix* transpose(matrix* input) {
   for(int i=0; i<rows; i++) {
     for(int j=0; j<cols; j++) {
         set(result, j,i, get(input,i,j));
-        // result->matrixAddr[j][i] = input->matrixAddr[i][j];
     }
   }
   return result;
 }
-// TEMP FUNCS FROM SHIDA'S TESTING
-
-// SHIDA'S TEMP FUNCS END
 
 
 #ifdef BUILD_TEST
@@ -255,17 +241,13 @@ int main(int argc,char** argv) {
   //initMatrix and display of empty matrix
   printf("\n===========testing empty init========\n");
   matrix *null_matrix=initMatrix(NULL, 2, 2);
-  // printf("NULL MATRIX: \n");
-  // display(null_matrix);
 
-  
 
 printf("\n===========testing list init========\n");
   //initMatrix and display of 2x2 matrix
   double vals1[] = {91, 2, 3, 222, 7, 6};
   double *list1 = vals1;
   matrix *m = initMatrix(list1, 3, 2);
-  // printf("2x2 MATRIX: \n");
 
   display(m);
     for( int i = 0; i < 4; i++) {
@@ -282,8 +264,6 @@ printf("\n===========testing list init========\n");
   display(m);
 
 
-  
-  
   // //add 2 of the same matrix
   printf("\n===========testing addition========\n");
   double vals1a[] = {1,2,3,4,5,6};
@@ -322,6 +302,8 @@ printf("\n===========testing list init========\n");
   display(result_product2);
 
 
+  // Below is Shida testing demo program 
+  
   // double source[] = {0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0};
   // double dest[] = {0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0};
   // matrix* d = initMatrix(dest, 5, 6);
@@ -357,32 +339,5 @@ printf("\n===========testing list init========\n");
   //   }
 
   //   display(d);
-
-  // //scalar multiplication
-  // matrix *result_scalar = timesScalar(m, 3);
-  // printf("SCALAR MULTIPLICATION OF ORIGINAL MATRIX BY 3: \n");
-  // display(result_scalar);
-
-  // //determinant of 2x2 matrix
-  // printf("The determinant is %d\n", determinant(m, 2));
-  
-  // //determinant of 3x3 matrix
-  // int vals2[] = {6, 1, 1, 4, -2, 5, 2, 8, 7};
-  // int *list2 = vals2;
-  // matrix *n = initMatrix(list2, 3, 3);
-  // printf("3x3 MATRIX: \n");
-  // display(n);
-  // printf("The determinant is %d\n", determinant(n, 3));
-  
-  // //dot product tests
-  // int values_1[4] = {1,2,3,4};
-  // matrix* m1 = initMatrix(&values_1[0], 2, 2);
-  // int values_2[4] = {5,6,7,8};
-  // matrix* m2 = initMatrix(&values_2[0], 2, 2);
-
-  // printf("The dot product of matrices 1 and 2 is %d\n", dotProduct(m1,m2));
-
-  // transpose(m1);
-  // display(m1);
 }
 #endif
