@@ -160,7 +160,7 @@ output -> double, number of rows
 description: return the number of rows in a matrix
 */
 double mNumRows(matrix* lhs){
-    return lhs->num_rows;
+    return (double)lhs->num_rows;
 }
 
 /*
@@ -174,7 +174,7 @@ double mNumCols(matrix* lhs){
 }
 
 /*
-matrixInverse
+matrixTranspose
 input -> xirtam matrix object
 output -> the inverse of the matrix M^-1
 description: return the inverse of the matrix input
@@ -210,6 +210,7 @@ matrix* matrixMult(matrix* lhs, matrix* rhs) {
   }
   return result;
 }
+
 void display(matrix* input) {
     int row = input->num_rows;
     int col = input->num_cols;

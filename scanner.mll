@@ -67,12 +67,13 @@ if so, make it so users cant name variables xirtam function names
 
 | "fillMat" {MAT_FILL}  (* Fill all of matrix with values*)
 | "transpose" {MAT_TRANSPOSE}(* *)
-| "getrows" {MAT_ROWS}(* get number of rows*)(* *)
-| "getcols" {MAT_COLS}(* get number of cols*)
+| "getrows" {MAT_ROWS}(* get number of rows*)(* ignored*)
+| "getcols" {MAT_COLS}(* get number of cols*) (* ignored*)
 | "equals" {MAT_EQ} (* *)
 | "addMat" {MAT_ADD}(* *)
 | "multScalar" {MAT_MULT_SCALAR}(*multiply scalar *)
 | "multMat" {MAT_MULT}(*mult 2 matrices *)
+| "matnumrows" {MAT_NUM_ROWS} (*get the number of rows in a matrix*)
 
 
 (*  Literals*)
