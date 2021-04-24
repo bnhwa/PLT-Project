@@ -1,5 +1,8 @@
 { open Parser }
-(*authored by: Bailey Hwa and Shida Jing*)
+(* authored by: Bailey Hwa, help by Shida Jing *)
+(* Citation: MicroC scanner *)
+
+
 (*digits*)
 let digit = ['0'-'9']
 let digits = digit+
@@ -23,9 +26,7 @@ rule tokenize = parse
 | '*'	{TIMES}
 | '/'	{DIV}
 | '='	{ASSIGN }
-(*optional operators? should we implement these later, putting them here so we can just uncomment and go| '%' {MOD}*)
-| '%' {MOD}
-(* | '^'  {EXP} *)
+
 
 | "!"	{NOT}
 | "=="	{EQ}
@@ -44,13 +45,9 @@ rule tokenize = parse
 | "for"    {FOR}
 | "while" {WHILE}
 | "return" {RETURN}
-(*| "continue" { CONTINUE }*)(*no more continue*)
 | "new" {NEW}
 | "del" {DEL}
 | "NULL" {NULL}
-
-(*Note ARE WE IMPLEMENTING THESE?*)
-(*| "break"  {BREAK}*)
 
 
 (* Primitive data & function types *)
@@ -59,12 +56,6 @@ rule tokenize = parse
 | "string" {STRING}
 | "void"   {VOID}
 | "xirtam"   {XIRTAM}
-(* Xirtam functions CHECK IF THIS CONFLICTS WITH VAR NAMING
-if so, make it so users cant name variables xirtam function names
-*)
-(* MAT_IDENTITY MAT_FILL MAT_TRANSPOSE MAT_ROWS MAT_COLS MAT_EQ MAT_ADD MAT_MULT_SCALAR MAT_MULT*)
-
-(*| "identity" {MAT_IDENTITY} *)
 
 
 
@@ -73,8 +64,8 @@ if so, make it so users cant name variables xirtam function names
 | "false"  {FALSE}
 | digits as lex { NUMLIT(float_of_string lex) } (*convert all numbers to float (num datatype)*)
 | digits '.'  digit* ( ['e' 'E'] ['+' '-']? digits )? as lex {NUMLIT(float_of_string lex) } (*accept floating point numbers with signs*)
-| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*     as lex {ID(lex)}(*Variable IDS string and number _*)
-| '"' ([^ '"']* as lex) '"' { STRLIT(lex) }(*double quotes with lookahead*)
+| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*     as lex {ID(lex)} (*Variable IDS string and number _*)
+| '"' ([^ '"']* as lex) '"' { STRLIT(lex) } (*double quotes with lookahead*)
 (*  Xirtam module functions*)
 | eof { EOF }
 | _ as char { raise (Failure("invalid character detectred: " ^ Char.escaped char)) }(* raise error *)
