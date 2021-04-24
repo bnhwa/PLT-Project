@@ -1,5 +1,7 @@
 
-(* TODO: 
+(* 
+Authored by Bailey Hwa, Shida Jing, and Andrew Gorovoy
+TODO: 
     1. Deal with strings overall.
     2. Examine line 68 - 116.
     3. There are two SBinops in the original MicroC. Did I copy the right one?

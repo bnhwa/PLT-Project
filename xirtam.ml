@@ -1,3 +1,4 @@
+(* authored by: Bailey Hwa and Shida Jing *)
 type action = Ast | Sast | LLVM_IR | Compile
 
 let () = 

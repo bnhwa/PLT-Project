@@ -1,4 +1,5 @@
-(*bnh2128
+(*
+authored by: Bailey Hwa and Shida Jing
 citation: microc compiler shown in class
 *)
 

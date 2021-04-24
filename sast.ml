@@ -1,6 +1,6 @@
 open Ast
 
- 
+ (* authored by: Bailey Hwa and Shida Jing *)
 type sexpr = typ * sx
 and sx =
 	(*Primitives and expressions*)

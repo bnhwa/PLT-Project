@@ -1,4 +1,5 @@
 { open Parser }
+(*authored by: Bailey Hwa and Shida Jing*)
 (*digits*)
 let digit = ['0'-'9']
 let digits = digit+

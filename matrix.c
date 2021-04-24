@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+//Authored by Bailey Hwa, Shida Jing, and Andrew Gorovoy
 static void die(const char *message)
 {
     perror(message);

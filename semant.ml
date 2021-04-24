@@ -1,5 +1,5 @@
 (* Semantic checking for the MicroC compiler *)
-
+(* authored by: Bailey Hwa and Shida Jing *)
 open Ast
 open Sast
 

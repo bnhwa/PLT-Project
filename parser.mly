@@ -6,7 +6,7 @@ Citation: microC processor code
 
 %{ open Ast %} 
 
-
+/* Authored  by Bailey Hwa and Shida Jing */
 /* Tokens: syntax */
 %token PAREN_L PAREN_R CURLY_L CURLY_R SQUARE_L SQUARE_R SEMICOL COMMA
 /* Tokens: Operators & literals */
