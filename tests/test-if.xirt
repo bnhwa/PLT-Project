@@ -39,5 +39,4 @@ num main() {
     } else {
         printn(1);
     }
-
 }

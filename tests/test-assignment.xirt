@@ -1,6 +1,6 @@
 num main(){
     string s;
-    num n;
+    num n; 
     bool b;
     s="test";
     n=6;

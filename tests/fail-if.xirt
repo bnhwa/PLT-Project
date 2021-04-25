@@ -1,15 +1,9 @@
 num main() {
     num f;
-
     f = 8;
-
 
     if {
 
-        
     }
-
-
-
 
 }

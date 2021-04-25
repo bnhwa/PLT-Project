@@ -1,8 +1,4 @@
 int main () {
-
-
     num f;
-
     f = 4;
-    
 }

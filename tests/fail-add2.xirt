@@ -18,11 +18,10 @@ num main() {
     xirtam m2;
     xirtam r;
   
-
     m = [[]];
     m2 = [[-1]];
     r = matadd(m, m2);
     printm(r);
 
-    
+
 }

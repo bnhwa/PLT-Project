@@ -1,4 +1,3 @@
-
 num add_and_get(xirtam m1, xirtam m2, num r, num c) {
     xirtam m3;
     num ret;
@@ -6,7 +5,6 @@ num add_and_get(xirtam m1, xirtam m2, num r, num c) {
     ret = matget(m3, r, c);
     return ret;
 }
-
 
 num main() {
     xirtam m;

@@ -1,4 +1,3 @@
-
 num min(num a, num b) {
     if (a >= b) {
         return b;
@@ -28,7 +27,7 @@ num main() {
     r = matadd(m, m2);
     printm(r);
 
-    
+
     m = [[(1 * -1)]];
     m2 = [[(-1 * -1)]];
     r = matadd(m, m2);
