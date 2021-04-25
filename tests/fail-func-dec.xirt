@@ -1,0 +1,25 @@
+num add(num a, num b) {
+    num c;
+    c = a + b;
+    return c;
+}
+
+bool small_Num(num input, num threshold) {
+    return (input < threshold);
+}
+
+num main() {
+    num k;
+    num threshold;
+
+    k = add(1, 2);
+    printn(k);
+
+    k = 0.34;
+    threshold = 1;
+    if (small_num(k, threshold)) {
+        printn(k);
+    } else {
+        printn(100000);
+    }
+}

@@ -1,0 +1,14 @@
+num main() {
+
+    num test;
+    num result;
+
+    test = 12;
+
+    result = getrows(test);
+
+
+
+
+
+}

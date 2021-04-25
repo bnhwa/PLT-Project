@@ -62,15 +62,33 @@ void set( struct matrix* m,int r,int c,double v){
 }
 
 double pub_get(struct matrix* m, double r,double c){
+
+  if (r < 0) {
+    perror("Row value is less than 0");
+    die("");
+  }
+  if (c < 0) {
+    perror("Column value is less than 0");
+    die("");
+  }
   return get(m,(int)r,(int)c);
 }
 
 void pub_set( struct matrix* m, double r,double c, double v){
+  if (r < 0) {
+    perror("Row value is less than 0");
+    die("");
+  }
+  if (c < 0) {
+    perror("Column value is less than 0");
+    die("");
+  }
   set(m,(int)r,(int)c,v);
 }
 
 
 double getrows(matrix* m) {
+
   return (double) m->num_rows;
 }
 
@@ -81,9 +99,8 @@ double getcols(matrix* m) {
 
 matrix* autofill(double num_cols, double num_rows, double value) {
 
-    if ((int) num_cols < 1 || (int) num_rows < 1) {
+    if  (   ((int) num_cols < 1 )|| ((int) num_rows < 1)    ) {
       perror("Number of columns or number of rows is not valid.\nRows and columns must be a positive number.");
-
       exit(1);
     }
 

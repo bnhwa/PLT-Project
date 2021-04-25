@@ -1,0 +1,12 @@
+num main() {
+    num i;
+    i = 0;
+    while() {
+        if (i == 3) {
+            printn(1);
+        } else {
+            printn(100);
+        }
+        i = i + 1;
+    }
+}
