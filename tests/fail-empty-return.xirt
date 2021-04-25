@@ -1,0 +1,7 @@
+xirtam no_return() {
+    xirtam m;
+}
+
+num main() {
+    printn(0);
+}
