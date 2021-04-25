@@ -1,0 +1,11 @@
+xirtam temp() {
+    
+    xirtam m;
+}
+
+num main() {
+
+    temp();
+    printn(0);
+
+} 

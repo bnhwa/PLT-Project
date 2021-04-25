@@ -65,11 +65,11 @@ double pub_get(struct matrix* m, double r,double c){
 
   if (r < 0) {
     perror("Row value is less than 0");
-    die("");
+    exit(1);
   }
   if (c < 0) {
     perror("Column value is less than 0");
-    die("");
+    exit(1);
   }
   return get(m,(int)r,(int)c);
 }
@@ -77,11 +77,11 @@ double pub_get(struct matrix* m, double r,double c){
 void pub_set( struct matrix* m, double r,double c, double v){
   if (r < 0) {
     perror("Row value is less than 0");
-    die("");
+    exit(1);
   }
   if (c < 0) {
     perror("Column value is less than 0");
-    die("");
+    exit(1);
   }
   set(m,(int)r,(int)c,v);
 }
