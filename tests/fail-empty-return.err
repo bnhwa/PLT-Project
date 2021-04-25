@@ -1,4 +1,0 @@
-Function return type does not match operand type of return inst!
-  ret i0 0
- %struct.matrix*LLVM ERROR: Broken module found, compilation aborted!
-Aborted
