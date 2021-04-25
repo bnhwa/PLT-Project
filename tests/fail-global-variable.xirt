@@ -1,0 +1,24 @@
+num global;
+
+global = 4;
+
+num temp(num a) {
+  global = 2;
+  return a + 1;
+}
+
+num main()
+{
+  num i;
+  
+  global = 9;
+  temp(4);
+
+  i = 5;
+  while (i > 0) {
+    printn(i);
+    i = i - 1;
+  }
+  printn(42);
+  printn(global);
+}
