@@ -1,3 +1,7 @@
+/* https://www.geeksforgeeks.org/a-boolean-matrix-question/ */ 
+
+/* This function returns a matrix that's identical to s, except that 
+   an element is replaced with a 1 if there is a 1 in the col or row. */
 xirtam populate_1(xirtam s, xirtam ret, num row, num col) {
     num i;
     num j;
