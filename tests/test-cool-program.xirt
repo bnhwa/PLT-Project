@@ -27,8 +27,6 @@ xirtam copy_first_row(xirtam source, xirtam dest) {
     
 }
 
-
-
 xirtam copy_first_col(xirtam source, xirtam dest) {
 
     num val;

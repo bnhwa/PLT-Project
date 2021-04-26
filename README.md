@@ -5,7 +5,6 @@
 # XIRTAM Programming Language:
 
 
-
 Bailey Nozomu Hwa( bnh2128)
 
 Shida Jing( sj2670) 
@@ -13,6 +12,7 @@ Shida Jing( sj2670)
 Andrew Peter Yevsey Gorovoy( apg2165) 
 
 Annie Wang ( aw3168) 
+
 Lior Attias (lra2135) 
 
 ## About

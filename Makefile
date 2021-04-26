@@ -1,4 +1,4 @@
-# Citation: microc
+# Citation: microc and Matrx
 # authored by: Annie, Lior and Shida
 
 # "make test" Compiles everything and runs the regression tests

@@ -1,4 +1,7 @@
 (* authored by: Bailey Hwa and Shida Jing *)
+
+(* Citation: MicroC *)
+
 type action = Ast | Sast | LLVM_IR | Compile
 
 let () = 
